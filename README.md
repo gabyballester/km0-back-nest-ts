@@ -95,6 +95,36 @@ npm run env:example
 npm run env:setup
 ```
 
+## 🚀 Deployment Rápido
+
+### Railway (Recomendado)
+
+**Deployment en 5 minutos:**
+
+1. **Ir a [railway.app](https://railway.app)**
+2. **Conectar cuenta de GitHub**
+3. **Seleccionar este repositorio**
+4. **Railway detectará automáticamente que es NestJS**
+5. **Configurar variables de entorno en el dashboard**
+6. **¡Listo! Deployment automático en cada push**
+
+**Variables de entorno requeridas:**
+
+```bash
+NODE_ENV=production
+JWT_SECRET=tu-super-secret-jwt-key-at-least-32-characters-long
+COOKIE_SECRET=tu-super-secret-cookie-key-at-least-32-characters-long
+DATABASE_URL=postgresql://username:password@host:port/database
+```
+
+**📖 Ver guía completa:** [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)
+
+### Alternativas
+
+- **Render**: [render.com](https://render.com) - Excelente alternativa
+- **Vercel**: [vercel.com](https://vercel.com) - Para APIs simples
+- **DigitalOcean**: [digitalocean.com](https://digitalocean.com) - Profesional
+
 ## 📊 Métricas del Proyecto
 
 ### ⚡ Performance

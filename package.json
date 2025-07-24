@@ -25,7 +25,11 @@
     "env:setup": "cp env.mirror .env",
     "env:example": "cp env.example .env",
     "check:process-env": "node scripts/check-process-env.js",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy:railway": "npm run test:cov && npm run build:prod",
+    "deploy:render": "npm run test:cov && npm run build:prod",
+    "deploy:vercel": "npm run test:cov && npm run build",
+    "check:deployment": "node scripts/check-deployment.js"
   },
   "lint-staged": {
     "*.ts": [

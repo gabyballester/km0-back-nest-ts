@@ -1,6 +1,67 @@
-# Deployment Guide
+# Deployment Guide - KM0 Market Backend
 
-## 🌐 **Configuración de Puertos**
+## 🚀 **PLATAFORMAS RECOMENDADAS**
+
+### **🥇 RAILWAY (RECOMENDACIÓN PRINCIPAL)**
+
+**Ventajas:**
+
+- ✅ Deployment automático desde GitHub
+- ✅ Base de datos PostgreSQL incluida
+- ✅ Variables de entorno fáciles de configurar
+- ✅ SSL automático y dominio personalizado
+- ✅ Escalado automático según tráfico
+- ✅ Logs en tiempo real
+- ✅ Perfecto para NestJS
+
+**Precios:**
+
+- **Gratis**: $5 de crédito mensual
+- **Pro**: $20/mes (más recursos)
+
+**🔗 [railway.app](https://railway.app)**
+
+---
+
+### **🥈 RENDER (EXCELENTE ALTERNATIVA)**
+
+**Ventajas:**
+
+- ✅ Deployment automático desde GitHub
+- ✅ Base de datos PostgreSQL incluida
+- ✅ SSL automático
+- ✅ Muy estable y confiable
+- ✅ Buena documentación para NestJS
+
+**Precios:**
+
+- **Gratis**: 750 horas/mes (sleep después de 15 min inactivo)
+- **Pro**: $7/mes (siempre activo)
+
+**🔗 [render.com](https://render.com)**
+
+---
+
+### **🥉 VERCEL (PARA APIS SIMPLES)**
+
+**Ventajas:**
+
+- ✅ Deployment ultra-rápido
+- ✅ Edge functions disponibles
+- ✅ Excelente performance
+- ✅ Integración perfecta con frontend
+
+**Limitaciones:**
+
+- ⚠️ Serverless functions (no ideal para NestJS completo)
+- ⚠️ Timeout de 10 segundos en plan gratuito
+- ⚠️ Mejor para APIs simples
+
+**🔗 [vercel.com](https://vercel.com)**
+
+---
+
+## 🌐 **CONFIGURACIÓN DE PUERTOS**
 
 ### **Desarrollo Local**
 
@@ -12,19 +73,15 @@ http://localhost:3000
 http://localhost:4000
 ```
 
-### **Producción**
+### **Producción (Railway/Render)**
 
 ```bash
-# Frontend (nginx/apache)
-https://tu-dominio.com
-
-# Backend (NestJS)
-https://api.tu-dominio.com
-# o
-https://tu-dominio.com/api
+# Railway/Render asignan automáticamente
+PORT=3000  # o el puerto que asigne la plataforma
+HOST=0.0.0.0
 ```
 
-## 🔧 **Variables de Entorno**
+## 🔧 **VARIABLES DE ENTORNO**
 
 ### **Desarrollo (.env)**
 
@@ -35,7 +92,7 @@ HOST=localhost
 CORS_ORIGIN=http://localhost:3000
 ```
 
-### **Producción (Render/Railway/etc.)**
+### **Producción (Railway/Render)**
 
 ```bash
 NODE_ENV=production
@@ -44,27 +101,58 @@ HOST=0.0.0.0
 CORS_ORIGIN=https://tu-dominio.com
 ```
 
-## 🚀 **Deployment**
+## 🚀 **DEPLOYMENT EN RAILWAY**
 
-### **1. Build de Producción**
+### **Paso 1: Preparar el Proyecto**
 
 ```bash
+# Verificar que todo funcione localmente
+npm run test:cov
 npm run build:prod
-```
-
-### **2. Variables de Entorno Requeridas**
-
-- `JWT_SECRET` - Clave secreta de 32+ caracteres
-- `COOKIE_SECRET` - Clave secreta de 32+ caracteres
-- `DATABASE_URL` - URL de conexión a PostgreSQL
-
-### **3. Comando de Inicio**
-
-```bash
 npm run start:prod
 ```
 
-## 📊 **Monitoreo**
+### **Paso 2: Conectar con Railway**
+
+1. **Ir a [railway.app](https://railway.app)**
+2. **Conectar cuenta de GitHub**
+3. **Seleccionar el repositorio**
+4. **Railway detectará automáticamente que es un proyecto Node.js**
+
+### **Paso 3: Configurar Variables de Entorno**
+
+En Railway Dashboard → Variables:
+
+```bash
+# REQUERIDAS
+NODE_ENV=production
+JWT_SECRET=tu-super-secret-jwt-key-at-least-32-characters-long
+COOKIE_SECRET=tu-super-secret-cookie-key-at-least-32-characters-long
+DATABASE_URL=postgresql://username:password@host:port/database
+
+# OPCIONALES (con valores por defecto)
+PORT=3000
+HOST=0.0.0.0
+JWT_EXPIRES_IN=1d
+THROTTLE_TTL=60
+THROTTLE_LIMIT=100
+CORS_ORIGIN=https://tu-frontend.com
+LOG_LEVEL=info
+```
+
+### **Paso 4: Configurar Base de Datos**
+
+1. **En Railway Dashboard → New → Database → PostgreSQL**
+2. **Railway generará automáticamente DATABASE_URL**
+3. **Copiar DATABASE_URL a las variables de entorno**
+
+### **Paso 5: Deployment Automático**
+
+- **Railway detectará cambios en GitHub automáticamente**
+- **Deployment se ejecutará automáticamente**
+- **Health check en `/health` verificará que todo funcione**
+
+## 📊 **MONITOREO**
 
 ### **Health Checks**
 
@@ -73,14 +161,20 @@ GET /health          # Health básico
 GET /health/detailed # Health detallado con métricas
 ```
 
-### **Logs**
+### **Logs en Railway**
 
-```bash
-# Nivel de log configurable
-LOG_LEVEL=info  # error, warn, info, debug
-```
+- **Dashboard → Logs**: Ver logs en tiempo real
+- **Logs estructurados**: Fácil debugging
+- **Métricas de performance**: CPU, memoria, requests
 
-## 🔒 **Seguridad**
+### **Dominio Personalizado**
+
+1. **Railway Dashboard → Settings → Domains**
+2. **Agregar dominio personalizado**
+3. **Configurar DNS según instrucciones**
+4. **SSL automático incluido**
+
+## 🔒 **SEGURIDAD**
 
 ### **Headers de Seguridad**
 
@@ -92,5 +186,69 @@ LOG_LEVEL=info  # error, warn, info, debug
 ### **Variables Sensibles**
 
 - ❌ Nunca committear `.env` o `env.mirror`
-- ✅ Usar variables de entorno del hosting
+- ✅ Usar variables de entorno de Railway
 - ✅ Rotar secrets regularmente
+- ✅ Railway encripta automáticamente las variables
+
+## 🚨 **SOLUCIÓN DE PROBLEMAS**
+
+### **Deployment Falla**
+
+```bash
+# Verificar logs en Railway Dashboard
+# Verificar variables de entorno
+# Verificar que el build funcione localmente
+npm run build:prod
+```
+
+### **Health Check Falla**
+
+```bash
+# Verificar que /health responda localmente
+curl http://localhost:4000/health
+
+# Verificar variables de entorno requeridas
+NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
+```
+
+### **Base de Datos No Conecta**
+
+```bash
+# Verificar DATABASE_URL en Railway
+# Verificar que la base de datos esté activa
+# Verificar credenciales
+```
+
+## 📈 **ESCALADO**
+
+### **Railway Auto-Scaling**
+
+- **Automático**: Según tráfico
+- **Manual**: Configurar en Dashboard
+- **Métricas**: CPU, memoria, requests/segundo
+
+### **Monitoreo**
+
+- **Railway Dashboard**: Métricas en tiempo real
+- **Logs**: Estructurados y buscables
+- **Alertas**: Configurables por métricas
+
+---
+
+## 🎯 **RESUMEN DE DEPLOYMENT**
+
+### **Railway (Recomendado)**
+
+1. ✅ **Conectar GitHub** → Deployment automático
+2. ✅ **Configurar variables** → Seguridad
+3. ✅ **Agregar base de datos** → PostgreSQL
+4. ✅ **Configurar dominio** → SSL automático
+5. ✅ **Monitorear** → Logs y métricas
+
+### **Ventajas Finales**
+
+- 🚀 **Deployment en 5 minutos**
+- 🔒 **Seguridad automática**
+- 📊 **Monitoreo completo**
+- 💰 **Gratis para empezar**
+- 🔧 **Fácil mantenimiento**

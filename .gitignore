@@ -72,3 +72,8 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Deployment files
+.railway/
+.vercel/
+.netlify/
