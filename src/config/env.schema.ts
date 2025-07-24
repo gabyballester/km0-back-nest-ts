@@ -27,7 +27,10 @@ export const envSchema = z.object({
     .min(32, 'COOKIE_SECRET must be at least 32 characters'),
 
   // Database
-  [ENV_KEYS.DATABASE_URL]: z.string().url('DATABASE_URL must be a valid URL'),
+  [ENV_KEYS.DATABASE_URL]: z
+    .string()
+    .url('DATABASE_URL must be a valid URL')
+    .optional(),
 
   // Rate Limiting
   [ENV_KEYS.THROTTLE_TTL]: z
