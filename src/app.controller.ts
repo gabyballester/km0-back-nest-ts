@@ -7,6 +7,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
+    // Deployment automático test - Render
     return this.appService.getHello();
   }
 }
