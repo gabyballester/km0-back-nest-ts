@@ -1,37 +1,19 @@
 # Deployment Guide - KM0 Market Backend
 
-## 🚀 **PLATAFORMAS RECOMENDADAS**
+## 🚀 **PLATAFORMAS GRATUITAS RECOMENDADAS**
 
-### **🥇 RAILWAY (RECOMENDACIÓN PRINCIPAL)**
+### **🥇 RENDER (RECOMENDACIÓN PRINCIPAL - GRATUITO)**
 
 **Ventajas:**
 
+- ✅ **750 horas/mes GRATIS** (suficiente para desarrollo)
 - ✅ Deployment automático desde GitHub
 - ✅ Base de datos PostgreSQL incluida
 - ✅ Variables de entorno fáciles de configurar
 - ✅ SSL automático y dominio personalizado
-- ✅ Escalado automático según tráfico
-- ✅ Logs en tiempo real
-- ✅ Perfecto para NestJS
-
-**Precios:**
-
-- **Gratis**: $5 de crédito mensual
-- **Pro**: $20/mes (más recursos)
-
-**🔗 [railway.app](https://railway.app)**
-
----
-
-### **🥈 RENDER (EXCELENTE ALTERNATIVA)**
-
-**Ventajas:**
-
-- ✅ Deployment automático desde GitHub
-- ✅ Base de datos PostgreSQL incluida
-- ✅ SSL automático
 - ✅ Muy estable y confiable
-- ✅ Buena documentación para NestJS
+- ✅ Excelente para NestJS
+- ✅ Se despierta automáticamente después de inactividad
 
 **Precios:**
 

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: km0-market-backend
+    runtime: node
+    plan: free
+    buildCommand: npm run build:prod
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://tu-frontend-domain.com
+    autoDeploy: true

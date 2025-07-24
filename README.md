@@ -97,14 +97,14 @@ npm run env:setup
 
 ## 🚀 Deployment Rápido
 
-### Railway (Recomendado)
+### Render (Recomendado - Gratuito)
 
 **Deployment en 5 minutos:**
 
-1. **Ir a [railway.app](https://railway.app)**
+1. **Ir a [render.com](https://render.com)**
 2. **Conectar cuenta de GitHub**
 3. **Seleccionar este repositorio**
-4. **Railway detectará automáticamente que es NestJS**
+4. **Render detectará automáticamente que es NestJS**
 5. **Configurar variables de entorno en el dashboard**
 6. **¡Listo! Deployment automático en cada push**
 
