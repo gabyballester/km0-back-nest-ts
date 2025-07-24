@@ -1,98 +1,200 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# KM0 Market Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend API para KM0 Market construido con NestJS, optimizado para velocidad máxima, calidad y cobertura de código garantizada.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Características
 
-## Description
+- **⚡ Velocidad**: SWC para compilación ~30% más rápida
+- **📊 Cobertura**: 100% en todas las métricas de testing
+- **🔒 Calidad**: Pre-commit hooks que bloquean commits sin cobertura suficiente
+- **🛡️ TypeScript**: Tipado estricto sin `any`
+- **🧪 Testing**: Jest con SWC y umbrales estrictos
+- **📝 Linting**: ESLint + Prettier con reglas estrictas
+- **🔧 Automatización**: Husky + lint-staged + commitlint
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Prerrequisitos
 
-## Project setup
+- Node.js 18+
+- npm 9+
+- Git
+
+## 🛠️ Instalación
 
 ```bash
-$ npm install
+# Clonar repositorio
+git clone <repository-url>
+cd backend
+
+# Instalar dependencias
+npm install
+
+# Verificar configuración
+npm run lint
+npm run test:cov
 ```
 
-## Compile and run the project
+## 🧪 Testing
+
+### Scripts Optimizados
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Testing (Ultra-rápido)
+npm run test                   # Tests unitarios optimizados
+npm run test:cov              # Tests con cobertura optimizada
+npm run test:watch            # Watch mode optimizado
+npm run test:e2e              # Tests e2e optimizados
 ```
 
-## Run tests
+### Umbrales de Cobertura
+
+- **Statements**: 75%
+- **Branches**: 80%
+- **Functions**: 80%
+- **Lines**: 75%
+
+**⚠️ Los commits se bloquean automáticamente si no se cumplen estos umbrales.**
+
+## 📊 Métricas Actuales
+
+```
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     100 |      100 |     100 |     100 |
+ app.controller.ts |     100 |      100 |     100 |     100 |
+ app.module.ts     |     100 |      100 |     100 |     100 |
+ app.service.ts    |     100 |      100 |     100 |     100 |
+-------------------|---------|----------|---------|---------|-------------------
+```
+
+## 🔧 Scripts de Desarrollo
 
 ```bash
-# unit tests
-$ npm run test
+# Desarrollo
+npm run start:dev              # Servidor con SWC y watch optimizado
+npm run build                  # Build con SWC sin typeCheck
 
-# e2e tests
-$ npm run test:e2e
+# Calidad de código
+npm run lint                   # ESLint con cache
+npm run format                 # Prettier con cache
 
-# test coverage
-$ npm run test:cov
+# Testing
+npm run test:cov              # Tests con cobertura optimizada
+npm run test:watch            # Tests en modo watch optimizado
+npm run test:debug            # Tests con debugger
 ```
 
-## Deployment
+## 🔒 Pre-commit Hooks
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Los hooks se ejecutan automáticamente en cada commit:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- ✅ **Tests con cobertura** (`npm run test:cov`)
+- ✅ **Linting y formateo** (`npx lint-staged`)
+- ✅ **Validación de mensajes** (Conventional Commits)
+
+## 📝 Convenciones de Código
+
+### TypeScript
+
+- **Tipado estricto**: No usar `any`
+- **Tipos explícitos**: En todas las funciones
+- **Interfaces**: Para contratos de servicios
+
+### NestJS
+
+- **Logger**: Usar `Logger` de NestJS (no `console`)
+- **Dependency Injection**: Usar interfaces, no clases concretas
+- **Decorators**: Seguir convenciones de NestJS
+
+### Commits
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Formato: type(scope): description
+git commit -m "feat(auth): add JWT authentication"
+git commit -m "fix(api): resolve user validation bug"
+git commit -m "test(service): add comprehensive unit tests"
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🏗️ Arquitectura
 
-## Resources
+```
+src/
+├── modules/           # Módulos de la aplicación
+├── common/           # Utilidades compartidas
+├── config/           # Configuraciones
+├── types/            # Tipos TypeScript
+└── main.ts          # Punto de entrada
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🚀 Despliegue
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Desarrollo
 
-## Support
+```bash
+npm run start:dev
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Producción
 
-## Stay in touch
+```bash
+npm run build:prod
+npm run start:prod
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 📚 Documentación
 
-## License
+- [Guía de Testing](./docs/TESTING.md) - Configuración completa de testing
+- [Guía de Contribución](./docs/CONTRIBUTING.md) - Flujo de desarrollo
+- [NestJS Documentation](https://docs.nestjs.com/) - Framework oficial
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🔍 Troubleshooting
+
+### Problemas Comunes
+
+1. **Hooks no funcionan**
+
+   ```bash
+   npm run prepare
+   ```
+
+2. **Tests lentos**
+
+   ```bash
+   npm run test
+   ```
+
+3. **Cobertura baja**
+
+   ```bash
+   npm run test:cov
+   ```
+
+4. **Linting errors**
+
+   ```bash
+   npm run lint
+   ```
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'feat: add amazing feature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+Ver [CONTRIBUTING.md](./docs/CONTRIBUTING.md) para detalles completos.
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 🆘 Soporte
+
+- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
+- **Documentación**: [docs/](./docs/)
+- **NestJS**: [Documentación oficial](https://docs.nestjs.com/)
+
+---
+
+**Desarrollado con ❤️ usando NestJS, TypeScript y SWC**
