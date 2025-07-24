@@ -7,9 +7,11 @@ import { ENV_KEYS } from '../../config/env.constants';
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 type ThrottlerConfig = {
-  ttl: number | undefined;
-  limit: number | undefined;
-  skipIf: (req: { url: string }) => boolean;
+  throttlers: Array<{
+    ttl: number;
+    limit: number;
+  }>;
+  skipIf: (context: any) => boolean;
 };
 
 describe('SecurityModule', () => {

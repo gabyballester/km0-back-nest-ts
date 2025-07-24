@@ -14,17 +14,18 @@ import { ENV_KEYS } from '../../config/env.constants';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (
-        configService: ConfigService,
-      ): {
-        ttl: number;
-        limit: number;
-        skipIf: (req: { url: string }) => boolean;
-      } => ({
-        ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL),
-        limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT),
+      useFactory: (configService: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 60,
+            limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 100,
+          },
+        ],
         // Skip rate limiting for health checks
-        skipIf: (req: { url: string }) => req.url === '/health',
+        skipIf: (context: any) => {
+          const req = context.switchToHttp().getRequest();
+          return req.url === '/health';
+        },
       }),
     }),
   ],

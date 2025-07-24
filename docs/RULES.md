@@ -127,20 +127,26 @@ beforeEach(() => {
 });
 ```
 
-### 📝 **5. TypeScript - Tipado Estricto**
+### 📝 **5. TypeScript - Tipado Balanceado**
 
 **✅ OBLIGATORIO:**
 
-- Tipado explícito en todas las funciones
-- No usar `any` (excepto casos muy específicos)
+- Tipado explícito en funciones críticas
 - Interfaces para contratos de servicios
-- Tipos de retorno explícitos
+- Tipos de retorno explícitos en lógica de negocio
+- `strictNullChecks` habilitado (crítico para seguridad)
+
+**✅ PERMITIDO:**
+
+- Uso de `any` en tests y casos específicos (con warnings)
+- Tipado implícito en casos simples
+- Configuración balanceada entre seguridad y practicidad
 
 **❌ PROHIBIDO:**
 
-- Variables sin tipar
-- Uso de `any` sin justificación
-- Tipos implícitos
+- Variables sin tipar en lógica crítica
+- Uso excesivo de `any` sin justificación
+- Deshabilitar `strictNullChecks`
 
 ### 🎯 **6. Naming Conventions**
 

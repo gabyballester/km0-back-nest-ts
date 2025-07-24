@@ -15,10 +15,16 @@
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
-    "noEmitOnError": false,
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": true,
+    "noEmitOnError": true,
     "isolatedModules": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

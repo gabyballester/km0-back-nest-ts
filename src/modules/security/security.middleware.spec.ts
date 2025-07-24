@@ -77,8 +77,8 @@ describe('SecurityMiddleware', () => {
 
     it('should apply security headers and call next', () => {
       // Mock the helmet middleware to call the callback immediately
-      const originalHelmetMiddleware = middleware['helmetMiddleware'];
-      middleware['helmetMiddleware'] = jest.fn(
+      const originalHelmetMiddleware = (middleware as any)['helmetMiddleware'];
+      (middleware as any)['helmetMiddleware'] = jest.fn(
         (req: Request, res: Response, callback: () => void) => {
           callback();
         },
@@ -123,7 +123,7 @@ describe('SecurityMiddleware', () => {
       expect(mockNext).toHaveBeenCalled();
 
       // Restore original helmet middleware
-      middleware['helmetMiddleware'] = originalHelmetMiddleware;
+      (middleware as any)['helmetMiddleware'] = originalHelmetMiddleware;
     });
 
     it('should handle different CORS origins', async () => {
@@ -145,7 +145,7 @@ describe('SecurityMiddleware', () => {
         moduleWithDifferentOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
       // Mock the helmet middleware to call the callback immediately
-      middlewareWithDifferentOrigin['helmetMiddleware'] = jest.fn(
+      (middlewareWithDifferentOrigin as any)['helmetMiddleware'] = jest.fn(
         (req: Request, res: Response, callback: () => void) => {
           callback();
         },
@@ -184,7 +184,7 @@ describe('SecurityMiddleware', () => {
         moduleWithNullOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
       // Mock the helmet middleware to call the callback immediately
-      middlewareWithNullOrigin['helmetMiddleware'] = jest.fn(
+      (middlewareWithNullOrigin as any)['helmetMiddleware'] = jest.fn(
         (req: Request, res: Response, callback: () => void) => {
           callback();
         },
@@ -197,10 +197,10 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to null
+      // Verify CORS origin is set to default when null
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
-        null,
+        'http://localhost:3000',
       );
     });
 
@@ -223,7 +223,7 @@ describe('SecurityMiddleware', () => {
         moduleWithUndefinedOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
       // Mock the helmet middleware to call the callback immediately
-      middlewareWithUndefinedOrigin['helmetMiddleware'] = jest.fn(
+      (middlewareWithUndefinedOrigin as any)['helmetMiddleware'] = jest.fn(
         (req: Request, res: Response, callback: () => void) => {
           callback();
         },
@@ -236,10 +236,10 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to undefined
+      // Verify CORS origin is set to default when undefined
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
-        undefined,
+        'http://localhost:3000',
       );
     });
 
@@ -262,7 +262,7 @@ describe('SecurityMiddleware', () => {
         moduleWithEmptyOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
       // Mock the helmet middleware to call the callback immediately
-      middlewareWithEmptyOrigin['helmetMiddleware'] = jest.fn(
+      (middlewareWithEmptyOrigin as any)['helmetMiddleware'] = jest.fn(
         (req: Request, res: Response, callback: () => void) => {
           callback();
         },
@@ -275,10 +275,10 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to empty string
+      // Verify CORS origin is set to default when empty string
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
-        '',
+        'http://localhost:3000',
       );
     });
   });
@@ -286,7 +286,7 @@ describe('SecurityMiddleware', () => {
   describe('constructor', () => {
     it('should configure helmet with all security options', () => {
       // Forzar helmetMiddleware a ser una función mockeada
-      middleware['helmetMiddleware'] = jest.fn();
+      (middleware as any)['helmetMiddleware'] = jest.fn();
       expect(middleware).toBeDefined();
       expect(typeof middleware['helmetMiddleware']).toBe('function');
     });

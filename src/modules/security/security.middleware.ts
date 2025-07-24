@@ -16,7 +16,8 @@ export class SecurityMiddleware implements NestMiddleware {
   private readonly corsOrigin: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.corsOrigin = this.configService.get<string>(ENV_KEYS.CORS_ORIGIN);
+    const corsOrigin = this.configService.get<string>(ENV_KEYS.CORS_ORIGIN);
+    this.corsOrigin = corsOrigin || 'http://localhost:3000';
 
     // Configure Helmet with security headers
     this.helmetMiddleware = helmet({
@@ -42,8 +43,8 @@ export class SecurityMiddleware implements NestMiddleware {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
       // DNS Prefetch Control
       dnsPrefetchControl: { allow: false },
-      // Expect CT
-      expectCt: { enforce: true, maxAge: 30 },
+      // Expect CT (deprecated, removed from newer versions)
+      // expectCt: { enforce: true, maxAge: 30 },
       // Frameguard
       frameguard: { action: 'deny' },
       // Hide Powered-By
@@ -60,14 +61,14 @@ export class SecurityMiddleware implements NestMiddleware {
       noSniff: true,
       // Origin Agent Cluster
       originAgentCluster: true,
-      // Permissions Policy
-      permissionsPolicy: {
-        features: {
-          camera: ["'none'"],
-          microphone: ["'none'"],
-          geolocation: ["'none'"],
-        },
-      },
+      // Permissions Policy (deprecated, use Permissions-Policy header directly)
+      // permissionsPolicy: {
+      //   features: {
+      //     camera: ["'none'"],
+      //     microphone: ["'none'"],
+      //     geolocation: ["'none'"],
+      //   },
+      // },
       // Referrer Policy
       referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
       // XSS Protection

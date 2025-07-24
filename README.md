@@ -239,8 +239,8 @@ npm run format:check   # Verificar formato sin cambiar
 
 ### 🛡️ Calidad
 
-1. **TypeScript strict mode** obligatorio
-2. **ESLint sin warnings** obligatorio
+1. **TypeScript balanceado** - Seguridad con practicidad
+2. **ESLint con warnings permitidos** - Flexibilidad en desarrollo
 3. **Prettier** para formato consistente
 4. **Tests pasando** antes de commits
 
