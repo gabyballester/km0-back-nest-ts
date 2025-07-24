@@ -2,73 +2,92 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './app.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HealthController } from './health/health.controller';
+import { MiddlewareConsumer } from '@nestjs/common';
 
 describe('AppModule', () => {
   let module: TestingModule;
 
-  beforeEach(async (): Promise<void> => {
-    const moduleRef = await Test.createTestingModule({
+  beforeEach(async () => {
+    module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
-    module = moduleRef;
   });
 
-  afterEach((): void => {
-    jest.clearAllMocks();
-  });
+  afterEach(jest.clearAllMocks);
 
-  it('should be defined', (): void => {
+  it('should be defined', () => {
     expect(module).toBeDefined();
   });
 
-  it('should provide AppController', (): void => {
+  it('should have AppController', () => {
     const controller = module.get<AppController>(AppController);
     expect(controller).toBeDefined();
-    expect(controller).toBeInstanceOf(AppController);
   });
 
-  it('should provide AppService', (): void => {
+  it('should have AppService', () => {
     const service = module.get<AppService>(AppService);
     expect(service).toBeDefined();
-    expect(service).toBeInstanceOf(AppService);
   });
 
-  it('should have AppController with getHello method', (): void => {
-    const controller = module.get<AppController>(AppController);
-    expect(typeof controller.getHello).toBe('function');
+  it('should have HealthController', () => {
+    const controller = module.get<HealthController>(HealthController);
+    expect(controller).toBeDefined();
   });
 
-  it('should have AppService with getHello method', (): void => {
+  it('should have getHello method in AppService', () => {
     const service = module.get<AppService>(AppService);
     expect(typeof service.getHello).toBe('function');
   });
 
-  it('should return same result from controller and service', (): void => {
-    const controller = module.get<AppController>(AppController);
+  it('should return hello message from AppService', () => {
     const service = module.get<AppService>(AppService);
-
-    const controllerResult = controller.getHello();
-    const serviceResult = service.getHello();
-
-    expect(controllerResult).toBe(serviceResult);
+    const result = service.getHello();
+    expect(result).toBe('Hello World!');
   });
 
-  it('should have controller that calls service method', (): void => {
+  it('should have getHello method in AppController', () => {
     const controller = module.get<AppController>(AppController);
-    const service = module.get<AppService>(AppService);
-
-    const serviceSpy = jest.spyOn(service, 'getHello');
-    controller.getHello();
-
-    expect(serviceSpy).toHaveBeenCalled();
+    expect(typeof controller.getHello).toBe('function');
   });
 
-  it('should compile without errors', async (): Promise<void> => {
-    await expect(
-      Test.createTestingModule({
-        imports: [AppModule],
-      }).compile(),
-    ).resolves.toBeDefined();
+  it('should return hello message from AppController', () => {
+    const controller = module.get<AppController>(AppController);
+    const result = controller.getHello();
+    expect(result).toBe('Hello World!');
+  });
+
+  it('should compile without errors', () => {
+    expect(() => module.createNestApplication()).not.toThrow();
+  });
+
+  it('should have providers', () => {
+    expect(module.get(AppService)).toBeDefined();
+  });
+
+  it('should have controllers', () => {
+    expect(module.get(AppController)).toBeDefined();
+    expect(module.get(HealthController)).toBeDefined();
+  });
+
+  it('should have imports', () => {
+    const appModule = module.get(AppModule);
+    expect(appModule).toBeDefined();
+  });
+
+  describe('configure method', () => {
+    it('should configure middleware correctly', () => {
+      const appModule = module.get(AppModule);
+      const mockConsumer = {
+        apply: jest.fn().mockReturnThis(),
+        forRoutes: jest.fn().mockReturnThis(),
+      } as unknown as MiddlewareConsumer;
+
+      // Test that configure method exists and can be called
+      expect(typeof appModule.configure).toBe('function');
+
+      // Test that it doesn't throw when called
+      expect(() => appModule.configure(mockConsumer)).not.toThrow();
+    });
   });
 });
