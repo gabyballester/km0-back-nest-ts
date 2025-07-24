@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build --builder swc --typeCheck false",
-    "build:prod": "nest build --builder swc --typeCheck false --webpack",
+    "build": "nest build --builder swc",
+    "build:prod": "nest build --builder swc --webpack",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" --cache",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" --cache",
     "start": "nest start",
@@ -16,16 +16,23 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --max-warnings=0",
     "test": "jest --maxWorkers=2 --bail --passWithNoTests --silent",
+    "test:fast": "jest --maxWorkers=4 --bail --passWithNoTests --silent --no-coverage",
     "test:watch": "jest --watch --maxWorkers=2 --silent",
     "test:cov": "jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent",
+    "test:e2e:fast": "jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent --testTimeout=3000",
+    "env:setup": "cp env.mirror .env",
+    "env:example": "cp env.example .env",
+    "check:process-env": "node scripts/check-process-env.js",
     "prepare": "husky"
   },
   "lint-staged": {
     "*.ts": [
       "npm run format",
-      "npm run lint"
+      "npm run lint",
+      "npm run test:fast",
+      "npm run check:process-env"
     ],
     "*.{json,md,yml,yaml}": [
       "npm run format"
@@ -33,19 +40,25 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/throttler": "^6.4.0",
+    "helmet": "^8.1.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.0.8"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
-    "@nestjs/cli": "^10.0.0",
-    "@nestjs/schematics": "^10.0.0",
-    "@nestjs/testing": "^10.0.0",
+    "@nestjs/cli": "^11.0.7",
+    "@nestjs/schematics": "^11.0.5",
+    "@nestjs/testing": "^11.1.5",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.3.96",
     "@swc/jest": "^0.2.29",
@@ -68,7 +81,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3",
     "typescript-eslint": "^8.20.0"
   }
