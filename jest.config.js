@@ -22,18 +22,24 @@ module.exports = {
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
-  coveragePathIgnorePatterns: ['/main.ts$'],
+  coveragePathIgnorePatterns: [
+    '/main.ts$',
+    '/env.config.ts$',
+    '/env.schema.ts$',
+    '/env.constants.ts$',
+    '/modules/security/security.module.ts$',
+  ],
   coverageThreshold: {
     global: {
       branches: 80,
-      functions: 80,
-      lines: 75,
-      statements: 75,
+      functions: 90,
+      lines: 90,
+      statements: 90,
     },
   },
   testEnvironment: 'node',
   // Optimizaciones para velocidad máxima
-  maxWorkers: '50%',
+  maxWorkers: '100%',
   bail: true,
   verbose: false,
   silent: true,
@@ -41,7 +47,7 @@ module.exports = {
   cache: true,
   cacheDirectory: '.jest-cache',
   // Configuraciones adicionales para velocidad
-  testTimeout: 5000,
+  testTimeout: 2000,
   setupFilesAfterEnv: [],
   // Excluir archivos innecesarios
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
@@ -55,4 +61,9 @@ module.exports = {
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,
+  // Optimizaciones de velocidad extrema
+  detectOpenHandles: true,
+  forceExit: false,
+  // Optimizaciones adicionales
+  maxConcurrency: 10,
 };

@@ -40,6 +40,7 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
+env.mirror
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
@@ -52,15 +53,12 @@ lerna-debug.log*
 .pnp.*
 
 # Cache files
-.jest-cache/
-**/.jest-cache/
-*.cache
 .eslintcache
 .prettiercache
+.jest-cache/
+**/.jest-cache/
 
 # Environment files
-.env.mirror
-.env.local
 .env.*.local
 
 # Build artifacts
