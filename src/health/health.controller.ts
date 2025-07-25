@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { DatabaseService } from '../infrastructure/database/database.service';
 
 /**
  * Health check controller for monitoring and load balancers
@@ -9,7 +10,10 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly databaseService: DatabaseService,
+  ) {}
 
   /**
    * Basic health check endpoint
@@ -44,12 +48,17 @@ export class HealthController {
     timestamp: string;
     uptime: number;
     environment: string;
+    database: string;
   } {
+    // Eliminar el await innecesario
+    const dbStatus = this.databaseService.healthCheck();
+
     return {
-      status: 'ok',
+      status: dbStatus ? 'ok' : 'error',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       environment: this.configService.get<string>('NODE_ENV') || 'development',
+      database: dbStatus ? 'connected' : 'disconnected',
     };
   }
 

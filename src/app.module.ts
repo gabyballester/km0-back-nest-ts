@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { SecurityModule } from './modules/security/security.module';
 import { SecurityMiddleware } from './modules/security/security.middleware';
 import { HealthController } from './health/health.controller';
+import { DatabaseService } from './infrastructure/database/database.service';
+import { PrismaService } from './infrastructure/database/prisma.service';
 import { envConfig } from './config/env.config';
 
 /**
@@ -30,7 +32,7 @@ import { envConfig } from './config/env.config';
     SecurityModule,
   ],
   controllers: [AppController, HealthController],
-  providers: [AppService],
+  providers: [AppService, DatabaseService, PrismaService],
 })
 export class AppModule {
   /**

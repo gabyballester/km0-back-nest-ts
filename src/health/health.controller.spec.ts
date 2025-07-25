@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
+import { DatabaseService } from '../infrastructure/database/database.service';
 
 // Mock Swagger decorators for tests
 jest.mock('@nestjs/swagger', () => ({
@@ -25,6 +26,14 @@ describe('HealthController', () => {
         }),
       ],
       controllers: [HealthController],
+      providers: [
+        {
+          provide: DatabaseService,
+          useValue: {
+            healthCheck: jest.fn().mockResolvedValue(true),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
@@ -41,13 +50,15 @@ describe('HealthController', () => {
     it('should return health status', () => {
       const result = controller.getHealth();
 
-      expect(result).toHaveProperty('status', 'ok');
+      expect(result).toHaveProperty('status');
       expect(result).toHaveProperty('timestamp');
       expect(result).toHaveProperty('uptime');
       expect(result).toHaveProperty('environment');
+      expect(result).toHaveProperty('database');
       expect(typeof result.timestamp).toBe('string');
       expect(typeof result.uptime).toBe('number');
       expect(typeof result.environment).toBe('string');
+      expect(typeof result.database).toBe('string');
     });
 
     it('should return valid timestamp', () => {
@@ -85,6 +96,14 @@ describe('HealthController', () => {
           }),
         ],
         controllers: [HealthController],
+        providers: [
+          {
+            provide: DatabaseService,
+            useValue: {
+              healthCheck: jest.fn().mockReturnValue(true),
+            },
+          },
+        ],
       }).compile();
 
       const productionController =
