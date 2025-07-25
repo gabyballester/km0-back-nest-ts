@@ -13,6 +13,7 @@ jest.mock('@nestjs/swagger', () => ({
 describe('HealthController', () => {
   let controller: HealthController;
   let configService: ConfigService;
+  let databaseService: DatabaseService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +39,7 @@ describe('HealthController', () => {
 
     controller = module.get<HealthController>(HealthController);
     configService = module.get<ConfigService>(ConfigService);
+    databaseService = module.get<DatabaseService>(DatabaseService);
   });
 
   afterEach(jest.clearAllMocks);
@@ -47,14 +49,30 @@ describe('HealthController', () => {
   });
 
   describe('getHealth', () => {
-    it('should return health status', () => {
+    it('should return health status when database is connected', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       const result = controller.getHealth();
 
-      expect(result).toHaveProperty('status');
+      expect(result).toHaveProperty('status', 'ok');
       expect(result).toHaveProperty('timestamp');
       expect(result).toHaveProperty('uptime');
       expect(result).toHaveProperty('environment');
-      expect(result).toHaveProperty('database');
+      expect(result).toHaveProperty('database', 'connected');
+      expect(typeof result.timestamp).toBe('string');
+      expect(typeof result.uptime).toBe('number');
+      expect(typeof result.environment).toBe('string');
+      expect(typeof result.database).toBe('string');
+    });
+
+    it('should return health status when database is disconnected', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(false);
+      const result = controller.getHealth();
+
+      expect(result).toHaveProperty('status', 'error');
+      expect(result).toHaveProperty('timestamp');
+      expect(result).toHaveProperty('uptime');
+      expect(result).toHaveProperty('environment');
+      expect(result).toHaveProperty('database', 'disconnected');
       expect(typeof result.timestamp).toBe('string');
       expect(typeof result.uptime).toBe('number');
       expect(typeof result.environment).toBe('string');

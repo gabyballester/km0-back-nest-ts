@@ -92,6 +92,33 @@ describe('DatabaseService', () => {
       consoleSpy.mockRestore();
       consoleErrorSpy.mockRestore();
     });
+
+    it('should handle errors during connection closure', () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      // Simular un error durante el cierre
+      const originalIsConnected = service['isConnected'];
+      Object.defineProperty(service, 'isConnected', {
+        set: () => {
+          throw new Error('Connection error');
+        },
+        get: () => originalIsConnected,
+      });
+
+      service.onModuleDestroy();
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '🔄 Cerrando conexión a la base de datos...',
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ Error al cerrar conexión:',
+        expect.any(Error),
+      );
+
+      consoleSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
   });
 
   describe('healthCheck', () => {
@@ -107,6 +134,26 @@ describe('DatabaseService', () => {
       service['isConnected'] = false;
       const result = service.healthCheck();
       expect(result).toBe(false);
+    });
+
+    it('should handle errors and return false', () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      // Simular un error al acceder a isConnected
+      Object.defineProperty(service, 'isConnected', {
+        get: () => {
+          throw new Error('Access error');
+        },
+      });
+
+      const result = service.healthCheck();
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ Health check falló:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -161,6 +208,24 @@ describe('DatabaseService', () => {
         postgres_version: 'PostgreSQL',
       });
     });
+
+    it('should handle errors and return null', () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      // Simular un error en configService.get
+      jest.spyOn(configService, 'get').mockImplementation(() => {
+        throw new Error('Config error');
+      });
+
+      const result = service.getDatabaseInfo();
+      expect(result).toBe(null);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ Error al obtener información de la base de datos:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
   });
 
   describe('extractDatabaseName', () => {
@@ -178,6 +243,12 @@ describe('DatabaseService', () => {
 
     it('should return default name for URL without path', () => {
       const url = 'postgresql://user:pass@localhost:5432';
+      const result = service['extractDatabaseName'](url);
+      expect(result).toBe('km0_db');
+    });
+
+    it('should return default name for URL with empty path parts', () => {
+      const url = 'postgresql://user:pass@localhost:5432/';
       const result = service['extractDatabaseName'](url);
       expect(result).toBe('km0_db');
     });
