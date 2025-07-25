@@ -1,13 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { DatabaseService } from '../infrastructure/database/database.service';
+import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
+import * as os from 'os';
 
 /**
- * Health check controller for monitoring and load balancers
- * Provides basic health status and system information
+ * Health check controller
+ * Provides health status endpoints for monitoring
  */
-@ApiTags('Health')
 @Controller('health')
 export class HealthController {
   constructor(
@@ -17,117 +17,104 @@ export class HealthController {
 
   /**
    * Basic health check endpoint
-   * Returns 200 OK if the service is running
+   * Returns simple health status
    */
   @Get()
-  @ApiOperation({
-    summary: 'Health check endpoint',
-    description: 'Returns basic health status and environment.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Service is healthy',
-    schema: {
-      type: 'object',
-      properties: {
-        status: { type: 'string', example: 'ok' },
-        timestamp: { type: 'string', example: '2024-01-01T00:00:00.000Z' },
-        uptime: { type: 'number', example: 123.456 },
-        environment: { type: 'string', example: 'development' },
-      },
-      example: {
-        status: 'ok',
-        timestamp: '2024-01-01T00:00:00.000Z',
-        uptime: 123.456,
-        environment: 'development',
-      },
-    },
-  })
   getHealth(): {
     status: string;
     timestamp: string;
-    uptime: number;
     environment: string;
-    database: string;
+    uptime: number;
   } {
-    // Eliminar el await innecesario
     const dbStatus = this.databaseService.healthCheck();
 
     return {
-      status: dbStatus ? 'ok' : 'error',
+      status: dbStatus ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
+      environment:
+        this.configService.get<string>(ENV_KEYS.NODE_ENV) ||
+        ENV_VALUES.NODE_ENV.DEVELOPMENT,
       uptime: process.uptime(),
-      environment: this.configService.get<string>('NODE_ENV') || 'development',
-      database: dbStatus ? 'connected' : 'disconnected',
     };
   }
 
   /**
-   * Detailed health check with more system information
+   * Detailed health check endpoint
+   * Returns comprehensive health information
    */
   @Get('detailed')
-  @ApiOperation({
-    summary: 'Detailed health check',
-    description: 'Returns detailed health status, memory usage, and version.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Detailed health information',
-    schema: {
-      type: 'object',
-      properties: {
-        status: { type: 'string', example: 'ok' },
-        timestamp: { type: 'string', example: '2024-01-01T00:00:00.000Z' },
-        uptime: { type: 'number', example: 123.456 },
-        environment: { type: 'string', example: 'development' },
-        memory: {
-          type: 'object',
-          properties: {
-            used: { type: 'number', example: 50 },
-            total: { type: 'number', example: 100 },
-            percentage: { type: 'number', example: 50 },
-          },
-        },
-        version: { type: 'string', example: '1.0.0' },
-      },
-      example: {
-        status: 'ok',
-        timestamp: '2024-01-01T00:00:00.000Z',
-        uptime: 123.456,
-        environment: 'development',
-        memory: { used: 50, total: 100, percentage: 50 },
-        version: '1.0.0',
-      },
-    },
-  })
   getDetailedHealth(): {
     status: string;
     timestamp: string;
-    uptime: number;
     environment: string;
-    memory: {
-      used: number;
-      total: number;
-      percentage: number;
+    uptime: number;
+    database: {
+      status: string;
+      info: {
+        name: string;
+        type: string;
+        version?: string;
+      };
     };
-    version: string;
+    system: {
+      nodeVersion: string;
+      platform: string;
+      memory: {
+        used: number;
+        total: number;
+        free: number;
+      };
+      cpu: {
+        load: number[];
+        cores: number;
+      };
+    };
+    services: {
+      database: boolean;
+      config: boolean;
+    };
   } {
+    const dbStatus = this.databaseService.healthCheck();
+    const dbInfo = this.databaseService.getDatabaseInfo();
+
+    // Get system information
     const memUsage = process.memoryUsage();
-    const totalMem = memUsage.heapTotal;
-    const usedMem = memUsage.heapUsed;
-    const memPercentage = (usedMem / totalMem) * 100;
+    const cpuUsage = process.cpuUsage();
 
     return {
-      status: 'ok',
+      status: dbStatus ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
+      environment:
+        this.configService.get<string>(ENV_KEYS.NODE_ENV) ||
+        ENV_VALUES.NODE_ENV.DEVELOPMENT,
       uptime: process.uptime(),
-      environment: this.configService.get<string>('NODE_ENV') || 'development',
-      memory: {
-        used: Math.round(usedMem / 1024 / 1024), // MB
-        total: Math.round(totalMem / 1024 / 1024), // MB
-        percentage: Math.round(memPercentage),
+      database: {
+        status: dbStatus ? 'connected' : 'disconnected',
+        info: {
+          name: dbInfo?.database_name || 'unknown',
+          type: 'PostgreSQL',
+          version: dbInfo?.postgres_version || 'unknown',
+        },
       },
-      version: this.configService.get<string>('npm_package_version') || '0.0.1',
+      system: {
+        nodeVersion: process.version,
+        platform: process.platform,
+        memory: {
+          used: Math.round(memUsage.heapUsed / 1024 / 1024),
+          total: Math.round(memUsage.heapTotal / 1024 / 1024),
+          free: Math.round(
+            (memUsage.heapTotal - memUsage.heapUsed) / 1024 / 1024,
+          ),
+        },
+        cpu: {
+          load: [cpuUsage.user, cpuUsage.system],
+          cores: os.cpus().length,
+        },
+      },
+      services: {
+        database: dbStatus,
+        config: true,
+      },
     };
   }
 }

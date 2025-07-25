@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import { ConfigService } from '@nestjs/config';
-import { ENV_KEYS } from '../../config/env.constants';
+import { ENV_KEYS } from '../../shared/constants/environment';
 
 /**
  * Security middleware that applies:

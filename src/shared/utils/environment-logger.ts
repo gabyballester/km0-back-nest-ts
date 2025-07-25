@@ -1,20 +1,18 @@
 import { Logger } from '@nestjs/common';
+import { ENV_VALUES } from '../constants/environment';
 
 /**
- * Logger personalizado para mostrar información del entorno
- * Basado en las mejores prácticas de NestJS y la comunidad
+ * Custom logger for environment-specific information
+ * Provides structured logging based on the current environment
  */
 export class EnvironmentLogger extends Logger {
   private static instance: EnvironmentLogger;
-  private environment: string = 'development';
+  private environment: string = ENV_VALUES.NODE_ENV.DEVELOPMENT;
 
   constructor() {
-    super('Environment');
+    super('EnvironmentLogger');
   }
 
-  /**
-   * Inicializar el logger con el entorno desde ConfigService
-   */
   initialize(environment: string): void {
     this.environment = environment;
   }
@@ -27,7 +25,7 @@ export class EnvironmentLogger extends Logger {
   }
 
   /**
-   * Muestra información completa del entorno al iniciar
+   * Log environment information
    */
   logEnvironmentInfo(): void {
     const timestamp = new Date().toISOString();
@@ -55,7 +53,7 @@ export class EnvironmentLogger extends Logger {
    */
   private logEnvironmentSpecificInfo(): void {
     switch (this.environment) {
-      case 'development':
+      case ENV_VALUES.NODE_ENV.DEVELOPMENT:
         console.log('🔧 DEVELOPMENT MODE');
         console.log('   • Hot reload enabled');
         console.log('   • Verbose logging');
@@ -63,7 +61,7 @@ export class EnvironmentLogger extends Logger {
         console.log('   • Source maps enabled');
         break;
 
-      case 'production':
+      case ENV_VALUES.NODE_ENV.PRODUCTION:
         console.log('🏭 PRODUCTION MODE');
         console.log('   • Performance optimized');
         console.log('   • Security enhanced');
@@ -71,7 +69,7 @@ export class EnvironmentLogger extends Logger {
         console.log('   • Error tracking enabled');
         break;
 
-      case 'test':
+      case ENV_VALUES.NODE_ENV.TEST:
         console.log('🧪 TEST MODE');
         console.log('   • Test database');
         console.log('   • Suppressed logging');
@@ -124,7 +122,9 @@ export class EnvironmentLogger extends Logger {
   /**
    * Verifica si estamos en un entorno específico
    */
-  isEnvironment(env: 'development' | 'production' | 'test'): boolean {
+  isEnvironment(
+    env: (typeof ENV_VALUES.NODE_ENV)[keyof typeof ENV_VALUES.NODE_ENV],
+  ): boolean {
     return this.environment === env;
   }
 }

@@ -8,7 +8,6 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor(private readonly configService: ConfigService) {
-    // Motivo: Prisma genera el cliente dinámicamente y este warning es un falso positivo aceptado por la comunidad.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
       log: ['error'],
@@ -16,10 +15,12 @@ export class PrismaService
   }
 
   onModuleInit(): void {
+    // La conexión se maneja automáticamente por PrismaClient
     console.log('🔗 PrismaService inicializado');
   }
 
   onModuleDestroy(): void {
+    // La desconexión se maneja automáticamente por PrismaClient
     console.log('🔗 PrismaService destruido');
   }
 }

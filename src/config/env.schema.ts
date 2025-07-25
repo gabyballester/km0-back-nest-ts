@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ENV_KEYS } from './env.constants';
+import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
 
 /**
  * Environment variables validation schema using Zod
@@ -8,8 +8,12 @@ import { ENV_KEYS } from './env.constants';
 export const envSchema = z.object({
   // Server Configuration
   [ENV_KEYS.NODE_ENV]: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
+    .enum([
+      ENV_VALUES.NODE_ENV.DEVELOPMENT,
+      ENV_VALUES.NODE_ENV.PRODUCTION,
+      ENV_VALUES.NODE_ENV.TEST,
+    ])
+    .default(ENV_VALUES.NODE_ENV.DEVELOPMENT),
   [ENV_KEYS.PORT]: z
     .string()
     .transform(val => parseInt(val, 10))
@@ -49,8 +53,13 @@ export const envSchema = z.object({
 
   // Logging
   [ENV_KEYS.LOG_LEVEL]: z
-    .enum(['error', 'warn', 'info', 'debug'])
-    .default('info'),
+    .enum([
+      ENV_VALUES.LOG_LEVEL.ERROR,
+      ENV_VALUES.LOG_LEVEL.WARN,
+      ENV_VALUES.LOG_LEVEL.INFO,
+      ENV_VALUES.LOG_LEVEL.DEBUG,
+    ])
+    .default(ENV_VALUES.LOG_LEVEL.INFO),
 });
 
 /**

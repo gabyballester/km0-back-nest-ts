@@ -29,6 +29,9 @@ module.exports = {
     '/env.schema.ts$',
     '/env.constants.ts$',
     '/modules/security/security.module.ts$',
+    '/shared/constants/api.ts$',
+    '/shared/constants/security.ts$',
+    '/shared/constants/validation.ts$',
   ],
   coverageThreshold: {
     global: {
