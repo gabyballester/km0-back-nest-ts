@@ -11,7 +11,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" --cache",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" --cache",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --max-warnings=50",
-    "prepare": "husky",
+    "prepare": "node scripts/prepare.js",
     "check:process-env": "node scripts/check-process-env.js",
     "check:deployment": "node scripts/check-deployment.js",
     "setup:env": "node scripts/setup-env.js",
