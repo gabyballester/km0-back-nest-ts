@@ -1,41 +1,38 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
-import { ENV_KEYS } from './config/env.constants';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentLogger } from './shared/utils/environment-logger';
 
-async function bootstrap(): Promise<void> {
-  const logger = new Logger('Bootstrap');
-
+async function bootstrap() {
   try {
-    // Create the application (Zod validation happens in envConfig)
+    // Crear aplicación
     const app = await NestFactory.create(AppModule);
+
+    // Obtener configuración
     const configService = app.get(ConfigService);
+    const port = configService.get<number>('env.port', 3000);
+    const environment = configService.get<string>('env.nodeEnv', 'development');
 
-    // If we reach here, all environment variables are valid (Zod validated)
-    logger.log('✅ Environment variables validated successfully');
+    // Inicializar logger personalizado con el entorno correcto
+    const envLogger = EnvironmentLogger.getInstance();
+    envLogger.initialize(environment);
 
-    // Get configuration (Zod guarantees these are not null/undefined)
-    const port = configService.get<number>(ENV_KEYS.PORT);
-    const host = configService.get<string>(ENV_KEYS.HOST);
-    const nodeEnv = configService.get<string>(ENV_KEYS.NODE_ENV);
+    // Mostrar información del entorno
+    envLogger.logEnvironmentInfo();
 
-    if (!port || !host || !nodeEnv) {
-      throw new Error('Required configuration values are missing');
-    }
-
-    // Start server
+    // Iniciar servidor
     await app.listen(port);
 
-    // Success log
-    logger.log(`🚀 Server running on http://${host}:${port} (${nodeEnv})`);
-    logger.log(`📊 Health: http://${host}:${port}/health`);
+    // Mostrar información de inicio exitoso
+    envLogger.logApplicationStart(port);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`❌ Startup failed: ${errorMessage}`);
+    const envLogger = EnvironmentLogger.getInstance();
+    envLogger.logStartupError(error as Error);
     process.exit(1);
   }
 }
 
-void bootstrap();
+bootstrap().catch(error => {
+  console.error('❌ Failed to start application:', error);
+  process.exit(1);
+});

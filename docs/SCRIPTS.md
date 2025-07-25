@@ -1,241 +1,322 @@
-# Scripts Rápidos - Uso Obligatorio
+# Scripts del Proyecto - KM0 Market Backend
 
-## 🚀 Regla Principal: **SIEMPRE usar scripts rápidos**
+## 🚀 **SCRIPTS PRINCIPALES**
 
-### ❌ **NUNCA usar scripts lentos en desarrollo diario**
-
-- `npm run test` (lento, con cobertura)
-- `npm run test:cov` (muy lento, cobertura completa)
-- `npm run test:e2e` (lento, tests end-to-end)
-
-### ✅ **SIEMPRE usar scripts rápidos en desarrollo**
-
-- `npm run test:fast` (rápido, sin cobertura)
-- `npm run test:e2e:fast` (rápido, e2e optimizado)
-- `npm run lint` (rápido, con cache)
-
-### 🔧 Scripts de Utilidad
+### ⚡ **Desarrollo**
 
 ```bash
-npm run env:setup      # Configurar .env desde env.mirror
-npm run env:example    # Configurar .env desde env.example
-npm run format:check   # Verificar formato sin cambiar
-npm run check:process-env # Verificar uso correcto de process.env
+npm run dev            # 🚀 Desarrollo con hot reload
+npm run dev:debug      # 🐛 Inicio con debug mode
 ```
 
-## 📋 Scripts Disponibles
-
-### 🏃‍♂️ **Scripts Rápidos (Obligatorios para desarrollo)**
-
-| Script              | Tiempo | Uso                           | Comando                     |
-| ------------------- | ------ | ----------------------------- | --------------------------- |
-| `test:fast`         | ~2s    | Tests unitarios sin cobertura | `npm run test:fast`         |
-| `test:e2e:fast`     | ~3s    | Tests e2e optimizados         | `npm run test:e2e:fast`     |
-| `lint`              | ~1s    | ESLint + Prettier con cache   | `npm run lint`              |
-| `format`            | ~0.5s  | Solo Prettier                 | `npm run format`            |
-| `start:dev`         | ~2s    | Servidor desarrollo           | `npm run start:dev`         |
-| `check:process-env` | ~0.1s  | Verificar uso de process.env  | `npm run check:process-env` |
-
-### �� **Scripts Lentos (Solo para CI/CD y commits importantes)**
-
-| Script       | Tiempo | Uso                 | Cuándo usar          |
-| ------------ | ------ | ------------------- | -------------------- |
-| `test:cov`   | ~2.8s  | Tests con cobertura | Pre-push, CI/CD      |
-| `test:e2e`   | ~5s    | Tests e2e completos | Pre-push, CI/CD      |
-| `test:debug` | ~10s   | Tests con debugger  | Debugging específico |
-
-## 🎯 Flujo de Desarrollo Optimizado
-
-### **1. Desarrollo Diario (Obligatorio)**
+### ⚡ **Testing Rápido**
 
 ```bash
-# ✅ Hacer cambios en código
-# ✅ Ejecutar tests rápidos
-npm run test:fast
+npm run test:quick     # 🚀 Tests rápidos sin coverage (~3.5s)
+npm run test:full      # 📊 Tests completos con coverage (~7s)
+npm run test:watch     # 👀 Tests en modo watch
+npm run test:debug     # 🐛 Tests con debug mode
+```
 
-# ✅ Verificar linting
+### ⚡ **E2E Testing Rápido**
+
+```bash
+npm run test:e2e:quick # 🚀 E2E tests rápidos (~3s)
+npm run test:e2e:full  # 📊 E2E tests completos
+```
+
+### ⚡ **Inicio Rápido**
+
+```bash
+npm run start:quick    # 🚀 Inicio rápido sin watch
+npm run start:full     # 🔄 Inicio completo con watch
+npm run start:prod     # 🏭 Inicio de producción
+```
+
+## 🛠️ **SCRIPTS DE UTILIDAD**
+
+### 🔧 **Formateo y Linting**
+
+```bash
+npm run format         # ✨ Formatear código
+npm run format:check   # ✅ Verificar formato
+npm run lint           # 🔍 Linting con auto-fix
+```
+
+### 🌍 **Entornos**
+
+```bash
+npm run env:info       # ℹ️ Ver entorno actual
+npm run env:dev        # 🔧 Verificar entorno desarrollo
+npm run env:test       # 🧪 Verificar entorno testing
+npm run env:prod       # 🏭 Verificar entorno producción
+npm run test:environments # 🧪 Probar todos los entornos
+```
+
+### 🗄️ **Base de Datos**
+
+```bash
+npm run db:generate    # 🔧 Generar cliente Prisma
+npm run db:push        # 📤 Sincronizar esquema
+npm run db:migrate     # 🔄 Crear migración
+npm run db:studio      # 🖥️ Abrir Prisma Studio
+```
+
+### 🗄️ **Base de Datos por Entorno**
+
+```bash
+npm run db:dev         # 🔧 DB desarrollo
+npm run db:test        # 🧪 DB testing
+npm run db:prod        # 🏭 DB producción
+npm run db:studio:dev  # 🖥️ Studio desarrollo
+npm run db:studio:test # 🖥️ Studio testing
+npm run db:studio:prod # 🖥️ Studio producción
+```
+
+## 🚀 **SCRIPTS DE DEPLOYMENT**
+
+### ☁️ **Plataformas**
+
+```bash
+npm run deploy:railway # 🚂 Deploy a Railway
+npm run deploy:render  # 🎨 Deploy a Render
+npm run deploy:vercel  # ⚡ Deploy a Vercel
+```
+
+### 🔧 **Build**
+
+```bash
+npm run build          # 🔨 Build normal
+npm run build:prod     # 🏭 Build optimizado para producción
+```
+
+## 🛡️ **SCRIPTS DE VERIFICACIÓN**
+
+### ✅ **Checks**
+
+```bash
+npm run check:process-env  # 🔍 Verificar uso de process.env
+npm run check:deployment   # 🚀 Verificar configuración de deployment
+```
+
+### 🔧 **Setup**
+
+```bash
+npm run setup:env      # 🔧 Configurar archivos de entorno
+npm run env:setup      # 📋 Copiar env.mirror a .env
+npm run env:example    # 📋 Copiar env.example a .env
+```
+
+## 📊 **COMPARACIÓN DE VELOCIDAD**
+
+### ⚡ **Scripts Rápidos (Desarrollo diario)**
+
+| Script           | Tiempo | Uso                       |
+| ---------------- | ------ | ------------------------- |
+| `dev`            | ~3s    | Desarrollo con hot reload |
+| `test:quick`     | ~3.5s  | Tests sin coverage        |
+| `test:e2e:quick` | ~3s    | E2E tests rápidos         |
+
+### 🐌 **Scripts Completos (CI/CD)**
+
+| Script          | Tiempo | Uso                   |
+| --------------- | ------ | --------------------- |
+| `dev:full`      | ~5s    | Inicio con hot reload |
+| `test:full`     | ~7s    | Tests con coverage    |
+| `test:e2e:full` | ~15s   | E2E tests completos   |
+
+## 🎯 **FLUJO DE TRABAJO RECOMENDADO**
+
+### 🚀 **Desarrollo Diario**
+
+```bash
+# 1. Desarrollo con hot reload
+npm run dev
+
+# 2. Tests rápidos antes de commit
+npm run test:quick
+
+# 3. Linting y formateo
 npm run lint
-
-# ✅ Formatear código
 npm run format
-
-# ✅ Iniciar servidor
-npm run start:dev
 ```
 
-### **2. Pre-commit (Automático)**
+### 🏭 **Antes de Deploy**
 
 ```bash
-# Husky ejecuta automáticamente:
-npm run format    # Formatear
-npm run lint      # Linting
-npm run test:fast # Tests rápidos
+# 1. Tests completos
+npm run test:full
+
+# 2. Build de producción
+npm run build:prod
+
+# 3. Deploy
+npm run deploy:railway
 ```
 
-### **3. Pre-push (Automático)**
+## 🎯 **SISTEMA DE VALIDACIÓN EN DOS FASES**
+
+### 📋 **Estrategia de Validación Automática**
+
+El proyecto implementa un sistema de validación en dos fases para garantizar la calidad del código:
+
+#### ⚡ **Fase 1: Validación Rápida (Pre-commit)**
 
 ```bash
-# Husky ejecuta automáticamente:
-npm run test:cov  # Tests con cobertura
-npm run test:e2e  # Tests e2e completos
+npm run validate:quick    # ~6.4s - Validación rápida para commits
 ```
 
-### **4. CI/CD (Automático)**
+**¿Qué ejecuta?**
+
+- ✅ **Format** - Prettier (cached)
+- ✅ **Lint** - ESLint con cache
+- ✅ **Tests Unitarios Rápidos** - Sin coverage (~3.8s)
+- ✅ **Tests E2E Rápidos** - Timeout reducido (~2.6s)
+
+**¿Cuándo se ejecuta?**
+
+- Automáticamente en cada `git commit`
+- En `lint-staged` para archivos modificados
+- Si falla → **STOP** (no continúa el commit)
+
+#### 📊 **Fase 2: Validación Completa (Pre-push)**
 
 ```bash
-# Pipeline ejecuta:
-npm run test:cov  # Tests con cobertura
-npm run test:e2e  # Tests e2e completos
-npm run build     # Build de producción
+npm run validate:full     # ~10.8s - Validación completa para push
 ```
 
-## ⚡ Optimizaciones Implementadas
+**¿Qué ejecuta?**
 
-### **test:fast**
+- ✅ **Format** - Prettier (cached)
+- ✅ **Lint** - ESLint con cache
+- ✅ **Tests Unitarios Completos** - Con coverage (~4.3s)
+- ✅ **Tests E2E Completos** - Sin timeout reducido (~2.45s)
 
-```json
-{
-  "maxWorkers": 4, // Paralelización máxima
-  "bail": true, // Parar en primer error
-  "passWithNoTests": true, // No fallar si no hay tests
-  "silent": true, // Output mínimo
-  "no-coverage": true // Sin cobertura (más rápido)
+**¿Cuándo se ejecuta?**
+
+- Automáticamente en cada `git push`
+- Si falla → **STOP** (no continúa el push)
+
+### 🔧 **Scripts de Validación Disponibles**
+
+| Script              | Tiempo | Propósito               | Uso        |
+| ------------------- | ------ | ----------------------- | ---------- |
+| `validate:quick`    | ~6.4s  | Validación rápida       | Pre-commit |
+| `validate:full`     | ~10.8s | Validación completa     | Pre-push   |
+| `validate:coverage` | ~4.3s  | Solo tests con coverage | Manual     |
+
+### 🎯 **Umbrales de Cobertura**
+
+```javascript
+coverageThreshold: {
+  global: {
+    branches: 60,    // 60% de cobertura de ramas
+    functions: 70,   // 70% de cobertura de funciones
+    lines: 70,       // 70% de cobertura de líneas
+    statements: 70,  // 70% de cobertura de statements
+  },
 }
 ```
 
-### **test:e2e:fast**
+### 🚀 **Flujo de Trabajo Recomendado**
 
-```json
-{
-  "maxWorkers": 1, // Tests e2e secuenciales
-  "bail": true, // Parar en primer error
-  "testTimeout": 3000 // Timeout reducido
-}
-```
-
-### **lint**
-
-```json
-{
-  "--fix": true, // Corregir automáticamente
-  "--cache": true, // Cache para velocidad
-  "--max-warnings": 0 // Cero warnings
-}
-```
-
-## 📊 Comparación de Velocidad
-
-### **Tests Unitarios**
-
-- **test:fast**: ~2.7s (71 tests, sin cobertura)
-- **test:cov**: ~2.8s (71 tests, con cobertura)
-- **test**: ~3.5s (71 tests, configuración estándar)
-
-### **Tests E2E**
-
-- **test:e2e:fast**: ~3s (timeout reducido)
-- **test:e2e**: ~5s (timeout completo)
-
-### **Linting**
-
-- **lint**: ~1s (con cache)
-- **lint sin cache**: ~3s
-
-## 🚨 Reglas Estrictas
-
-### **✅ OBLIGATORIO en desarrollo:**
-
-1. **Siempre usar `npm run test:fast`** para verificar cambios
-2. **Siempre usar `npm run lint`** antes de commits
-3. **Siempre usar `npm run format`** para formatear código
-4. **Nunca usar `npm run test:cov`** en desarrollo diario
-
-### **✅ PERMITIDO solo en:**
-
-1. **Pre-push hooks** (automático)
-2. **CI/CD pipelines** (automático)
-3. **Debugging específico** (cuando sea necesario)
-
-### **❌ PROHIBIDO en desarrollo:**
-
-1. `npm run test:cov` (lento, innecesario)
-2. `npm run test:e2e` (lento, innecesario)
-3. `npm run test:debug` (muy lento, solo debugging)
-
-## 🔧 Configuración de Husky
-
-### **Pre-commit Hook**
-
-```json
-{
-  "lint-staged": {
-    "*.ts": [
-      "npm run format",
-      "npm run lint",
-      "npm run test:fast",
-      "npm run check:process-env"
-    ]
-  }
-}
-```
-
-### **Pre-push Hook**
+#### **Para desarrollo diario:**
 
 ```bash
-npm run test:cov
-npm run test:e2e
+# 1. Hacer cambios en el código
+# 2. Commit automático con validación rápida
+git add .
+git commit -m "feat: nueva funcionalidad"
+
+# 3. Push automático con validación completa
+git push origin feature/nueva-funcionalidad
 ```
 
-## 📈 Beneficios de Scripts Rápidos
-
-### **⚡ Velocidad**
-
-- **Desarrollo 3x más rápido**
-- **Feedback inmediato**
-- **Menos tiempo de espera**
-
-### **🎯 Productividad**
-
-- **Flujo de trabajo fluido**
-- **Menos interrupciones**
-- **Desarrollo más eficiente**
-
-### **🛡️ Calidad**
-
-- **Tests automáticos en cada commit**
-- **Linting automático**
-- **Formato consistente**
-- **Verificación de process.env automática**
-
-## 🎯 Comandos de Referencia Rápida
+#### **Para verificación manual:**
 
 ```bash
-# ✅ Desarrollo diario (OBLIGATORIO)
-npm run test:fast    # Tests rápidos
-npm run lint         # Linting rápido
-npm run format       # Formatear
-npm run start:dev    # Servidor desarrollo
-npm run check:process-env # Verificar process.env
+# Validación rápida (como pre-commit)
+npm run validate:quick
 
-# ❌ Solo para CI/CD
-npm run test:cov     # Tests con cobertura
-npm run test:e2e     # Tests e2e completos
-npm run build        # Build producción
+# Validación completa (como pre-push)
+npm run validate:full
+
+# Solo verificar cobertura
+npm run validate:coverage
 ```
 
-## 🚀 Recordatorio Diario
+### ⚠️ **Archivos Excluidos de Cobertura**
 
-**Antes de cada commit:**
+Los siguientes archivos están excluidos del cálculo de cobertura:
 
-1. `npm run test:fast` ✅
-2. `npm run lint` ✅
-3. `npm run format` ✅
-4. `npm run check:process-env` ✅
-5. Commit ✅
+- `main.ts` - Punto de entrada
+- `env.config.ts` - Configuración de entorno
+- `env.schema.ts` - Esquemas de validación
+- `env.constants.ts` - Constantes de entorno
+- `security.module.ts` - Módulo de seguridad
+- `environment-logger.ts` - Logger de entorno
 
-**NUNCA:**
+### 🔍 **Configuración de Hooks**
 
-- `npm run test:cov` en desarrollo ❌
-- `npm run test:e2e` en desarrollo ❌
-- Commits sin tests rápidos ❌
-- Usar `process.env` fuera de `env.config.ts` ❌
+Los hooks de Git están configurados en `.husky/`:
+
+#### **Pre-commit Hook:**
+
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx lint-staged
+npm run pre-commit
+```
+
+#### **Pre-push Hook:**
+
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npm run pre-push
+```
+
+### 📈 **Beneficios del Sistema**
+
+1. **⚡ Velocidad**: Validación rápida en commits (~6.4s)
+2. **🛡️ Seguridad**: Validación completa en push (~10.8s)
+3. **🎯 Calidad**: Cobertura garantizada >70%
+4. **🔄 Automatización**: Sin intervención manual
+5. **🚫 Prevención**: Bloquea commits/push con errores
+
+## 🔍 **TROUBLESHOOTING**
+
+### ❌ **Error: cross-env not found**
+
+```bash
+npm install --save-dev cross-env
+```
+
+### ❌ **Error: Variables de entorno faltantes**
+
+```bash
+npm run setup:env
+npm run env:setup
+```
+
+### ❌ **Error: Base de datos no conecta**
+
+```bash
+npm run db:dev    # Para desarrollo
+npm run db:test   # Para testing
+```
+
+## 📚 **REFERENCIAS**
+
+- [NestJS CLI](https://docs.nestjs.com/cli/overview)
+- [Jest Testing](https://jestjs.io/docs/getting-started)
+- [Prisma CLI](https://www.prisma.io/docs/reference/api-reference/command-reference)
+- [Cross-env](https://www.npmjs.com/package/cross-env)
+
+---
+
+**Última actualización**: Enero 2024
+**Versión**: 2.0.0
