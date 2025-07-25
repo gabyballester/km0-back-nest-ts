@@ -14,7 +14,6 @@ const envSchema = z.object({
 // Función para validar y obtener variables de entorno
 export const validateEnv = () => {
   try {
-    // todo: revisar si podemos prescindir de process.env y usar config service de nestjs
     const env = envSchema.parse(process.env);
 
     // Mostrar información del entorno por consola (solo en desarrollo y producción)
