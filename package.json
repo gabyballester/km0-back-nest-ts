@@ -42,7 +42,7 @@
     "pre-push": "npm run validate:full",
     "start:quick": "node scripts/timed-run.js \"cross-env NODE_ENV=development npx nest start --builder swc\" \"🚀 Inicio rápido (Development)\"",
     "start:full": "node scripts/timed-run.js \"cross-env NODE_ENV=development npx nest start --watch --builder swc --preserveWatchOutput\" \"🔄 Inicio completo con watch (Development)\"",
-    "start:prod": "cross-env NODE_ENV=production node dist/main",
+    "start:prod": "node dist/main",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
