@@ -1,5 +1,57 @@
 # Changelog - KM0 Market Backend
 
+## [PENDIENTE] - Reorganización de Estructura de Carpetas
+
+### 📋 **TAREA PENDIENTE: Migración a Arquitectura Hexagonal**
+
+#### 🎯 Objetivo
+
+Reorganizar la estructura de carpetas del proyecto para seguir completamente la arquitectura hexagonal y las mejores prácticas de NestJS.
+
+#### 📁 Estructura Actual vs Propuesta
+
+**Actual (Mixta):**
+
+```
+src/
+├── infrastructure/database/     # ✅ Ya en lugar correcto
+├── modules/                     # ❌ Mezcla de responsabilidades
+├── health/                      # ❌ Debería estar en presentation
+└── shared/                      # ✅ Correcto
+```
+
+**Propuesta (Arquitectura Hexagonal):**
+
+```
+src/
+├── domain/                      # Entidades, interfaces, reglas de negocio
+├── application/                 # Casos de uso, DTOs, servicios de aplicación
+├── infrastructure/              # Base de datos, APIs externas, config
+├── presentation/                # Controllers, middlewares, guards
+└── shared/                      # Código compartido
+```
+
+#### 🔄 Archivos a Mover
+
+- `src/modules/` → `src/presentation/`
+- `src/health/` → `src/presentation/controllers/`
+- Crear `src/domain/` y `src/application/` para futuras funcionalidades
+
+#### ⚠️ Consideraciones
+
+- **No afectar deployment** actual que funciona correctamente
+- **Mantener 100% cobertura** durante la migración
+- **Actualizar todas las importaciones**
+- **Documentar cambios** en `/docs/ARCHITECTURE.md`
+
+#### 📅 Estado
+
+- **Estado**: Pendiente de decisión
+- **Prioridad**: Baja (proyecto funciona correctamente)
+- **Impacto**: Estructural pero no funcional
+
+---
+
 ## [0.1.1] - 2024-01-XX
 
 ### 🎯 **NUEVO: Gestión de Constantes Tipadas - Mejoras de Calidad**
@@ -31,18 +83,24 @@ export const ENV_VALUES = {
   },
 } as const;
 
-export type NodeEnv = typeof ENV_VALUES.NODE_ENV[keyof typeof ENV_VALUES.NODE_ENV];
-export type LogLevel = typeof ENV_VALUES.LOG_LEVEL[keyof typeof ENV_VALUES.LOG_LEVEL];
+export type NodeEnv =
+  (typeof ENV_VALUES.NODE_ENV)[keyof typeof ENV_VALUES.NODE_ENV];
+export type LogLevel =
+  (typeof ENV_VALUES.LOG_LEVEL)[keyof typeof ENV_VALUES.LOG_LEVEL];
 ```
 
 **Funciones Helper:**
 
 ```typescript
-export const isDevelopment = (env: string): env is typeof ENV_VALUES.NODE_ENV.DEVELOPMENT => {
+export const isDevelopment = (
+  env: string,
+): env is typeof ENV_VALUES.NODE_ENV.DEVELOPMENT => {
   return env === ENV_VALUES.NODE_ENV.DEVELOPMENT;
 };
 
-export const isProduction = (env: string): env is typeof ENV_VALUES.NODE_ENV.PRODUCTION => {
+export const isProduction = (
+  env: string,
+): env is typeof ENV_VALUES.NODE_ENV.PRODUCTION => {
   return env === ENV_VALUES.NODE_ENV.PRODUCTION;
 };
 
@@ -385,8 +443,8 @@ GET /health/detailed
 
 ```typescript
 // Configurable por entorno
-THROTTLE_TTL=60        // Ventana de tiempo (segundos)
-THROTTLE_LIMIT=100     // Máximo de requests por ventana
+THROTTLE_TTL = 60; // Ventana de tiempo (segundos)
+THROTTLE_LIMIT = 100; // Máximo de requests por ventana
 ```
 
 **Headers de Seguridad:**

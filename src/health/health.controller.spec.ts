@@ -47,6 +47,62 @@ describe('HealthController', () => {
     expect(controller).toBeDefined();
   });
 
+  describe('private methods', () => {
+    it('should get database name correctly', () => {
+      const dbInfo = {
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getDatabaseName(dbInfo);
+      expect(result).toBe('test_db');
+    });
+
+    it('should get database name as unknown when null', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getDatabaseName(null);
+      expect(result).toBe('unknown');
+    });
+
+    it('should get database name as unknown when missing', () => {
+      const dbInfo = {
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getDatabaseName(dbInfo);
+      expect(result).toBe('unknown');
+    });
+
+    it('should get database version correctly', () => {
+      const dbInfo = {
+        postgres_version: 'PostgreSQL 14.0',
+        current_user: 'test_user',
+        database_name: 'test_db',
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getDatabaseVersion(dbInfo);
+      expect(result).toBe('PostgreSQL 14.0');
+    });
+
+    it('should get database version as unknown when null', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getDatabaseVersion(null);
+      expect(result).toBe('unknown');
+    });
+
+    it('should get database version as unknown when missing', () => {
+      const dbInfo = {
+        current_user: 'test_user',
+        database_name: 'test_db',
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getDatabaseVersion(dbInfo);
+      expect(result).toBe('unknown');
+    });
+  });
+
   describe('getHealth', () => {
     it('should return health status when database is connected', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
@@ -225,9 +281,14 @@ describe('HealthController', () => {
       expect(result.database.info.version).toBe('unknown');
     });
 
-    it('should handle null database info', () => {
+    it('should handle database info with missing database_name', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
-      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue(null);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+        // database_name is missing
+      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
       jest
         .spyOn(configService, 'get')
         .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
@@ -235,6 +296,117 @@ describe('HealthController', () => {
       const result = controller.getDetailedHealth();
 
       expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('PostgreSQL 14.0');
+    });
+
+    it('should handle database info with missing postgres_version', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        // postgres_version is missing
+      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('test_db');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
+
+    it('should handle database info with both missing properties', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        current_user: 'test_user',
+        // database_name and postgres_version are missing
+      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
+
+    it('should handle database info with empty string database_name', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: '',
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      });
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('PostgreSQL 14.0');
+    });
+
+    it('should handle database info with empty string postgres_version', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: '',
+      });
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('test_db');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
+
+    it('should handle database info with falsy database_name', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 0 as any, // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      });
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('PostgreSQL 14.0');
+    });
+
+    it('should handle database info with falsy postgres_version', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: false as any, // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      });
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('test_db');
       expect(result.database.info.type).toBe('PostgreSQL');
       expect(result.database.info.version).toBe('unknown');
     });

@@ -4,6 +4,12 @@ import { DatabaseService } from '../infrastructure/database/database.service';
 import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
 import * as os from 'os';
 
+interface DatabaseInfo {
+  database_name: string;
+  current_user: string;
+  postgres_version: string;
+}
+
 /**
  * Health check controller
  * Provides health status endpoints for monitoring
@@ -14,6 +20,16 @@ export class HealthController {
     private readonly configService: ConfigService,
     private readonly databaseService: DatabaseService,
   ) {}
+
+  private getDatabaseName(dbInfo: DatabaseInfo | null): string {
+    return dbInfo && dbInfo.database_name ? dbInfo.database_name : 'unknown';
+  }
+
+  private getDatabaseVersion(dbInfo: DatabaseInfo | null): string {
+    return dbInfo && dbInfo.postgres_version
+      ? dbInfo.postgres_version
+      : 'unknown';
+  }
 
   /**
    * Basic health check endpoint
@@ -91,9 +107,9 @@ export class HealthController {
       database: {
         status: dbStatus ? 'connected' : 'disconnected',
         info: {
-          name: dbInfo?.database_name || 'unknown',
+          name: this.getDatabaseName(dbInfo),
           type: 'PostgreSQL',
-          version: dbInfo?.postgres_version || 'unknown',
+          version: this.getDatabaseVersion(dbInfo),
         },
       },
       system: {
