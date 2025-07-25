@@ -36,14 +36,16 @@ async function deployDatabase() {
         execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
         console.log('✅ Esquema sincronizado con push\n');
       } catch (error) {
-        console.log('⚠️  Push falló, intentando crear migración inicial...');
+        console.log('⚠️  Push falló, intentando hacer baseline de la base de datos existente...');
 
-        // Crear migración inicial
+        // Crear migración inicial sin aplicarla
         execSync('npx prisma migrate dev --name initial --create-only', {
           stdio: 'inherit',
         });
-        execSync('npx prisma migrate deploy', { stdio: 'inherit' });
-        console.log('✅ Migración inicial creada y aplicada\n');
+
+        // Marcar la migración como aplicada (baseline)
+        execSync('npx prisma migrate resolve --applied initial', { stdio: 'inherit' });
+        console.log('✅ Baseline de base de datos existente completado\n');
       }
     }
 
