@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -51,5 +52,23 @@ describe('AppModule', () => {
   it('should have AppModule', () => {
     const appModule = module.get<AppModule>(AppModule);
     expect(appModule).toBeDefined();
+  });
+
+  it('should configure middleware correctly', () => {
+    const appModule = module.get<AppModule>(AppModule);
+    const mockApply = jest.fn().mockReturnThis();
+    const mockForRoutes = jest.fn().mockReturnThis();
+    const mockConsumer = {
+      apply: mockApply,
+      forRoutes: mockForRoutes,
+    } as unknown as MiddlewareConsumer;
+
+    appModule.configure(mockConsumer);
+
+    expect(mockApply).toHaveBeenCalled();
+    expect(mockForRoutes).toHaveBeenCalledWith({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
   });
 });

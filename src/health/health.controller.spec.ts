@@ -224,5 +224,19 @@ describe('HealthController', () => {
       expect(result.database.info.type).toBe('PostgreSQL');
       expect(result.database.info.version).toBe('unknown');
     });
+
+    it('should handle null database info', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue(null);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
   });
 });
