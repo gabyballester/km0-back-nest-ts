@@ -51,7 +51,7 @@ npm run test:environments
 
 ```env
 NODE_ENV=development|production|test
-PORT=3000
+PORT=4000|4001
 DATABASE_URL=your_database_url
 JWT_SECRET=your_jwt_secret
 ```
@@ -224,7 +224,7 @@ npm run env:prod
 
    ```bash
    # Cambiar puerto en .env
-   PORT=3001
+   PORT=4001
    ```
 
 ### Logs de Error
@@ -267,5 +267,5 @@ Si la aplicación falla al iniciar, verás:
 
 ---
 
-**Última actualización**: Enero 2024
-**Versión**: 1.0.0
+**Última actualización**: Julio 2024
+**Versión**: 2.0.0

@@ -6,7 +6,7 @@
 
 Según la documentación oficial de NestJS y la comunidad, la forma correcta de manejar múltiples entornos es:
 
-1. **Un archivo `.env` base** con variables comunes
+1. **Un archivo `.env` base** con variables para producción
 2. **Archivos específicos por entorno** que sobrescriben variables necesarias
 3. **ConfigModule con `envFilePath`** que carga automáticamente según `NODE_ENV`
 
@@ -17,20 +17,26 @@ Según la documentación oficial de NestJS y la comunidad, la forma correcta de 
 ### **Archivo Base (.env)**
 
 ```bash
-# Variables comunes para todos los entornos
-NODE_ENV=development
+# Variables base para PRODUCCIÓN
+NODE_ENV=production
 PORT=4000
-JWT_SECRET=your-super-secret-jwt-key
-COOKIE_SECRET=your-super-secret-cookie-key
-DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_dev
+HOST=localhost
+DATABASE_URL=postgresql://user:password@host:port/database_name
+JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters-long
+COOKIE_SECRET=your-super-secret-cookie-key-at-least-32-characters-long
+JWT_EXPIRES_IN=1d
+THROTTLE_TTL=60
+THROTTLE_LIMIT=100
+CORS_ORIGIN=http://localhost:3000
+LOG_LEVEL=info
 ```
 
 ### **Desarrollo (.env.development)**
 
 ```bash
 # Solo sobrescribe variables específicas de desarrollo
-DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_dev
 NODE_ENV=development
+DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_dev
 LOG_LEVEL=debug
 ```
 
@@ -38,18 +44,10 @@ LOG_LEVEL=debug
 
 ```bash
 # Solo sobrescribe variables específicas de testing
-DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_test
 NODE_ENV=test
-LOG_LEVEL=warn
-```
-
-### **Producción (.env.production)**
-
-```bash
-# Solo sobrescribe variables específicas de producción
-DATABASE_URL=postgresql://gabi:...@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db
-NODE_ENV=production
-LOG_LEVEL=info
+PORT=4001
+DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_test
+LOG_LEVEL=error
 ```
 
 ---
@@ -68,18 +66,16 @@ ConfigModule.forRoot({
     '.env.local',
     '.env.development',
     '.env.test',
-    '.env.production',
   ],
 });
 ```
 
 ### **Orden de Carga**
 
-1. `.env` (variables base)
+1. `.env` (variables base para producción)
 2. `.env.local` (variables locales, no committeadas)
 3. `.env.development` (si NODE_ENV=development)
 4. `.env.test` (si NODE_ENV=test)
-5. `.env.production` (si NODE_ENV=production)
 
 **Las variables de archivos posteriores sobrescriben las anteriores.**
 
@@ -127,13 +123,11 @@ npm run setup:env
 cp env.example .env
 cp env.development.example .env.development
 cp env.test.example .env.test
-cp env.production.example .env.production
 
 # Editar con tus valores
 nano .env
 nano .env.development
 nano .env.test
-nano .env.production
 ```
 
 ### **Paso 3: Verificar configuración**
@@ -154,15 +148,13 @@ npm run start:dev
 .env.local
 .env.development
 .env.test
-.env.production
 ```
 
 ### **Archivos de ejemplo**
 
-- `env.example` - Variables base
-- `env.development.example` - Ejemplo desarrollo
-- `env.test.example` - Ejemplo testing
-- `env.production.example` - Ejemplo producción
+- `env.example` - Variables base para producción
+- `env.development.example` - Variables específicas de desarrollo
+- `env.test.example` - Variables específicas de testing
 
 ---
 
@@ -204,8 +196,8 @@ DATABASE_URL=...
 
 # ✅ Bien - Solo variables específicas
 # .env.development
-DATABASE_URL=postgresql://...
 NODE_ENV=development
+DATABASE_URL=postgresql://...
 ```
 
 ### **❌ No usar process.env directamente**
@@ -229,3 +221,28 @@ const port = this.configService.get<number>('PORT');
 4. **✅ Seguro**: Validación con Zod
 5. **✅ Flexible**: Fácil agregar nuevos entornos
 6. **✅ Mantenible**: Estructura clara y documentada
+7. **✅ Simple**: Solo sobrescribir lo necesario
+
+---
+
+## 🔄 **FLUJO DE CARGA**
+
+```
+1. .env (variables base para producción)
+   ↓
+2. .env.local (variables locales, opcional)
+   ↓
+3. .env.{NODE_ENV} (variables específicas del entorno)
+   ↓
+4. Variables de entorno del sistema
+   ↓
+5. ConfigService.get() (acceso tipado)
+```
+
+---
+
+## 📊 **RESUMEN DE PUERTOS**
+
+- **Producción**: 4000 (definido en .env)
+- **Desarrollo**: 4000 (heredado de .env)
+- **Testing**: 4001 (sobrescrito en .env.test)

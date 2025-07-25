@@ -3,6 +3,11 @@
 /**
  * Script para configurar archivos de entorno
  * Uso: node scripts/setup-env.js
+ *
+ * ESTRATEGIA:
+ * - .env: Variables base para PRODUCCIÓN
+ * - .env.development: Solo variables específicas de desarrollo
+ * - .env.test: Solo variables específicas de testing
  */
 
 const fs = require('fs');
@@ -15,22 +20,17 @@ function setupEnvironment() {
     {
       name: '.env',
       example: 'env.example',
-      description: 'Variables comunes para todos los entornos',
+      description: 'Variables base para PRODUCCIÓN',
     },
     {
       name: '.env.development',
       example: 'env.development.example',
-      description: 'Desarrollo local - PostgreSQL (pgAdmin)',
+      description: 'Variables específicas de desarrollo (sobrescribe .env)',
     },
     {
       name: '.env.test',
       example: 'env.test.example',
-      description: 'Testing - PostgreSQL (pgAdmin)',
-    },
-    {
-      name: '.env.production',
-      example: 'env.production.example',
-      description: 'Producción - PostgreSQL (Render)',
+      description: 'Variables específicas de testing (sobrescribe .env)',
     },
   ];
 
@@ -48,11 +48,10 @@ function setupEnvironment() {
     }
   });
 
-  console.log('\n📋 Configuración de entornos (NestJS ConfigModule):');
-  console.log('✅ .env - Variables base para todos los entornos');
+  console.log('\n📋 Estrategia de configuración de entornos:');
+  console.log('✅ .env - Variables base para PRODUCCIÓN');
   console.log('✅ .env.development - Sobrescribe variables para desarrollo');
   console.log('✅ .env.test - Sobrescribe variables para testing');
-  console.log('✅ .env.production - Sobrescribe variables para producción');
 
   console.log('\n🔗 URLs configuradas:');
   console.log(
@@ -62,7 +61,7 @@ function setupEnvironment() {
     '- Testing: postgresql://postgres:admin@localhost:5432/km0_db_test',
   );
   console.log(
-    '- Producción: postgresql://gabi:...@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db',
+    '- Producción: postgresql://user:password@host:port/database_name',
   );
 
   console.log('\n🚀 Comandos disponibles:');
@@ -79,6 +78,7 @@ function setupEnvironment() {
   console.log('✅ Carga automáticamente .env según NODE_ENV');
   console.log('✅ Variables específicas sobrescriben las base');
   console.log('✅ Validación con Zod en tiempo de ejecución');
+  console.log('✅ Orden de carga: .env → .env.{NODE_ENV}');
 }
 
 if (require.main === module) {
