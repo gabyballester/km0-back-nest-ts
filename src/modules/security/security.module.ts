@@ -22,7 +22,9 @@ import { ENV_KEYS } from '../../config/env.constants';
           },
         ],
         // Skip rate limiting for health checks
-        skipIf: (context: any) => {
+        skipIf: (context: {
+          switchToHttp: () => { getRequest: () => { url: string } };
+        }) => {
           const req = context.switchToHttp().getRequest();
           return req.url === '/health';
         },

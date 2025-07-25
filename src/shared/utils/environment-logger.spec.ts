@@ -14,7 +14,8 @@ describe('EnvironmentLogger', () => {
   afterEach(() => {
     jest.clearAllMocks();
     // Reset singleton instance
-    (EnvironmentLogger as any).instance = undefined;
+    (EnvironmentLogger as unknown as Record<string, unknown>).instance =
+      undefined;
   });
 
   describe('constructor', () => {

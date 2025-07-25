@@ -31,8 +31,9 @@
     "test:debug": "node scripts/timed-run.js \"node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand\" \"🐛 Tests con debug mode\"",
     "test:e2e:quick": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent --testTimeout=3000\" \"🚀 E2E tests rápidos (Test)\"",
     "test:e2e:full": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent\" \"📊 E2E tests completos (Test)\"",
-    "validate:quick": "npm run format && npm run lint && npm run test:quick && npm run test:e2e:quick",
-    "validate:full": "npm run format && npm run lint && npm run test:full && npm run test:e2e:full",
+    "type-check": "tsc --noEmit",
+    "validate:quick": "npm run format && npm run type-check && npm run lint && npm run test:quick && npm run test:e2e:quick",
+    "validate:full": "npm run format && npm run type-check && npm run lint && npm run test:full && npm run test:e2e:full",
     "validate:coverage": "cross-env NODE_ENV=test jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent --coverageThreshold={\"global\":{\"statements\":90,\"branches\":80,\"functions\":90,\"lines\":90}}",
     "pre-commit": "npm run validate:quick",
     "pre-push": "npm run validate:full",
@@ -56,6 +57,7 @@
   "lint-staged": {
     "*.ts": [
       "npm run format",
+      "npm run type-check",
       "npm run lint",
       "npm run test:quick",
       "npm run check:process-env"

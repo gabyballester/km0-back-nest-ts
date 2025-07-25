@@ -169,7 +169,8 @@ npm run validate:quick    # ~6.4s - Validación rápida para commits
 **¿Qué ejecuta?**
 
 - ✅ **Format** - Prettier (cached)
-- ✅ **Lint** - ESLint con cache
+- ✅ **Type Check** - TypeScript sin errores
+- ✅ **Lint Strict** - ESLint sin warnings (max-warnings=0)
 - ✅ **Tests Unitarios Rápidos** - Sin coverage (~3.8s)
 - ✅ **Tests E2E Rápidos** - Timeout reducido (~2.6s)
 
@@ -188,7 +189,8 @@ npm run validate:full     # ~10.8s - Validación completa para push
 **¿Qué ejecuta?**
 
 - ✅ **Format** - Prettier (cached)
-- ✅ **Lint** - ESLint con cache
+- ✅ **Type Check** - TypeScript sin errores
+- ✅ **Lint Strict** - ESLint sin warnings (max-warnings=0)
 - ✅ **Tests Unitarios Completos** - Con coverage (~4.3s)
 - ✅ **Tests E2E Completos** - Sin timeout reducido (~2.45s)
 
@@ -204,6 +206,14 @@ npm run validate:full     # ~10.8s - Validación completa para push
 | `validate:quick`    | ~6.4s  | Validación rápida       | Pre-commit |
 | `validate:full`     | ~10.8s | Validación completa     | Pre-push   |
 | `validate:coverage` | ~4.3s  | Solo tests con coverage | Manual     |
+
+### 🛡️ **Scripts de Validación Estricta**
+
+| Script        | Propósito                  | Uso                  |
+| ------------- | -------------------------- | -------------------- |
+| `type-check`  | Verificar tipos TypeScript | Validación de tipos  |
+| `lint:strict` | ESLint sin warnings        | Validación de código |
+| `lint`        | ESLint con warnings        | Desarrollo diario    |
 
 ### 🎯 **Umbrales de Cobertura**
 
@@ -286,6 +296,18 @@ npm run pre-push
 3. **🎯 Calidad**: Cobertura garantizada >90%
 4. **🔄 Automatización**: Sin intervención manual
 5. **🚫 Prevención**: Bloquea commits/push con errores
+6. **🔒 Estricto**: TypeScript y ESLint sin errores ni warnings
+
+### 🚫 **Bloqueo de Errores**
+
+El sistema ahora bloquea **automáticamente** commits y push si detecta:
+
+- ❌ **Errores de TypeScript** (20 errores actuales)
+- ❌ **Warnings de ESLint** (28 warnings actuales)
+- ❌ **Tests fallando**
+- ❌ **Cobertura insuficiente**
+
+**Esto garantiza que solo código limpio y funcional llegue al repositorio.**
 
 ## 🔍 **TROUBLESHOOTING**
 

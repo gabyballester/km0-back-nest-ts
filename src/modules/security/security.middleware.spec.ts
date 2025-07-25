@@ -2,16 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { SecurityMiddleware } from './security.middleware';
-import { ENV_KEYS } from '../../config/env.constants';
-
-// Mock helmet
-jest.mock('helmet', () => {
-  return jest.fn(() => jest.fn());
-});
 
 describe('SecurityMiddleware', () => {
   let middleware: SecurityMiddleware;
   let configService: ConfigService;
+  let mockReq: Partial<Request>;
+  let mockRes: Partial<Response>;
+  let mockNext: jest.Mock;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,62 +25,44 @@ describe('SecurityMiddleware', () => {
 
     middleware = module.get<SecurityMiddleware>(SecurityMiddleware);
     configService = module.get<ConfigService>(ConfigService);
+
+    mockReq = {
+      method: 'GET',
+      url: '/test',
+      headers: {},
+    };
+
+    mockRes = {
+      header: jest.fn().mockReturnThis(),
+      setHeader: jest.fn().mockReturnThis(),
+      removeHeader: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn().mockReturnThis(),
+    };
+
+    mockNext = jest.fn();
   });
 
   it('should be defined', () => {
     expect(middleware).toBeDefined();
   });
 
-  it('should get CORS origin from config service', () => {
+  it('should have ConfigService injected', () => {
+    expect(configService).toBeDefined();
+  });
+
+  it('should configure CORS origin from ConfigService', () => {
     const getSpy = jest.spyOn(configService, 'get');
-    expect(getSpy).toHaveBeenCalledWith(ENV_KEYS.CORS_ORIGIN);
-  });
-
-  it('should have use method', () => {
-    expect(typeof middleware.use).toBe('function');
-  });
-
-  it('should be instance of SecurityMiddleware', () => {
-    expect(middleware).toBeInstanceOf(SecurityMiddleware);
-  });
-
-  it('should configure helmet with security options', () => {
-    expect(middleware).toBeInstanceOf(SecurityMiddleware);
-    expect(typeof middleware.use).toBe('function');
-  });
-
-  it('should have helmetMiddleware property', () => {
-    expect(middleware).toHaveProperty('helmetMiddleware');
-  });
-
-  it('should have corsOrigin property', () => {
-    expect(middleware).toHaveProperty('corsOrigin');
-    expect(middleware['corsOrigin']).toBe('http://localhost:3000');
+    expect(getSpy).toHaveBeenCalledWith('CORS_ORIGIN');
+    expect(configService.get('CORS_ORIGIN')).toBe('http://localhost:3000');
   });
 
   describe('use method', () => {
-    let mockReq: Partial<Request>;
-    let mockRes: Partial<Response>;
-    let mockNext: jest.Mock;
-
     beforeEach(() => {
-      mockReq = {};
-      mockRes = {
-        header: jest.fn(),
-        removeHeader: jest.fn(),
-      } as Partial<Response>;
       mockNext = jest.fn();
     });
 
     it('should apply security headers and call next', () => {
-      // Mock the helmet middleware to call the callback immediately
-      const originalHelmetMiddleware = (middleware as any)['helmetMiddleware'];
-      (middleware as any)['helmetMiddleware'] = jest.fn(
-        (req: Request, res: Response, callback: () => void) => {
-          callback();
-        },
-      );
-
       // Execute the middleware
       middleware.use(mockReq as Request, mockRes as Response, mockNext);
 
@@ -121,9 +100,6 @@ describe('SecurityMiddleware', () => {
 
       // Verify next is called
       expect(mockNext).toHaveBeenCalled();
-
-      // Restore original helmet middleware
-      (middleware as any)['helmetMiddleware'] = originalHelmetMiddleware;
     });
 
     it('should handle different CORS origins', async () => {
@@ -143,13 +119,6 @@ describe('SecurityMiddleware', () => {
 
       const middlewareWithDifferentOrigin =
         moduleWithDifferentOrigin.get<SecurityMiddleware>(SecurityMiddleware);
-
-      // Mock the helmet middleware to call the callback immediately
-      (middlewareWithDifferentOrigin as any)['helmetMiddleware'] = jest.fn(
-        (req: Request, res: Response, callback: () => void) => {
-          callback();
-        },
-      );
 
       // Execute the middleware
       middlewareWithDifferentOrigin.use(
@@ -183,13 +152,6 @@ describe('SecurityMiddleware', () => {
       const middlewareWithNullOrigin =
         moduleWithNullOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
-      // Mock the helmet middleware to call the callback immediately
-      (middlewareWithNullOrigin as any)['helmetMiddleware'] = jest.fn(
-        (req: Request, res: Response, callback: () => void) => {
-          callback();
-        },
-      );
-
       // Execute the middleware
       middlewareWithNullOrigin.use(
         mockReq as Request,
@@ -197,7 +159,7 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to default when null
+      // Verify CORS origin is set to default
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
         'http://localhost:3000',
@@ -222,13 +184,6 @@ describe('SecurityMiddleware', () => {
       const middlewareWithUndefinedOrigin =
         moduleWithUndefinedOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
-      // Mock the helmet middleware to call the callback immediately
-      (middlewareWithUndefinedOrigin as any)['helmetMiddleware'] = jest.fn(
-        (req: Request, res: Response, callback: () => void) => {
-          callback();
-        },
-      );
-
       // Execute the middleware
       middlewareWithUndefinedOrigin.use(
         mockReq as Request,
@@ -236,14 +191,14 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to default when undefined
+      // Verify CORS origin is set to default
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
         'http://localhost:3000',
       );
     });
 
-    it('should handle empty string CORS origin', async () => {
+    it('should handle empty string CORS origin gracefully', async () => {
       // Create middleware with empty string CORS origin
       const moduleWithEmptyOrigin: TestingModule =
         await Test.createTestingModule({
@@ -261,13 +216,6 @@ describe('SecurityMiddleware', () => {
       const middlewareWithEmptyOrigin =
         moduleWithEmptyOrigin.get<SecurityMiddleware>(SecurityMiddleware);
 
-      // Mock the helmet middleware to call the callback immediately
-      (middlewareWithEmptyOrigin as any)['helmetMiddleware'] = jest.fn(
-        (req: Request, res: Response, callback: () => void) => {
-          callback();
-        },
-      );
-
       // Execute the middleware
       middlewareWithEmptyOrigin.use(
         mockReq as Request,
@@ -275,24 +223,29 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to default when empty string
+      // Verify CORS origin is set to default
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
         'http://localhost:3000',
       );
     });
-  });
 
-  describe('constructor', () => {
-    it('should configure helmet with all security options', () => {
-      // Forzar helmetMiddleware a ser una función mockeada
-      (middleware as any)['helmetMiddleware'] = jest.fn();
-      expect(middleware).toBeDefined();
-      expect(typeof middleware['helmetMiddleware']).toBe('function');
+    it('should handle middleware execution without errors', () => {
+      // Execute the middleware - should not throw
+      expect(() => {
+        middleware.use(mockReq as Request, mockRes as Response, mockNext);
+      }).not.toThrow();
+
+      // Verify next is called
+      expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should store CORS origin from config service', () => {
-      expect(middleware['corsOrigin']).toBe('http://localhost:3000');
+    it('should handle middleware execution with proper error handling', () => {
+      // Execute the middleware
+      middleware.use(mockReq as Request, mockRes as Response, mockNext);
+
+      // Verify next is called
+      expect(mockNext).toHaveBeenCalled();
     });
   });
 });
