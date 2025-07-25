@@ -53,7 +53,7 @@ function verifyDatabaseSafety() {
   // 3. Verificar conexión a la base de datos
   if (
     !safeExec(
-      'npx prisma db execute --stdin',
+      'npx prisma db execute --stdin --url "$DATABASE_URL"',
       'Verificando conexión a la base de datos',
     )
   ) {
@@ -84,11 +84,14 @@ function verifyDatabaseSafety() {
 
   // 6. Verificar estado de la base de datos
   try {
-    const result = execSync('npx prisma db execute --stdin', {
-      input:
-        "SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'public';",
-      encoding: 'utf8',
-    });
+    const result = execSync(
+      'npx prisma db execute --stdin --url "$DATABASE_URL"',
+      {
+        input:
+          "SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'public';",
+        encoding: 'utf8',
+      },
+    );
 
     const tableCount = parseInt(result.match(/\d+/)?.[0] || '0');
     console.log(`📊 Tablas en la base de datos: ${tableCount}`);

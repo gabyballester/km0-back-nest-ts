@@ -16,7 +16,7 @@ function safeExec(command, description) {
     console.log(`🔄 ${description}...`);
     execSync(command, {
       stdio: 'inherit',
-      env: { ...process.env, FORCE_COLOR: '1' }
+      env: { ...process.env, FORCE_COLOR: '1' },
     });
     console.log(`✅ ${description} completado`);
     return true;
@@ -30,17 +30,23 @@ function safeExec(command, description) {
 function isDatabaseEmpty() {
   try {
     console.log('🔍 Verificando estado de la base de datos...');
-    const result = execSync('npx prisma db execute --stdin', {
-      input: 'SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = \'public\';',
-      encoding: 'utf8'
-    });
+    const result = execSync(
+      'npx prisma db execute --stdin --url "$DATABASE_URL"',
+      {
+        input:
+          "SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'public';",
+        encoding: 'utf8',
+      },
+    );
 
     const tableCount = parseInt(result.match(/\d+/)?.[0] || '0');
     console.log(`📊 Tablas encontradas en la base de datos: ${tableCount}`);
 
     return tableCount === 0;
   } catch (error) {
-    console.log('⚠️  No se pudo verificar el estado de la base de datos, asumiendo que no está vacía');
+    console.log(
+      '⚠️  No se pudo verificar el estado de la base de datos, asumiendo que no está vacía',
+    );
     return false;
   }
 }
@@ -48,10 +54,13 @@ function isDatabaseEmpty() {
 // Función para verificar si hay migraciones
 function hasMigrations() {
   const migrationsPath = path.join(process.cwd(), 'prisma', 'migrations');
-  return fs.existsSync(migrationsPath) &&
-         fs.readdirSync(migrationsPath).filter(dir =>
-           fs.statSync(path.join(migrationsPath, dir)).isDirectory()
-         ).length > 0;
+  return (
+    fs.existsSync(migrationsPath) &&
+    fs
+      .readdirSync(migrationsPath)
+      .filter(dir => fs.statSync(path.join(migrationsPath, dir)).isDirectory())
+      .length > 0
+  );
 }
 
 // Función para crear baseline seguro
@@ -64,7 +73,12 @@ function createSafeBaseline() {
   }
 
   // 2. Crear migración inicial sin aplicar
-  if (!safeExec('npx prisma migrate dev --name initial --create-only', 'Creando migración inicial')) {
+  if (
+    !safeExec(
+      'npx prisma migrate dev --name initial --create-only',
+      'Creando migración inicial',
+    )
+  ) {
     throw new Error('No se pudo crear la migración inicial');
   }
 
@@ -74,7 +88,12 @@ function createSafeBaseline() {
   }
 
   // 4. Marcar como baseline (esto NO modifica la base de datos)
-  if (!safeExec('npx prisma migrate resolve --applied initial', 'Marcando migración como baseline')) {
+  if (
+    !safeExec(
+      'npx prisma migrate resolve --applied initial',
+      'Marcando migración como baseline',
+    )
+  ) {
     throw new Error('No se pudo marcar la migración como baseline');
   }
 
@@ -107,33 +126,53 @@ async function deployDatabase() {
         throw new Error('No se pudieron aplicar las migraciones');
       }
     } else {
-      console.log('🔄 No hay migraciones, verificando estado de la base de datos...');
+      console.log(
+        '🔄 No hay migraciones, verificando estado de la base de datos...',
+      );
 
       // 5. Verificar si la base de datos está vacía
       const isEmpty = isDatabaseEmpty();
 
       if (isEmpty) {
         console.log('📝 Base de datos vacía, sincronizando esquema...');
-        if (!safeExec('npx prisma db push --accept-data-loss', 'Sincronizando esquema')) {
+        if (
+          !safeExec(
+            'npx prisma db push --accept-data-loss',
+            'Sincronizando esquema',
+          )
+        ) {
           throw new Error('No se pudo sincronizar el esquema');
         }
       } else {
-        console.log('🛡️  Base de datos con datos existentes, creando baseline seguro...');
+        console.log(
+          '🛡️  Base de datos con datos existentes, creando baseline seguro...',
+        );
         createSafeBaseline();
       }
     }
 
     // 6. Verificación final
     console.log('🔍 Verificación final del deployment...');
-    if (!safeExec('npx prisma db execute --stdin', 'Verificando conexión a la base de datos')) {
+    if (
+      !safeExec(
+        'npx prisma db execute --stdin --url "$DATABASE_URL"',
+        'Verificando conexión a la base de datos',
+      )
+    ) {
       throw new Error('No se pudo verificar la conexión a la base de datos');
     }
 
-    console.log('🎉 Deployment SEGURO de base de datos completado exitosamente!');
-
+    console.log(
+      '🎉 Deployment SEGURO de base de datos completado exitosamente!',
+    );
   } catch (error) {
-    console.error('❌ Error CRÍTICO en deployment de base de datos:', error.message);
-    console.error('🛑 Deployment falló por seguridad. Revisa los logs y corrige el problema.');
+    console.error(
+      '❌ Error CRÍTICO en deployment de base de datos:',
+      error.message,
+    );
+    console.error(
+      '🛑 Deployment falló por seguridad. Revisa los logs y corrige el problema.',
+    );
     process.exit(1);
   }
 }
