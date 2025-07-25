@@ -121,8 +121,9 @@ describe('SecurityModule', () => {
     });
 
     const result = factory(configService);
-    expect(result.throttlers[0].ttl).toBe(60);
-    expect(result.throttlers[0].limit).toBe(100);
+    expect(result.throttlers).toHaveLength(1);
+    expect(result.throttlers[0]?.ttl).toBe(60);
+    expect(result.throttlers[0]?.limit).toBe(100);
     expect(result.skipIf({ url: '/health' })).toBe(true);
     expect(result.skipIf({ url: '/api/users' })).toBe(false);
   });
@@ -145,8 +146,9 @@ describe('SecurityModule', () => {
 
     const throttlerConfig = useFactory(configService);
 
-    expect(throttlerConfig.throttlers[0].ttl).toBe(60);
-    expect(throttlerConfig.throttlers[0].limit).toBe(100);
+    expect(throttlerConfig.throttlers).toHaveLength(1);
+    expect(throttlerConfig.throttlers[0]?.ttl).toBe(60);
+    expect(throttlerConfig.throttlers[0]?.limit).toBe(100);
     expect(throttlerConfig.skipIf({ url: '/health' })).toBe(true);
     expect(throttlerConfig.skipIf({ url: '/api/users' })).toBe(false);
   });
@@ -183,8 +185,9 @@ describe('SecurityModule', () => {
     });
 
     const result = factory(configService);
-    expect(result.throttlers[0].ttl).toBe(60);
-    expect(result.throttlers[0].limit).toBe(100);
+    expect(result.throttlers).toHaveLength(1);
+    expect(result.throttlers[0]?.ttl).toBe(60);
+    expect(result.throttlers[0]?.limit).toBe(100);
     expect(result.skipIf({ url: '/health' })).toBe(true);
     expect(result.skipIf({ url: '/api/users' })).toBe(false);
   });
@@ -205,8 +208,9 @@ describe('SecurityModule', () => {
     });
 
     const result = factory(fakeConfigService as ConfigService);
-    expect(result.throttlers[0].ttl).toBe(0);
-    expect(result.throttlers[0].limit).toBe(-5);
+    expect(result.throttlers).toHaveLength(1);
+    expect(result.throttlers[0]?.ttl).toBe(0);
+    expect(result.throttlers[0]?.limit).toBe(-5);
   });
 
   it('should handle undefined values for ttl and limit', () => {
@@ -225,8 +229,9 @@ describe('SecurityModule', () => {
     });
 
     const result = factory(fakeConfigService as ConfigService);
-    expect(result.throttlers[0].ttl).toBe(0);
-    expect(result.throttlers[0].limit).toBe(0);
+    expect(result.throttlers).toHaveLength(1);
+    expect(result.throttlers[0]?.ttl).toBe(0);
+    expect(result.throttlers[0]?.limit).toBe(0);
   });
 
   it('should handle non-numeric values for ttl and limit', () => {
@@ -247,8 +252,9 @@ describe('SecurityModule', () => {
     });
 
     const result = factory(fakeConfigService as ConfigService);
-    expect(result.throttlers[0].ttl).toBe(0);
-    expect(result.throttlers[0].limit).toBe(0);
+    expect(result.throttlers).toHaveLength(1);
+    expect(result.throttlers[0]?.ttl).toBe(0);
+    expect(result.throttlers[0]?.limit).toBe(0);
   });
 
   it('should handle factory function with error handling', () => {
@@ -277,8 +283,9 @@ describe('SecurityModule', () => {
     };
 
     const result = factory(configService);
-    expect(result.throttlers[0].ttl).toBe(60);
-    expect(result.throttlers[0].limit).toBe(100);
+    expect(result.throttlers).toHaveLength(1);
+    expect(result.throttlers[0]?.ttl).toBe(60);
+    expect(result.throttlers[0]?.limit).toBe(100);
     expect(result.skipIf({ url: '/health' })).toBe(true);
   });
 });
