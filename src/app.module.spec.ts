@@ -5,6 +5,14 @@ import { AppService } from './app.service';
 import { HealthController } from './health/health.controller';
 import { MiddlewareConsumer } from '@nestjs/common';
 
+// Configurar variables de entorno para tests
+beforeAll(() => {
+  process.env.NODE_ENV = 'test';
+  process.env.PORT = '4003';
+  process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+  process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes-only';
+});
+
 describe('AppModule', () => {
   let module: TestingModule;
 

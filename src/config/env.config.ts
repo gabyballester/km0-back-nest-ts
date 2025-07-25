@@ -14,18 +14,28 @@ const envSchema = z.object({
 // Función para validar y obtener variables de entorno
 export const validateEnv = () => {
   try {
+    // todo: revisar si podemos prescindir de process.env y usar config service de nestjs
     const env = envSchema.parse(process.env);
 
-    // Mostrar información del entorno por consola
-    console.log('🚀 ========================================');
-    console.log(`🌍 Environment: ${env.NODE_ENV.toUpperCase()}`);
-    console.log(`🔧 Port: ${env.PORT}`);
-    console.log(`📅 Started at: ${new Date().toISOString()}`);
-    console.log('========================================');
+    // Mostrar información del entorno por consola (solo en desarrollo y producción)
+    if (env.NODE_ENV !== 'test') {
+      console.log('🚀 ========================================');
+      console.log(`🌍 Environment: ${env.NODE_ENV.toUpperCase()}`);
+      console.log(`🔧 Port: ${env.PORT}`);
+      console.log(`📅 Started at: ${new Date().toISOString()}`);
+      console.log('========================================');
+    }
 
     return env;
   } catch (error) {
     console.error('❌ Environment validation failed:', error);
+
+    // En tests, lanzar excepción en lugar de process.exit
+    if (process.env.NODE_ENV === 'test') {
+      throw new Error(`Environment validation failed: ${String(error)}`);
+    }
+
+    // En desarrollo y producción, salir del proceso
     process.exit(1);
   }
 };

@@ -3,6 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
 
+// Configurar variables de entorno para tests E2E
+beforeAll(() => {
+  process.env.NODE_ENV = 'test';
+  process.env.PORT = '4003';
+  process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+  process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes-only';
+});
+
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 

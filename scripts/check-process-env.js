@@ -10,6 +10,12 @@ const path = require('path');
 
 const SRC_DIR = path.join(__dirname, '..', 'src');
 const ALLOWED_FILE = 'src/config/env.config.ts';
+const ALLOWED_PATTERNS = [
+  'src/config/env.config.ts',
+  'test/',
+  '.spec.ts',
+  '.e2e-spec.ts',
+];
 
 function findProcessEnvUsage(dir, allowedFile) {
   const results = [];
@@ -26,11 +32,19 @@ function findProcessEnvUsage(dir, allowedFile) {
       } else if (item.endsWith('.ts') || item.endsWith('.js')) {
         const relativePath = path.relative(process.cwd(), fullPath);
 
-        // Skip allowed file - normalize paths for comparison
+        // Skip allowed files and patterns - normalize paths for comparison
         const normalizedRelativePath = relativePath.replace(/\\/g, '/');
         const normalizedAllowedFile = allowedFile.replace(/\\/g, '/');
 
-        if (normalizedRelativePath === normalizedAllowedFile) {
+        // Check if file matches any allowed pattern
+        const isAllowed = ALLOWED_PATTERNS.some(pattern => {
+          if (pattern.endsWith('/')) {
+            return normalizedRelativePath.startsWith(pattern);
+          }
+          return normalizedRelativePath === pattern || normalizedRelativePath.endsWith(pattern);
+        });
+
+        if (normalizedRelativePath === normalizedAllowedFile || isAllowed) {
           console.log(`✅ Skipping allowed file: ${normalizedRelativePath}`);
           continue;
         }
