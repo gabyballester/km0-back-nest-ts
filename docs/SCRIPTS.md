@@ -210,7 +210,7 @@ npm run validate:full     # ~10.8s - Validación completa para push
 ```javascript
 coverageThreshold: {
   global: {
-    branches: 85,    // 85% de cobertura de ramas
+    branches: 80,    // 80% de cobertura de ramas
     functions: 90,   // 90% de cobertura de funciones
     lines: 90,       // 90% de cobertura de líneas
     statements: 90,  // 90% de cobertura de statements
