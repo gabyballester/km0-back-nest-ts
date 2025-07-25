@@ -210,10 +210,10 @@ npm run validate:full     # ~10.8s - Validación completa para push
 ```javascript
 coverageThreshold: {
   global: {
-    branches: 60,    // 60% de cobertura de ramas
-    functions: 70,   // 70% de cobertura de funciones
-    lines: 70,       // 70% de cobertura de líneas
-    statements: 70,  // 70% de cobertura de statements
+    branches: 85,    // 85% de cobertura de ramas
+    functions: 90,   // 90% de cobertura de funciones
+    lines: 90,       // 90% de cobertura de líneas
+    statements: 90,  // 90% de cobertura de statements
   },
 }
 ```
@@ -254,7 +254,7 @@ Los siguientes archivos están excluidos del cálculo de cobertura:
 - `env.schema.ts` - Esquemas de validación
 - `env.constants.ts` - Constantes de entorno
 - `security.module.ts` - Módulo de seguridad
-- `environment-logger.ts` - Logger de entorno
+- `environment-logger.ts` - Logger de entorno (✅ **100% testado**)
 
 ### 🔍 **Configuración de Hooks**
 
@@ -283,7 +283,7 @@ npm run pre-push
 
 1. **⚡ Velocidad**: Validación rápida en commits (~6.4s)
 2. **🛡️ Seguridad**: Validación completa en push (~10.8s)
-3. **🎯 Calidad**: Cobertura garantizada >70%
+3. **🎯 Calidad**: Cobertura garantizada >90%
 4. **🔄 Automatización**: Sin intervención manual
 5. **🚫 Prevención**: Bloquea commits/push con errores
 
