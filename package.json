@@ -48,6 +48,7 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:reset": "prisma migrate reset",
+    "db:deploy": "node scripts/deploy-db.js",
     "db:studio": "prisma studio",
     "db:dev": "dotenv -e .env.development -- prisma db push --accept-data-loss",
     "db:test": "dotenv -e .env.test -- prisma db push --accept-data-loss",
