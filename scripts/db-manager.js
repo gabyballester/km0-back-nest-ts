@@ -46,31 +46,58 @@ function logWarning(message) {
  * Get environment variables
  */
 function getEnvVars() {
-  // In production (Render), always use process.env directly
-  if (process.env.NODE_ENV === 'production') {
-    return process.env;
+  // Always load base .env file first (for all environments)
+  const baseEnvPath = path.join(process.cwd(), '.env');
+  let envVars = {};
+
+  if (fs.existsSync(baseEnvPath)) {
+    const baseEnvContent = fs.readFileSync(baseEnvPath, 'utf8');
+    baseEnvContent.split('\n').forEach(line => {
+      // Skip empty lines and comments
+      if (!line.trim() || line.trim().startsWith('#')) {
+        return;
+      }
+
+      const [key, ...valueParts] = line.split('=');
+      if (key && valueParts.length > 0) {
+        const value = valueParts.join('=').trim();
+        // Remove inline comments
+        const cleanValue = value.split('#')[0].trim();
+        envVars[key.trim()] = cleanValue;
+      }
+    });
   }
 
+  // Load environment-specific file if it exists
   const envFile =
-    process.env.NODE_ENV === 'test' ? '.env.test' : '.env.development';
+    process.env.NODE_ENV === 'test'
+      ? '.env.test'
+      : process.env.NODE_ENV === 'production'
+        ? '.env.production'
+        : '.env.development';
 
   const envPath = path.join(process.cwd(), envFile);
 
-  if (!fs.existsSync(envPath)) {
-    logWarning(`Environment file ${envFile} not found, using process.env`);
-    return process.env;
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      // Skip empty lines and comments
+      if (!line.trim() || line.trim().startsWith('#')) {
+        return;
+      }
+
+      const [key, ...valueParts] = line.split('=');
+      if (key && valueParts.length > 0) {
+        const value = valueParts.join('=').trim();
+        // Remove inline comments
+        const cleanValue = value.split('#')[0].trim();
+        envVars[key.trim()] = cleanValue;
+      }
+    });
+  } else if (process.env.NODE_ENV !== 'production') {
+    // Only warn for non-production environments
+    logWarning(`Environment file ${envFile} not found`);
   }
-
-  // Load environment variables from file
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  const envVars = {};
-
-  envContent.split('\n').forEach(line => {
-    const [key, ...valueParts] = line.split('=');
-    if (key && valueParts.length > 0) {
-      envVars[key.trim()] = valueParts.join('=').trim();
-    }
-  });
 
   return { ...process.env, ...envVars };
 }
