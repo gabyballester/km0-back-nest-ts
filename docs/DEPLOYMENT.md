@@ -79,11 +79,11 @@ http://localhost:3000
 http://localhost:4000
 ```
 
-### **Producción (Railway/Render)**
+### **Producción (Render)**
 
 ```bash
-# Railway/Render asignan automáticamente
-PORT=3000  # o el puerto que asigne la plataforma
+# Render asigna automáticamente
+PORT=4000
 HOST=0.0.0.0
 ```
 
@@ -98,11 +98,11 @@ HOST=localhost
 CORS_ORIGIN=http://localhost:3000
 ```
 
-### **Producción (Railway/Render)**
+### **Producción (Render)**
 
 ```bash
 NODE_ENV=production
-PORT=3000  # o el puerto que asigne el hosting
+PORT=4000
 HOST=0.0.0.0
 CORS_ORIGIN=https://tu-dominio.com
 ```
@@ -162,27 +162,27 @@ npm run build
 npm run start:prod
 ```
 
-### **Paso 2: Conectar con Railway**
+### **Paso 2: Conectar con Render**
 
-1. **Ir a [railway.app](https://railway.app)**
+1. **Ir a [render.com](https://render.com)**
 2. **Conectar cuenta de GitHub**
 3. **Seleccionar el repositorio**
-4. **Railway detectará automáticamente que es un proyecto Node.js**
+4. **Render detectará automáticamente el archivo `render.yaml`**
 
 ### **Paso 3: Configurar Variables de Entorno**
 
-En Railway Dashboard → Variables:
+En Render Dashboard → Environment Variables:
 
 ```bash
-# REQUERIDAS
+# REQUERIDAS (configuradas automáticamente desde render.yaml)
 NODE_ENV=production
-JWT_SECRET=tu-super-secret-jwt-key-at-least-32-characters-long
-COOKIE_SECRET=tu-super-secret-cookie-key-at-least-32-characters-long
-DATABASE_URL=postgresql://username:password@host:port/database
+PORT=4000
+HOST=0.0.0.0
+JWT_SECRET=<generado-automáticamente>
+COOKIE_SECRET=<generado-automáticamente>
+DATABASE_URL=<configurado-en-render>
 
 # OPCIONALES (con valores por defecto)
-PORT=3000
-HOST=0.0.0.0
 JWT_EXPIRES_IN=1d
 THROTTLE_TTL=60
 THROTTLE_LIMIT=100
@@ -192,14 +192,14 @@ LOG_LEVEL=info
 
 ### **Paso 4: Configurar Base de Datos**
 
-1. **En Railway Dashboard → New → Database → PostgreSQL**
-2. **Railway generará automáticamente DATABASE_URL**
-3. **Copiar DATABASE_URL a las variables de entorno**
+1. **En Render Dashboard → New → PostgreSQL**
+2. **Render generará automáticamente DATABASE_URL**
+3. **La variable se configurará automáticamente**
 
 ### **Paso 5: Deployment Automático**
 
-- **Railway detectará cambios en GitHub automáticamente**
-- **Deployment se ejecutará automáticamente**
+- **Render detectará cambios en GitHub automáticamente**
+- **Deployment se ejecutará automáticamente desde `render.yaml`**
 - **Health check en `/health` verificará que todo funcione**
 
 ## 📊 **MONITOREO**
@@ -211,7 +211,7 @@ GET /health          # Health básico
 GET /health/detailed # Health detallado con métricas
 ```
 
-### **Logs en Railway**
+### **Logs en Render**
 
 - **Dashboard → Logs**: Ver logs en tiempo real
 - **Logs estructurados**: Fácil debugging
@@ -219,7 +219,7 @@ GET /health/detailed # Health detallado con métricas
 
 ### **Dominio Personalizado**
 
-1. **Railway Dashboard → Settings → Domains**
+1. **Render Dashboard → Settings → Domains**
 2. **Agregar dominio personalizado**
 3. **Configurar DNS según instrucciones**
 4. **SSL automático incluido**
@@ -236,19 +236,19 @@ GET /health/detailed # Health detallado con métricas
 ### **Variables Sensibles**
 
 - ❌ Nunca committear `.env` o `env.mirror`
-- ✅ Usar variables de entorno de Railway
+- ✅ Usar variables de entorno de Render
 - ✅ Rotar secrets regularmente
-- ✅ Railway encripta automáticamente las variables
+- ✅ Render encripta automáticamente las variables
 
 ## 🚨 **SOLUCIÓN DE PROBLEMAS**
 
 ### **Deployment Falla**
 
 ```bash
-# Verificar logs en Railway Dashboard
+# Verificar logs en Render Dashboard
 # Verificar variables de entorno
 # Verificar que el build funcione localmente
-npm run build:prod
+npm run build
 ```
 
 ### **Health Check Falla**
@@ -264,14 +264,14 @@ NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
 ### **Base de Datos No Conecta**
 
 ```bash
-# Verificar DATABASE_URL en Railway
+# Verificar DATABASE_URL en Render
 # Verificar que la base de datos esté activa
 # Verificar credenciales
 ```
 
 ## 📈 **ESCALADO**
 
-### **Railway Auto-Scaling**
+### **Render Auto-Scaling**
 
 - **Automático**: Según tráfico
 - **Manual**: Configurar en Dashboard
@@ -279,7 +279,7 @@ NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
 
 ### **Monitoreo**
 
-- **Railway Dashboard**: Métricas en tiempo real
+- **Render Dashboard**: Métricas en tiempo real
 - **Logs**: Estructurados y buscables
 - **Alertas**: Configurables por métricas
 
@@ -294,14 +294,6 @@ NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
 3. ✅ **Agregar base de datos** → PostgreSQL incluido
 4. ✅ **Configurar dominio** → SSL automático
 5. ✅ **Monitorear** → Logs y métricas completas
-
-### **Railway (Alternativa)**
-
-1. ✅ **Conectar GitHub** → Deployment automático
-2. ✅ **Configurar variables** → Seguridad
-3. ✅ **Agregar base de datos** → PostgreSQL
-4. ✅ **Configurar dominio** → SSL automático
-5. ✅ **Monitorear** → Logs y métricas
 
 ### **Ventajas Finales**
 
