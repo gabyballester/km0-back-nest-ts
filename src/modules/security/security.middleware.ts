@@ -17,7 +17,7 @@ export class SecurityMiddleware implements NestMiddleware {
 
   constructor(private readonly configService: ConfigService) {
     const corsOrigin = this.configService.get<string>(ENV_KEYS.CORS_ORIGIN);
-    this.corsOrigin = corsOrigin || 'http://localhost:3000';
+    this.corsOrigin = corsOrigin ?? 'http://localhost:3000';
 
     // Configure Helmet with security headers
     this.helmetMiddleware = helmet({

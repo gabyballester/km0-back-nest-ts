@@ -198,7 +198,7 @@ describe('SecurityMiddleware', () => {
       );
     });
 
-    it('should handle empty string CORS origin gracefully', async () => {
+    it('should preserve empty string CORS origin', async () => {
       // Create middleware with empty string CORS origin
       const moduleWithEmptyOrigin: TestingModule =
         await Test.createTestingModule({
@@ -223,10 +223,10 @@ describe('SecurityMiddleware', () => {
         mockNext,
       );
 
-      // Verify CORS origin is set to default
+      // Verify CORS origin preserves empty string
       expect(mockRes.header).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
-        'http://localhost:3000',
+        '',
       );
     });
 

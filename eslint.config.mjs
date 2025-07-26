@@ -67,6 +67,9 @@ export default tseslint.config(
       'prefer-template': 'error',
       'object-shorthand': 'error',
 
+      // Nullish coalescing rule - prefer ?? over ||
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+
       // NestJS specific rules
       '@typescript-eslint/no-empty-function': [
         'error',

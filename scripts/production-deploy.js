@@ -42,7 +42,7 @@ function checkDatabaseExists() {
       },
     );
 
-    const tableCount = parseInt(result.match(/\d+/)?.[0] || '0');
+    const tableCount = parseInt(result.match(/\d+/)?.[0] ?? '0');
     console.log(`📊 Tablas encontradas en la base de datos: ${tableCount}`);
 
     return tableCount > 0;

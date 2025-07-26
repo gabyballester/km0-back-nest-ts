@@ -17,8 +17,8 @@ import { ENV_KEYS } from '../../shared/constants/environment';
       useFactory: (configService: ConfigService) => ({
         throttlers: [
           {
-            ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 60,
-            limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 100,
+            ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 60,
+            limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 100,
           },
         ],
         // Skip rate limiting for health checks

@@ -7,7 +7,7 @@
 
 const { execSync } = require('child_process');
 
-const nodeEnv = process.env.NODE_ENV || 'development';
+const nodeEnv = process.env.NODE_ENV ?? 'development';
 
 console.log(`🔧 Environment: ${nodeEnv}`);
 

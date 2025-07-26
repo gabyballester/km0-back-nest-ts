@@ -36,7 +36,7 @@ export const validateEnv = () => {
 
     // En tests, lanzar excepción en lugar de process.exit
     if (
-      isTest(process.env[ENV_KEYS.NODE_ENV] || ENV_VALUES.NODE_ENV.DEVELOPMENT)
+      isTest(process.env[ENV_KEYS.NODE_ENV] ?? ENV_VALUES.NODE_ENV.DEVELOPMENT)
     ) {
       throw new Error(`Environment validation failed: ${String(error)}`);
     }
@@ -63,5 +63,5 @@ export const envConfig = registerAs('env', () => {
 
 // Función helper para obtener el entorno actual
 export const getCurrentEnvironment = (): string => {
-  return process.env[ENV_KEYS.NODE_ENV] || ENV_VALUES.NODE_ENV.DEVELOPMENT;
+  return process.env[ENV_KEYS.NODE_ENV] ?? ENV_VALUES.NODE_ENV.DEVELOPMENT;
 };

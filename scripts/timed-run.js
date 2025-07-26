@@ -49,7 +49,7 @@ function runWithTimer(command, description) {
 // Ejecutar el comando si se proporciona
 if (process.argv.length >= 3) {
   const command = process.argv[2];
-  const description = process.argv[3] || 'Comando ejecutado';
+  const description = process.argv[3] ?? 'Comando ejecutado';
 
   runWithTimer(command, description);
 } else {

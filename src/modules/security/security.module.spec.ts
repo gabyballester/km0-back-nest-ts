@@ -113,8 +113,8 @@ describe('SecurityModule', () => {
     const factory = (configService: ConfigService) => ({
       throttlers: [
         {
-          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 60,
-          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 100,
+          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 60,
+          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 100,
         },
       ],
       skipIf: (req: { url: string }) => req.url === '/health',
@@ -137,8 +137,8 @@ describe('SecurityModule', () => {
     } => ({
       throttlers: [
         {
-          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 60,
-          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 100,
+          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 60,
+          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 100,
         },
       ],
       skipIf: (req: { url: string }) => req.url === '/health',
@@ -177,8 +177,8 @@ describe('SecurityModule', () => {
     const factory = (configService: ConfigService) => ({
       throttlers: [
         {
-          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 60,
-          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 100,
+          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 60,
+          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 100,
         },
       ],
       skipIf: (req: { url: string }) => req.url === '/health',
@@ -200,8 +200,8 @@ describe('SecurityModule', () => {
     const factory = (configService: ConfigService) => ({
       throttlers: [
         {
-          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 0,
-          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 0,
+          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 0,
+          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 0,
         },
       ],
       skipIf: (req: { url: string }) => req.url === '/health',
@@ -221,8 +221,8 @@ describe('SecurityModule', () => {
     const factory = (configService: ConfigService) => ({
       throttlers: [
         {
-          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 0,
-          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 0,
+          ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 0,
+          limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 0,
         },
       ],
       skipIf: (req: { url: string }) => req.url === '/health',
@@ -263,8 +263,8 @@ describe('SecurityModule', () => {
         return {
           throttlers: [
             {
-              ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) || 60,
-              limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) || 100,
+              ttl: configService.get<number>(ENV_KEYS.THROTTLE_TTL) ?? 60,
+              limit: configService.get<number>(ENV_KEYS.THROTTLE_LIMIT) ?? 100,
             },
           ],
           skipIf: (req: { url: string }) => req.url === '/health',
