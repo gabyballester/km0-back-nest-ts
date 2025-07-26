@@ -12,12 +12,12 @@ npm run start:prod     # 🏭 Inicio de producción
 ### **🧪 Scripts de Testing**
 
 ```bash
-npm run test:quick     # ⚡ Tests rápidos sin coverage
-npm run test:full      # 📊 Tests completos con coverage
+npm run test:quick     # ⚡ Tests rápidos sin coverage (~3.5s)
+npm run test:full      # 📊 Tests completos con coverage (~5.3s)
 npm run test:watch     # 👀 Tests en modo watch
 npm run test:debug     # 🐛 Tests en modo debug
-npm run test:e2e:quick # ⚡ E2E tests rápidos
-npm run test:e2e:full  # 📊 E2E tests completos
+npm run test:e2e:quick # ⚡ E2E tests rápidos (~3s)
+npm run test:e2e:full  # 📊 E2E tests completos (~2.6s)
 ```
 
 ### **🔧 Scripts de Entorno**

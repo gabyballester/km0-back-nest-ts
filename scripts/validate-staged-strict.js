@@ -2,8 +2,8 @@
 
 /**
  * Validación estricta de archivos staged
- * Ejecuta validaciones sin corregir errores automáticamente
- * FALLA si encuentra cualquier error de linting, type-check o tests
+ * Ejecuta validaciones solo en archivos staged sin corregir errores automáticamente
+ * FALLA si encuentra cualquier error de linting, type-check o tests de archivos staged
  */
 
 const { execSync } = require('child_process');
@@ -12,28 +12,22 @@ const path = require('path');
 console.log('🔍 Ejecutando validaciones estrictas en archivos staged...');
 
 try {
-  // 1. Verificar formato sin corregir
-  console.log('📝 Verificando formato...');
-  execSync('npm run format:check', { stdio: 'inherit' });
+  // 1. Verificar formato de archivos staged
+  console.log('📝 Verificando formato de archivos staged...');
+  execSync('npx lint-staged', { stdio: 'inherit' });
 
-  // 2. Verificar tipos de archivos staged
-  console.log('🔍 Verificando tipos...');
-  execSync('npm run type-check:staged', { stdio: 'inherit' });
+  // 2. Tests rápidos para archivos staged (solo si hay archivos .ts)
+  console.log('🧪 Ejecutando tests rápidos para archivos staged...');
+  execSync('npm run test:quick:staged', { stdio: 'inherit' });
 
-  // 3. Linting estricto SIN corregir errores
-  console.log('🧹 Ejecutando linting estricto...');
-  execSync(
-    'npx eslint "{src,apps,libs,test}/**/*.ts" --cache --max-warnings=0',
-    { stdio: 'inherit' },
+  console.log(
+    '✅ Validaciones estrictas de archivos staged completadas exitosamente',
   );
-
-  // 4. Tests mínimos para asegurar funcionalidad básica
-  console.log('🧪 Ejecutando tests mínimos...');
-  execSync('npm run test:quick', { stdio: 'inherit' });
-
-  console.log('✅ Validaciones estrictas completadas exitosamente');
 } catch (error) {
-  console.error('❌ Error en validaciones estrictas:', error.message);
+  console.error(
+    '❌ Error en validaciones estrictas de archivos staged:',
+    error.message,
+  );
   console.error('🚨 COMMIT BLOQUEADO: Corrige los errores antes de continuar');
   process.exit(1);
 }

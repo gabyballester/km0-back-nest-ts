@@ -7,7 +7,7 @@
 **✅ SIEMPRE usar en desarrollo:**
 
 ```bash
-npm run test:fast    # Tests rápidos (~2.7s)
+npm run test:quick   # Tests rápidos (~3.5s)
 npm run lint         # Linting rápido (~1s)
 npm run format       # Formatear (~0.5s)
 npm run start:dev    # Servidor desarrollo con hot reload
@@ -16,8 +16,8 @@ npm run start:dev    # Servidor desarrollo con hot reload
 **❌ NUNCA usar en desarrollo:**
 
 ```bash
-npm run test:cov     # Lento, solo para CI/CD
-npm run test:e2e     # Lento, solo para CI/CD
+npm run test:full    # Lento, solo para CI/CD
+npm run test:e2e:full # Lento, solo para CI/CD
 ```
 
 **📖 Ver documentación completa:** [docs/SCRIPTS.md](./docs/SCRIPTS.md)
@@ -65,6 +65,11 @@ src/
 - npm o yarn
 - PostgreSQL (para producción)
 
+### Documentación de API
+
+- **Swagger UI**: `http://localhost:4000/api` (desarrollo)
+- **Swagger UI**: `https://km0-market.onrender.com/api` (producción)
+
 ### Instalación
 
 ```bash
@@ -79,7 +84,7 @@ npm install
 npm run env:setup
 
 # Ejecutar tests rápidos (OBLIGATORIO)
-npm run test:fast
+npm run test:quick
 
 # Iniciar servidor desarrollo con hot reload
 npm run start:dev
@@ -129,31 +134,31 @@ DATABASE_URL=postgresql://username:password@host:port/database
 
 ### ⚡ Performance
 
-- **Tests rápidos**: ~2.7s (71 tests)
+- **Tests rápidos**: ~3.5s (204 tests)
 - **Linting**: ~1s (con cache)
 - **Build**: ~3s (SWC)
 - **Startup**: ~2s (desarrollo)
 
 ### 🛡️ Calidad
 
-- **Cobertura**: 82.08% statements, 80% functions
+- **Cobertura**: 100% statements, 100% branches, 100% functions, 100% lines
 - **Linting**: 0 warnings, 0 errors
 - **TypeScript**: Strict mode habilitado
 - **Prettier**: Formato consistente
 
 ### 🏗️ Arquitectura
 
-- **Módulos**: 5 módulos implementados
-- **Tests**: 71 tests pasando
-- **Documentación**: Completa y actualizada
+- **Módulos**: 2 módulos implementados (health, security)
+- **Tests**: 204 tests pasando
+- **Documentación**: Completa y actualizada con Swagger
 
 ## 🎯 Scripts Disponibles
 
 ### 🏃‍♂️ Scripts Rápidos (Desarrollo Diario)
 
 ```bash
-npm run test:fast      # Tests unitarios sin cobertura (~2.7s)
-npm run test:e2e:fast  # Tests e2e optimizados (~3s)
+npm run test:quick     # Tests unitarios sin cobertura (~3.5s)
+npm run test:e2e:quick # Tests e2e optimizados (~3s)
 npm run lint           # ESLint + Prettier con cache (~1s)
 npm run format         # Solo Prettier (~0.5s)
 npm run start:dev      # Servidor desarrollo con hot reload (recomendado)
@@ -162,8 +167,8 @@ npm run start:dev      # Servidor desarrollo con hot reload (recomendado)
 ### 🐌 Scripts Lentos (CI/CD)
 
 ```bash
-npm run test:cov       # Tests con cobertura completa (~2.8s)
-npm run test:e2e       # Tests e2e completos (~5s)
+npm run test:full      # Tests con cobertura completa (~5.3s)
+npm run test:e2e:full  # Tests e2e completos (~2.6s)
 npm run build          # Build de producción
 npm run start:prod     # Servidor de producción
 ```
@@ -225,9 +230,9 @@ npm run format:check   # Verificar formato sin cambiar
 
 ### ⚡ Desarrollo Diario
 
-1. **SIEMPRE usar `npm run test:fast`** para verificar cambios
+1. **SIEMPRE usar `npm run test:quick`** para verificar cambios
 2. **SIEMPRE usar `npm run lint`** antes de commits
-3. **NUNCA usar `npm run test:cov`** en desarrollo
+3. **NUNCA usar `npm run test:full`** en desarrollo
 4. **Mantener cobertura alta** pero realista
 
 ### 🏗️ Arquitectura

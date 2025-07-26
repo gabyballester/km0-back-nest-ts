@@ -16,6 +16,7 @@ jest.mock('@nestjs/swagger', () => ({
   ApiTags: (): (() => void) => (): void => {},
   ApiOperation: (): (() => void) => (): void => {},
   ApiResponse: (): (() => void) => (): void => {},
+  ApiInternalServerErrorResponse: (): (() => void) => (): void => {},
 }));
 
 describe('HealthController', () => {

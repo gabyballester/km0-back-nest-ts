@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentLogger } from './shared/utils/environment-logger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   try {
@@ -12,6 +13,33 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const port = configService.get<number>('env.port', 3000);
     const environment = configService.get<string>('env.nodeEnv', 'development');
+
+    // Configurar Swagger
+    const config = new DocumentBuilder()
+      .setTitle('KM0 Market API')
+      .setDescription(
+        'API para el marketplace KM0 - Conectando productores locales con consumidores',
+      )
+      .setVersion('1.0')
+      .addTag('health', 'Endpoints de monitoreo y health checks')
+      .addTag('auth', 'Autenticación y autorización')
+      .addTag('users', 'Gestión de usuarios')
+      .addTag('products', 'Gestión de productos')
+      .addTag('orders', 'Gestión de pedidos')
+      .addServer(`http://localhost:${port}`, 'Servidor de desarrollo')
+      .addServer('https://km0-market.onrender.com', 'Servidor de producción')
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        docExpansion: 'none',
+        filter: true,
+        showRequestDuration: true,
+      },
+      customSiteTitle: 'KM0 Market API Documentation',
+    });
 
     // Inicializar logger personalizado con el entorno correcto
     const envLogger = EnvironmentLogger.getInstance();
@@ -32,7 +60,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap().catch(error => {
-  console.error('❌ Failed to start application:', error);
-  process.exit(1);
-});
+void bootstrap();

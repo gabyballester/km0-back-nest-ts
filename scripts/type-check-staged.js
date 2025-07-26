@@ -31,9 +31,8 @@ try {
 
   console.log(`📁 Archivos staged a validar: ${stagedFiles.length}`);
 
-  // Ejecutar type-check solo en archivos staged
-  const filesArg = stagedFiles.join(' ');
-  execSync(`tsc --noEmit ${filesArg}`, { stdio: 'inherit' });
+  // Ejecutar type-check solo en archivos staged usando la configuración completa
+  execSync('tsc --noEmit', { stdio: 'inherit' });
 
   console.log('✅ Type-check de archivos staged completado exitosamente');
   process.exit(0);

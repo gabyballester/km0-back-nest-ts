@@ -1,5 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiInternalServerErrorResponse,
+} from '@nestjs/swagger';
 import { DatabaseService } from '../infrastructure/database/database.service';
 import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
 import * as os from 'os';
@@ -11,6 +17,7 @@ interface DatabaseInfo {
   postgres_version: string;
 }
 
+@ApiTags('health')
 @Controller('health')
 export class HealthController {
   constructor(
@@ -55,6 +62,40 @@ export class HealthController {
    * Returns simple health status
    */
   @Get()
+  @ApiOperation({
+    summary: 'Health Check Básico',
+    description:
+      'Verifica el estado básico de la aplicación y la conexión a la base de datos',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Aplicación saludable',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'healthy' },
+        timestamp: { type: 'string', example: '2024-01-15T10:30:00.000Z' },
+        environment: { type: 'string', example: 'production' },
+        uptime: { type: 'number', example: 123.456 },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Aplicación no saludable',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'unhealthy' },
+        timestamp: { type: 'string', example: '2024-01-15T10:30:00.000Z' },
+        environment: { type: 'string', example: 'production' },
+        uptime: { type: 'number', example: 123.456 },
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error interno del servidor',
+  })
   getHealth(): {
     status: string;
     timestamp: string;
@@ -76,6 +117,78 @@ export class HealthController {
    * Returns comprehensive health information
    */
   @Get('detailed')
+  @ApiOperation({
+    summary: 'Health Check Detallado',
+    description:
+      'Proporciona información detallada sobre el estado de la aplicación, base de datos, sistema y servicios',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Información detallada de salud',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'healthy' },
+        timestamp: { type: 'string', example: '2024-01-15T10:30:00.000Z' },
+        environment: { type: 'string', example: 'production' },
+        uptime: { type: 'number', example: 123.456 },
+        database: {
+          type: 'object',
+          properties: {
+            status: { type: 'string', example: 'connected' },
+            info: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', example: 'km0_db' },
+                type: { type: 'string', example: 'PostgreSQL' },
+                version: { type: 'string', example: 'PostgreSQL 14.0' },
+              },
+            },
+          },
+        },
+        system: {
+          type: 'object',
+          properties: {
+            nodeVersion: { type: 'string', example: 'v18.17.0' },
+            platform: { type: 'string', example: 'linux' },
+            memory: {
+              type: 'object',
+              properties: {
+                used: { type: 'number', example: 45 },
+                total: { type: 'number', example: 512 },
+                free: { type: 'number', example: 467 },
+              },
+            },
+            cpu: {
+              type: 'object',
+              properties: {
+                load: {
+                  type: 'array',
+                  items: { type: 'number' },
+                  example: [123456, 78901],
+                },
+                cores: { type: 'number', example: 4 },
+              },
+            },
+          },
+        },
+        services: {
+          type: 'object',
+          properties: {
+            database: { type: 'boolean', example: true },
+            config: { type: 'boolean', example: true },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Aplicación no saludable',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error interno del servidor',
+  })
   getDetailedHealth(): {
     status: string;
     timestamp: string;
