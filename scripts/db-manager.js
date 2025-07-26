@@ -109,6 +109,12 @@ function getOrmType() {
   const envVars = getEnvVars();
   const ormType = envVars.DATABASE_ORM || 'prisma';
 
+  // Debug logging for production troubleshooting
+  logInfo(`NODE_ENV: ${process.env.NODE_ENV}`);
+  logInfo(`DATABASE_ORM from env: ${envVars.DATABASE_ORM}`);
+  logInfo(`DATABASE_ORM from process.env: ${process.env.DATABASE_ORM}`);
+  logInfo(`Selected ORM: ${ormType}`);
+
   if (!['prisma', 'drizzle'].includes(ormType)) {
     logError(`Invalid DATABASE_ORM: ${ormType}. Must be 'prisma' or 'drizzle'`);
     process.exit(1);
