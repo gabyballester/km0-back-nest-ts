@@ -204,6 +204,27 @@ npm run db:studio:prod # Studio para producción
 
 ## 🔧 **GIT HOOKS**
 
+### **Configuración de Hooks**
+
+Los hooks están configurados directamente en los archivos `.husky/` para mayor control y claridad:
+
+#### **`.husky/pre-commit`**
+
+```bash
+npx lint-staged
+npm run test:quick
+```
+
+#### **`.husky/pre-push`**
+
+```bash
+npm run format:check
+npm run type-check
+npm run lint:check
+npm run test:full
+npm run test:e2e:full
+```
+
 ### **Estrategia de Validación**
 
 **Pre-commit (Rápido y Seguro):**

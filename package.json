@@ -28,8 +28,6 @@
     "validate:quick": "npm run format && npm run type-check && npm run lint:check",
     "validate:staged": "npm run format && npm run type-check && npm run lint:check && npm run test:staged",
     "validate:full": "npm run format && npm run type-check && npm run lint:check && npm run test:full && npm run test:e2e:full",
-    "pre-commit": "lint-staged && npm run test:quick",
-    "pre-push": "npm run validate:full",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
