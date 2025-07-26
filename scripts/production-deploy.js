@@ -8,19 +8,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-
-// Constantes para entornos
-const ENVIRONMENTS = {
-  DEVELOPMENT: 'development',
-  PRODUCTION: 'production',
-  TEST: 'test',
-};
-
-// Constantes para variables de entorno
-const ENV_KEYS = {
-  NODE_ENV: 'NODE_ENV',
-  SAFE_DEPLOYMENT_MODE: 'SAFE_DEPLOYMENT_MODE',
-};
+const { ENVIRONMENTS, ENV_KEYS, MESSAGES } = require('./constants');
 
 // Función helper para obtener variables de entorno de forma segura
 function getEnvVar(key, defaultValue = '') {
@@ -98,15 +86,15 @@ function createBaselineForExistingDatabase() {
   const safeDeploymentMode = getEnvVar(ENV_KEYS.SAFE_DEPLOYMENT_MODE);
 
   if (nodeEnv === ENVIRONMENTS.PRODUCTION) {
-    console.log('⚠️  ADVERTENCIA: Operación en PRODUCCIÓN detectada');
-    console.log('🛡️  Verificando que la operación sea SEGURA...');
+    console.log(MESSAGES.PRODUCTION_WARNING);
+    console.log(MESSAGES.SAFETY_CHECK);
 
     // Verificar que la operación sea solo de lectura
     if (!safeDeploymentMode) {
-      console.error('❌ ERROR: Deployment no seguro detectado');
-      console.error('🚨 Para operaciones en producción, usar:');
-      console.error('   SAFE_DEPLOYMENT_MODE=true npm run db:prod');
-      throw new Error('Deployment no seguro en producción');
+      console.error(MESSAGES.UNSAFE_DEPLOYMENT);
+      console.error(MESSAGES.SAFE_DEPLOYMENT_MODE_REQUIRED);
+      console.error(MESSAGES.SAFE_DEPLOYMENT_COMMAND);
+      throw new Error(MESSAGES.DEPLOYMENT_ERROR);
     }
   }
 

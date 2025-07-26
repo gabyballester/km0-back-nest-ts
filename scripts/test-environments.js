@@ -120,17 +120,7 @@ async function testEnvironment(environment) {
   }
 }
 
-// Constantes para entornos
-const ENVIRONMENTS = {
-  DEV: 'dev',
-  TEST: 'test',
-  PROD: 'prod',
-};
-
-// Constantes para variables de entorno
-const ENV_KEYS = {
-  NODE_ENV: 'NODE_ENV',
-};
+const { ENVIRONMENTS, ENV_KEYS } = require('./constants');
 
 async function main() {
   logHeader('NESTJS ENVIRONMENT TESTING SCRIPT');

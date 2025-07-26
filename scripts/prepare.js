@@ -5,19 +5,8 @@
  * Solo ejecuta husky en entornos de desarrollo
  */
 
-// Constantes para entornos
-const ENVIRONMENTS = {
-  DEVELOPMENT: 'development',
-  PRODUCTION: 'production',
-  TEST: 'test',
-};
-
-// Constantes para variables de entorno
-const ENV_KEYS = {
-  NODE_ENV: 'NODE_ENV',
-};
-
 const { execSync } = require('child_process');
+const { ENVIRONMENTS, ENV_KEYS } = require('./constants');
 
 const nodeEnv = process.env[ENV_KEYS.NODE_ENV] ?? ENVIRONMENTS.DEVELOPMENT;
 

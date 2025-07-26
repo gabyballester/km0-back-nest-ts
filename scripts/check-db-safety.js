@@ -6,28 +6,9 @@
  */
 
 const { execSync } = require('child_process');
-
-// Constantes para entornos
-const ENVIRONMENTS = {
-  DEVELOPMENT: 'development',
-  PRODUCTION: 'production',
-  TEST: 'test',
-};
-
-// Constantes para variables de entorno
-const ENV_KEYS = {
-  NODE_ENV: 'NODE_ENV',
-};
+const { ENVIRONMENTS, ENV_KEYS, DANGEROUS_COMMANDS } = require('./constants');
 
 console.log('🛡️ Verificando seguridad de comandos de base de datos...');
-
-// Comandos peligrosos que NUNCA deben usarse en producción
-const DANGEROUS_COMMANDS = [
-  'prisma migrate dev',
-  'prisma migrate reset',
-  'prisma db push --force-reset',
-  'prisma db push --accept-data-loss',
-];
 
 // Comandos seguros para producción
 const SAFE_COMMANDS = [

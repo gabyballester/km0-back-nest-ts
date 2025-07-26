@@ -33,6 +33,34 @@ export const ENV_KEYS = {
 } as const;
 
 /**
+ * Configuration keys for ConfigService
+ * Centralized keys for ConfigService.get() calls to avoid typos
+ */
+export const CONFIG_KEYS = {
+  // Environment configuration
+  ENV_NODE_ENV: 'env.nodeEnv',
+  ENV_PORT: 'env.port',
+  ENV_HOST: 'env.host',
+
+  // Database configuration
+  DATABASE_URL: 'database.url',
+
+  // Security configuration
+  JWT_SECRET: 'jwt.secret',
+  JWT_EXPIRES_IN: 'jwt.expiresIn',
+
+  // Rate limiting configuration
+  THROTTLE_TTL: 'throttle.ttl',
+  THROTTLE_LIMIT: 'throttle.limit',
+
+  // CORS configuration
+  CORS_ORIGIN: 'cors.origin',
+
+  // Logging configuration
+  LOG_LEVEL: 'log.level',
+} as const;
+
+/**
  * Environment values constants
  * Typed constants for environment values to ensure consistency
  */
