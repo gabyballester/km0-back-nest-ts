@@ -12,3 +12,4 @@ export class AppController {
   }
 }
 // test
+// Test comment for pre-commit
