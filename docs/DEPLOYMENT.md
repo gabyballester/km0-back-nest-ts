@@ -15,6 +15,30 @@
 - ✅ Excelente para NestJS
 - ✅ Se despierta automáticamente después de inactividad
 
+**Configuración Actualizada:**
+
+```yaml
+# render.yaml
+services:
+  - type: web
+    name: km0-market-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run db:generate && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+```
+
+**Variables de Entorno Configuradas:**
+
+- `NODE_ENV=production`
+- `PORT=4000`
+- `HOST=0.0.0.0`
+- `JWT_SECRET` (generado automáticamente)
+- `COOKIE_SECRET` (generado automáticamente)
+- `DATABASE_URL` (configurado en Render)
+- Variables individuales de base de datos
+
 **Precios:**
 
 - **Gratis**: 750 horas/mes (sleep después de 15 min inactivo)
@@ -263,7 +287,15 @@ NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
 
 ## 🎯 **RESUMEN DE DEPLOYMENT**
 
-### **Railway (Recomendado)**
+### **Render (Recomendado Principal)**
+
+1. ✅ **Conectar GitHub** → Deployment automático desde `render.yaml`
+2. ✅ **Configurar variables** → Seguridad con variables individuales
+3. ✅ **Agregar base de datos** → PostgreSQL incluido
+4. ✅ **Configurar dominio** → SSL automático
+5. ✅ **Monitorear** → Logs y métricas completas
+
+### **Railway (Alternativa)**
 
 1. ✅ **Conectar GitHub** → Deployment automático
 2. ✅ **Configurar variables** → Seguridad
@@ -278,3 +310,4 @@ NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
 - 📊 **Monitoreo completo**
 - 💰 **Gratis para empezar**
 - 🔧 **Fácil mantenimiento**
+- 📋 **Configuración declarativa** (render.yaml)
