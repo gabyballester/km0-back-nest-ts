@@ -19,13 +19,6 @@ import { envConfig } from './config/env.config';
       isGlobal: true,
       load: [envConfig],
       cache: true,
-      envFilePath: [
-        '.env',
-        '.env.local',
-        '.env.development',
-        '.env.test',
-        '.env.production',
-      ],
     }),
     // Security module (rate limiting, etc.)
     SecurityModule,
