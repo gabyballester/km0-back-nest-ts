@@ -141,10 +141,8 @@ const prismaOperations = {
   },
 
   migrateDeploy: (env = '') => {
-    const envFlag = env ? `-e .env.${env}` : '';
-    const command = envFlag
-      ? `dotenv ${envFlag} -- npx prisma migrate deploy`
-      : 'npx prisma migrate deploy';
+    // In production, use process.env directly (no dotenv needed)
+    const command = 'npx prisma migrate deploy';
     return executeCommand(
       command,
       `Deploy Prisma migrations (${env || 'current'})`,
@@ -209,10 +207,8 @@ const drizzleOperations = {
   },
 
   migrateDeploy: (env = '') => {
-    const envFlag = env ? `-e .env.${env}` : '';
-    const command = envFlag
-      ? `dotenv ${envFlag} -- npx drizzle-kit migrate`
-      : 'npx drizzle-kit migrate';
+    // In production, use process.env directly (no dotenv needed)
+    const command = 'npx drizzle-kit migrate';
     return executeCommand(
       command,
       `Deploy Drizzle migrations (${env || 'current'})`,
