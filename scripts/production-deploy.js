@@ -9,6 +9,16 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Función helper para obtener variables de entorno de forma segura
+function getEnvVar(key, defaultValue = '') {
+  return process.env[key] || defaultValue;
+}
+
+// Función helper para verificar el entorno
+function getEnvironment() {
+  return getEnvVar('NODE_ENV', 'development');
+}
+
 console.log(
   '🚀 Iniciando deployment de producción siguiendo mejores prácticas...',
 );
@@ -71,12 +81,15 @@ function createBaselineForExistingDatabase() {
   );
 
   // 🚨 VALIDACIÓN CRÍTICA: Verificar que estamos en entorno seguro
-  if (process.env.NODE_ENV === 'production') {
+  const nodeEnv = getEnvironment();
+  const safeDeploymentMode = getEnvVar('SAFE_DEPLOYMENT_MODE');
+
+  if (nodeEnv === 'production') {
     console.log('⚠️  ADVERTENCIA: Operación en PRODUCCIÓN detectada');
     console.log('🛡️  Verificando que la operación sea SEGURA...');
 
     // Verificar que la operación sea solo de lectura
-    if (!process.env.SAFE_DEPLOYMENT_MODE) {
+    if (!safeDeploymentMode) {
       console.error('❌ ERROR: Deployment no seguro detectado');
       console.error('🚨 Para operaciones en producción, usar:');
       console.error('   SAFE_DEPLOYMENT_MODE=true npm run db:prod');
@@ -111,7 +124,9 @@ function createBaselineForExistingDatabase() {
 function deployProduction() {
   try {
     // 🚨 VALIDACIÓN CRÍTICA: Verificar entorno de producción
-    if (process.env.NODE_ENV === 'production') {
+    const nodeEnv = getEnvironment();
+
+    if (nodeEnv === 'production') {
       console.log('🚨 ========================================');
       console.log('🛡️  DEPLOYMENT DE PRODUCCIÓN DETECTADO');
       console.log('========================================');
