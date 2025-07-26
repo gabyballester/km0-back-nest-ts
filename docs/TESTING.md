@@ -165,6 +165,7 @@ grep -r "process\.env" src/ --exclude="env.config.ts"
 - **`env.schema.ts`**: Schema de validación de Zod (solo definiciones)
 - **`env.constants.ts`**: Constantes estáticas (solo valores)
 - **`environment.schema.ts`**: Schema de validación de Zod para constantes (solo definiciones)
+- **`shared/constants/`**: Toda la carpeta de constantes, helpers y schemas estáticos (no lógica de negocio)
 - **`modules/security/security.module.ts`**: Módulo puramente declarativo, sin lógica propia (solo importa y exporta ThrottlerModule). Se excluye para evitar penalización artificial en la cobertura, ya que no contiene lógica de negocio ni ramas relevantes.
 - **Constants**: Solo valores estáticos
 - **Types/Interfaces**: Solo definiciones de TypeScript
@@ -173,13 +174,12 @@ grep -r "process\.env" src/ --exclude="env.config.ts"
 
 ### ✅ Justificación de Exclusión
 
-**`env.schema.ts` y `env.constants.ts`**:
-
 - ✅ Solo contienen definiciones estáticas
 - ✅ No tienen lógica de negocio ejecutable
 - ✅ Se testean indirectamente a través de su uso
 - ✅ Zod ya tiene sus propios tests exhaustivos
 - ✅ No aportan valor al testing unitario
+- ✅ Módulos declarativos (sin lógica) tampoco aportan valor
 
 ## 🎯 Criterios de Necesidad de Tests
 
@@ -276,39 +276,4 @@ coveragePathIgnorePatterns: [
 
 ### ✅ Errores de TypeScript Strict Solucionados
 
-**Problema**: 37 errores de `@typescript-eslint/no-unsafe-assignment` y `@typescript-eslint/no-explicit-any`
-
-**Soluciones implementadas**:
-
-1. **Tipado estricto en mocks**: Reemplazado `any` con tipos específicos
-2. **Imports de Express**: Agregado `import { Request, Response } from 'express'`
-3. **Type assertions**: Uso de `as Partial<ConfigService>` en lugar de `as any`
-4. **Variables no utilizadas**: Prefijo `_` para parámetros no utilizados
-5. **ConfigService tipado**: Uso de `jest.fn()` con tipos específicos
-
-### ✅ Archivos Corregidos
-
-- `src/modules/security/security.middleware.spec.ts`: Tipado completo de mocks
-- `src/modules/security/security.module.spec.ts`: Eliminación de `any` y tipado estricto
-
-### ✅ Configuración Final
-
-```javascript
-// jest.config.js
-detectOpenHandles: true,
-forceExit: false,
-
-// ESLint
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-```
-
-### ✅ Resultado Final
-
-- **Linting**: ✅ Sin errores ni warnings
-- **Tests**: ✅ 83 tests pasando
-- **Cobertura**: ✅ Umbrales cumplidos
-- **Performance**: ✅ Tests rápidos (2.9s)
-
----
-
-> **Cobertura y documentación sincronizadas. Última actualización: [ver CHANGELOG](CHANGELOG.md)**
+**Problema**: 37 errores de `@typescript-eslint/no-unsafe-assignment` y `

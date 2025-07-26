@@ -3,6 +3,9 @@
 /node_modules
 /legacy
 
+# Ignorar cualquier carpeta dist anidada
+**/dist/
+
 # Logs
 logs
 *.log

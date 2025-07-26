@@ -27,12 +27,10 @@ module.exports = {
     '/main.ts$',
     '/env.config.ts$',
     '/env.schema.ts$',
-    '/env.constants.ts$',
+    // Excluir toda la carpeta de constantes (solo definiciones estáticas, helpers y schemas)
+    '/shared/constants/',
+    // Excluir módulos puramente declarativos (sin lógica de negocio)
     '/modules/security/security.module.ts$',
-    '/shared/constants/api.ts$',
-    '/shared/constants/security.ts$',
-    '/shared/constants/validation.ts$',
-    '/shared/constants/environment.schema.ts$',
     '/dist/',
     '/node_modules/',
   ],
