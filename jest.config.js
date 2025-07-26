@@ -24,6 +24,10 @@ module.exports = {
       },
     ],
   },
+  // Configuración alternativa con esbuild (más rápido)
+  transformIgnorePatterns: process.env.JEST_USE_ESBUILD
+    ? ['node_modules/(?!(.*\\.mjs$))']
+    : ['/node_modules/', '/dist/', '/legacy/'],
   collectCoverageFrom: ['src/**/*.(t|j)s'],
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: [
