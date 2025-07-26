@@ -17,6 +17,8 @@
     "test:quick:ultra": "node scripts/timed-run.js \"cross-env NODE_ENV=test JEST_MAX_WORKERS=6 jest --maxWorkers=6 --bail --passWithNoTests --silent --no-coverage\" \"⚡ Tests ultra rápidos (Test)\"",
     "test:quick:esbuild": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --maxWorkers=8 --bail --passWithNoTests --silent --no-coverage --transformIgnorePatterns=node_modules\" \"⚡ Tests con esbuild (Test)\"",
     "test:quick:esbuild:ultra": "node scripts/timed-run.js \"cross-env NODE_ENV=test JEST_USE_ESBUILD=true jest --maxWorkers=8 --bail --passWithNoTests --silent --no-coverage\" \"🚀 Tests con esbuild ultra rápidos (Test)\"",
+    "test:quick:typesafe": "node scripts/timed-run.js \"npm run type-check && cross-env NODE_ENV=test jest --maxWorkers=6 --bail --passWithNoTests --silent --no-coverage\" \"🛡️ Tests rápidos con verificación de tipos (Test)\"",
+    "test:quick:hybrid": "node scripts/timed-run.js \"npm run type-check && cross-env NODE_ENV=test JEST_USE_ESBUILD=true jest --maxWorkers=6 --bail --passWithNoTests --silent --no-coverage\" \"⚡ Tests híbridos: velocidad + tipos (Test)\"",
     "test:staged": "cross-env NODE_ENV=test jest --maxWorkers=4 --bail --passWithNoTests --silent --no-coverage --onlyChanged",
     "test:staged:ultra": "cross-env NODE_ENV=test JEST_MAX_WORKERS=8 jest --maxWorkers=8 --bail --passWithNoTests --silent --no-coverage --onlyChanged",
     "test:full": "node scripts/timed-run.js \"cross-env NODE_ENV=test JEST_COVERAGE=true jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent\" \"📊 Tests completos con coverage (Test)\"",

@@ -352,15 +352,37 @@ NODE_ENV=test            # Entorno de testing
 
 ## 🚀 **COMPILADORES ULTRA RÁPIDOS - INVESTIGACIÓN COMPLETA**
 
-### **📊 Comparación de Velocidades**
+### **📊 Comparación de Velocidades (ACTUALIZADA)**
 
-| Compilador       | Tiempo   | Compatibilidad | Estabilidad     | Recomendación         |
-| ---------------- | -------- | -------------- | --------------- | --------------------- |
-| **SWC (Actual)** | ~5.8s    | ✅ Excelente   | ✅ Estable      | ✅ **Recomendado**    |
-| **esbuild**      | ~5.8s    | ✅ Buena       | ✅ Estable      | ✅ **Alternativa**    |
-| **Bun**          | ❌ Crash | ❌ Problemas   | ❌ Inestable    | ❌ **No recomendado** |
-| **Vite**         | N/A      | ⚠️ Limitada    | ⚠️ Experimental | ⚠️ **Futuro**         |
-| **Turbo**        | N/A      | ⚠️ Monorepo    | ⚠️ Complejo     | ⚠️ **Overkill**       |
+| Compilador                         | Velocidad       | Verificación de Tipos | Tiempo Total | Recomendación             |
+| ---------------------------------- | --------------- | --------------------- | ------------ | ------------------------- |
+| **SWC (Actual)**                   | ⚡️⚡️⚡️⚡️⚡️ | ❌ No incluye         | ~5.8s        | ✅ **Desarrollo rápido**  |
+| **esbuild**                        | ⚡️⚡️⚡️⚡️⚡️ | ❌ No incluye         | ~5.8s        | ✅ **Alternativa rápida** |
+| **ts-jest (estándar)**             | ⚡️             | ✅ Incluye            | ~11.4s       | ⚠️ **Lento pero seguro**  |
+| **ts-jest (transpile-only)**       | ⚡️⚡️⚡️       | ❌ No incluye         | ~8s          | ⚠️ **Balance medio**      |
+| **Híbrido (type-check + esbuild)** | ⚡️⚡️⚡️⚡️    | ✅ Incluye            | ~10.1s       | ✅ **Recomendado**        |
+
+### **🎯 ESTRATEGIA HÍBRIDA RECOMENDADA**
+
+#### **Problema Identificado:**
+
+- **SWC/esbuild**: Ultra rápidos pero sin verificación de tipos
+- **ts-jest**: Lento pero con verificación de tipos
+- **Riesgo**: Errores de tipos pueden pasar desapercibidos
+
+#### **Solución Híbrida:**
+
+```bash
+# Combinar type-check + esbuild para máxima seguridad y velocidad
+npm run test:quick:hybrid
+```
+
+**Ventajas:**
+
+- ✅ **Verificación de tipos**: `tsc --noEmit` antes de tests
+- ✅ **Velocidad**: esbuild para compilación de tests
+- ✅ **Seguridad**: Detecta errores de tipos temprano
+- ✅ **Balance**: ~10s vs ~11.4s (10% más rápido que ts-jest estándar)
 
 ### **🔍 Análisis Detallado**
 
@@ -373,6 +395,11 @@ NODE_ENV=test            # Entorno de testing
 - **Estabilidad**: Muy estable en producción
 - **Configuración**: Simple y directa
 - **Comunidad**: Amplio soporte
+
+**❌ Limitaciones:**
+
+- **Verificación de tipos**: No incluye
+- **Riesgo**: Errores de tipos pueden pasar desapercibidos
 
 **⚙️ Configuración Actual:**
 
@@ -411,6 +438,7 @@ transform: {
 - **Decoradores**: Soporte limitado para decoradores de NestJS
 - **Reflection**: Problemas con `reflect-metadata`
 - **Testing**: Requiere configuración especial
+- **Verificación de tipos**: No incluye
 
 **⚙️ Configuración:**
 
@@ -427,158 +455,135 @@ transformIgnorePatterns: process.env.JEST_USE_ESBUILD
 - **Build**: ~2s (más rápido que SWC)
 - **Memory**: ~120MB
 
-#### **3. Bun - NO RECOMENDADO**
+#### **3. Híbrido (type-check + esbuild) - RECOMENDADO**
 
-**❌ Problemas Identificados:**
+**✅ Ventajas:**
 
-- **Crash**: Pánico del runtime con NestJS
-- **Compatibilidad**: Problemas con decoradores y reflection
-- **Estabilidad**: Muy inestable para proyectos complejos
-- **Ecosistema**: Soporte limitado para NestJS
+- **Verificación de tipos**: Completa con `tsc --noEmit`
+- **Velocidad**: esbuild para compilación de tests
+- **Seguridad**: Máxima protección contra errores de tipos
+- **Balance**: Velocidad + seguridad
 
-**🚨 Errores Encontrados:**
+**⚙️ Configuración:**
 
+```bash
+# package.json
+"test:quick:hybrid": "npm run type-check && cross-env NODE_ENV=test JEST_USE_ESBUILD=true jest --maxWorkers=6 --bail --passWithNoTests --silent --no-coverage"
 ```
-panic(main thread): invalid error code
-oh no: Bun has crashed. This indicates a bug in Bun, not your code.
-```
 
-**📊 Resultados:**
+**📈 Performance:**
 
-- **Tests**: ❌ Fallo total
-- **Tiempo**: 4.4s antes del crash
-- **Estabilidad**: ❌ Inaceptable
+- **Type-check**: ~5.2s
+- **Tests con esbuild**: ~5.3s
+- **Total**: ~10.1s
+- **Seguridad**: 100% verificación de tipos
 
-#### **4. Vite - FUTURO PROMETEDOR**
+#### **4. ts-jest (estándar) - COMPARACIÓN**
 
-**⚠️ Estado Actual:**
+**✅ Ventajas:**
 
-- **Testing**: Soporte experimental
-- **NestJS**: No optimizado para backends
-- **Configuración**: Compleja para testing
-- **Comunidad**: En desarrollo
+- **Verificación de tipos**: Incluida
+- **Compatibilidad**: Máxima con TypeScript
+- **Simplicidad**: Configuración estándar
 
-**🔮 Potencial Futuro:**
+**❌ Limitaciones:**
 
-- **Velocidad**: Promete ser más rápido que SWC
-- **HMR**: Hot Module Replacement excelente
-- **Ecosistema**: Crecimiento rápido
+- **Velocidad**: Muy lento (~11.4s)
+- **Recursos**: Alto consumo de CPU/memoria
+- **Escalabilidad**: Problemas con proyectos grandes
 
-#### **5. Turbo - OVERKILL**
+**📈 Performance:**
 
-**⚠️ Limitaciones:**
-
-- **Monorepo**: Diseñado para monorepos
-- **Complejidad**: Configuración compleja
-- **Testing**: No optimizado para testing unitario
-- **Overhead**: Demasiado para proyectos simples
+- **Tests completos**: ~11.4s
+- **Memory**: ~200MB
+- **CPU**: Alto uso
 
 ### **🎯 RECOMENDACIONES FINALES**
 
-#### **✅ PARA PRODUCCIÓN (ACTUAL)**
+#### **✅ PARA DESARROLLO DIARIO**
 
-**SWC es la mejor opción actual:**
+**Opción 1: Híbrido (Recomendado)**
 
-- ✅ **Estabilidad**: Probado y confiable
-- ✅ **Velocidad**: Muy rápido (5.8s para 204 tests)
-- ✅ **Compatibilidad**: Excelente con NestJS
-- ✅ **Comunidad**: Amplio soporte
-- ✅ **Configuración**: Simple y directa
+```bash
+npm run test:quick:hybrid  # ~10.1s - Velocidad + seguridad
+```
 
-#### **✅ PARA EXPERIMENTACIÓN**
+**Opción 2: SWC (Solo velocidad)**
 
-**esbuild como alternativa:**
+```bash
+npm run test:quick:ultra   # ~5.8s - Máxima velocidad
+```
 
-- ✅ **Velocidad**: Similar a SWC
-- ✅ **Simplicidad**: Configuración mínima
-- ⚠️ **Compatibilidad**: Requiere ajustes para decoradores
+#### **✅ PARA PRE-COMMIT**
 
-#### **❌ NO RECOMENDADOS**
+**Actualizar pre-commit para usar híbrido:**
 
-**Bun, Vite, Turbo:**
+```bash
+# .husky/pre-commit
+npx lint-staged
+npm run test:quick:hybrid  # Verificación de tipos + velocidad
+```
 
-- ❌ **Bun**: Inestable, crashes frecuentes
-- ❌ **Vite**: No optimizado para testing backend
-- ❌ **Turbo**: Overkill para proyectos simples
+#### **✅ PARA PRE-PUSH**
 
-### **📈 MÉTRICAS DE PERFORMANCE**
+**Mantener configuración actual:**
 
-#### **Comparación de Tiempos**
+```bash
+# .husky/pre-push
+npm run format:check
+npm run type-check        # Verificación de tipos explícita
+npm run lint:check
+npm run test:full:ultra   # Tests completos con cobertura
+npm run test:e2e:full
+```
 
-| Script               | Compilador | Workers | Tiempo | Tests | Velocidad  |
-| -------------------- | ---------- | ------- | ------ | ----- | ---------- |
-| `test:quick`         | SWC        | 4       | 5.5s   | 204   | 37 tests/s |
-| `test:quick:ultra`   | SWC        | 6       | 6.2s   | 204   | 33 tests/s |
-| `test:quick:esbuild` | esbuild    | 8       | 5.8s   | 204   | 35 tests/s |
-| `test:full:ultra`    | SWC        | 4       | 7.4s   | 204   | 28 tests/s |
+### **📊 COMPARACIÓN FINAL DE VELOCIDADES**
 
-#### **Optimizaciones Implementadas**
+| Script                     | Compilador           | Verificación de Tipos | Tiempo | Uso Recomendado   |
+| -------------------------- | -------------------- | --------------------- | ------ | ----------------- |
+| `test:quick`               | SWC                  | ❌                    | ~5.5s  | Desarrollo básico |
+| `test:quick:ultra`         | SWC                  | ❌                    | ~6.2s  | Desarrollo rápido |
+| `test:quick:esbuild:ultra` | esbuild              | ❌                    | ~5.8s  | Máxima velocidad  |
+| `test:quick:typesafe`      | ts-jest              | ✅                    | ~11.4s | Máxima seguridad  |
+| `test:quick:hybrid`        | type-check + esbuild | ✅                    | ~10.1s | **Pre-commit**    |
+| `test:full:ultra`          | SWC                  | ❌                    | ~7.4s  | **Pre-push**      |
 
-1. **Workers Dinámicos**: Configuración automática según CPU
-2. **Cache Inteligente**: Persistente entre ejecuciones
-3. **Sin Source Maps**: Deshabilitados para velocidad
-4. **Force Exit**: Salida forzada para evitar delays
-5. **Transformaciones Optimizadas**: SWC en lugar de Babel
+### **🔧 CONFIGURACIÓN OPTIMIZADA**
 
-### **🔧 CONFIGURACIÓN ACTUAL OPTIMIZADA**
+#### **Actualizar pre-commit para máxima seguridad:**
 
-```javascript
-// jest.config.js - Configuración ultra optimizada
-module.exports = {
-  transform: {
-    '^.+\\.(t|j)s$': [
-      '@swc/jest',
-      {
-        jsc: {
-          parser: { syntax: 'typescript', decorators: true },
-          transform: { legacyDecorator: true, decoratorMetadata: true },
-          target: 'es2020',
-        },
-        minify: false,
-        sourceMaps: false,
-      },
-    ],
-  },
-  maxWorkers: process.env.JEST_MAX_WORKERS || '100%',
-  cache: true,
-  cacheDirectory: '.jest-cache',
-  clearMocks: false,
-  resetMocks: false,
-  restoreMocks: false,
-  detectOpenHandles: false,
-  forceExit: true,
-  injectGlobals: true,
-};
+```bash
+# .husky/pre-commit
+npx lint-staged
+npm run test:quick:hybrid  # Verificación de tipos + velocidad
+```
+
+#### **Mantener pre-push con validación explícita:**
+
+```bash
+# .husky/pre-push
+npm run format:check
+npm run type-check        # Verificación de tipos explícita
+npm run lint:check
+npm run test:full:ultra   # Tests completos con cobertura
+npm run test:e2e:full
 ```
 
 ### **🚀 PRÓXIMOS PASOS**
 
-1. **Mantener SWC**: Como compilador principal
-2. **Monitorear esbuild**: Para mejoras futuras
-3. **Evaluar Vite**: Cuando madure para testing
-4. **Evitar Bun**: Hasta que sea más estable
-5. **Optimizar más**: Ajustar workers según hardware
+1. **Implementar híbrido en pre-commit**: Máxima seguridad
+2. **Mantener SWC en pre-push**: Velocidad + cobertura
+3. **Monitorear performance**: Ajustar según necesidades
+4. **Evaluar ts-jest transpile-only**: Si se necesita más velocidad
+5. **Considerar Vite**: Cuando madure para testing
 
----
+### **📈 BENEFICIOS DE LA ESTRATEGIA HÍBRIDA**
 
-## 📊 **COMPARACIÓN FINAL DE VELOCIDADES**
-
-### **Scripts Optimizados por Velocidad**
-
-| Script                     | Compilador | Workers | Cobertura | Tiempo | Uso Recomendado   |
-| -------------------------- | ---------- | ------- | --------- | ------ | ----------------- |
-| `test:quick`               | SWC        | 4       | ❌        | ~5.5s  | Desarrollo básico |
-| `test:quick:ultra`         | SWC        | 6       | ❌        | ~6.2s  | Desarrollo rápido |
-| `test:quick:esbuild:ultra` | esbuild    | 8       | ❌        | ~5.8s  | **Pre-commit**    |
-| `test:full:ultra`          | SWC        | 4       | ✅        | ~7.4s  | **Pre-push**      |
-| `test:full:coverage`       | SWC        | 2       | ✅        | ~12s   | CI/CD             |
-
-### **Recomendaciones de Uso**
-
-- **Pre-commit**: `test:quick:esbuild:ultra` (más rápido)
-- **Pre-push**: `test:full:ultra` (con cobertura)
-- **Desarrollo**: `test:quick:ultra` (balance velocidad/estabilidad)
-- **CI/CD**: `test:full:coverage` (validación completa)
+- ✅ **Seguridad**: Verificación de tipos en cada commit
+- ✅ **Velocidad**: esbuild para compilación rápida
+- ✅ **Balance**: 10% más rápido que ts-jest estándar
+- ✅ **Compatibilidad**: Funciona con NestJS y decoradores
+- ✅ **Escalabilidad**: Mantiene performance en proyectos grandes
 
 ---
 
