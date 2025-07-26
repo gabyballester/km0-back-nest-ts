@@ -27,9 +27,9 @@ try {
     { stdio: 'inherit' },
   );
 
-  // 4. Tests completos con coverage
-  console.log('🧪 Ejecutando tests completos...');
-  execSync('npm run test:full', { stdio: 'inherit' });
+  // 4. Tests completos con coverage estricta (100%)
+  console.log('🧪 Ejecutando tests completos con cobertura estricta...');
+  execSync('npm run validate:coverage:strict', { stdio: 'inherit' });
 
   // 5. Tests E2E
   console.log('🌐 Ejecutando tests E2E...');

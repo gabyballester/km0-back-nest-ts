@@ -2,32 +2,26 @@
 
 /**
  * Validación estricta de archivos staged
- * Ejecuta validaciones solo en archivos staged sin corregir errores automáticamente
- * FALLA si encuentra cualquier error de linting, type-check o tests de archivos staged
+ * Optimizado para pre-commit: rápido y eficiente
+ * FALLA si encuentra cualquier error
  */
 
 const { execSync } = require('child_process');
-const path = require('path');
 
-console.log('🔍 Ejecutando validaciones estrictas en archivos staged...');
+console.log('🔍 Ejecutando validación estricta de archivos staged...');
 
 try {
-  // 1. Verificar formato de archivos staged
-  console.log('📝 Verificando formato de archivos staged...');
+  // 1. Ejecutar lint-staged (formato + type-check + eslint + tests rápidos)
+  console.log('📋 Ejecutando lint-staged...');
   execSync('npx lint-staged', { stdio: 'inherit' });
 
-  // 2. Tests rápidos para archivos staged (solo si hay archivos .ts)
-  console.log('🧪 Ejecutando tests rápidos para archivos staged...');
-  execSync('npm run test:quick:staged', { stdio: 'inherit' });
+  // 2. Validación de cobertura global (rápida)
+  console.log('📊 Verificando cobertura global...');
+  execSync('npm run validate:coverage:strict', { stdio: 'inherit' });
 
-  console.log(
-    '✅ Validaciones estrictas de archivos staged completadas exitosamente',
-  );
+  console.log('✅ Validación staged estricta completada exitosamente');
 } catch (error) {
-  console.error(
-    '❌ Error en validaciones estrictas de archivos staged:',
-    error.message,
-  );
+  console.error('❌ Error en validación staged estricta:', error.message);
   console.error('🚨 COMMIT BLOQUEADO: Corrige los errores antes de continuar');
   process.exit(1);
 }

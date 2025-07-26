@@ -33,14 +33,16 @@ module.exports = {
     '/shared/constants/security.ts$',
     '/shared/constants/validation.ts$',
   ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 90,
-      lines: 90,
-      statements: 90,
-    },
-  },
+  coverageThreshold: process.env.JEST_COVERAGE_THRESHOLD
+    ? JSON.parse(process.env.JEST_COVERAGE_THRESHOLD)
+    : {
+        global: {
+          branches: 80,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
+      },
   testEnvironment: 'node',
   // Optimizaciones para velocidad máxima
   maxWorkers: '100%',

@@ -41,7 +41,8 @@
     "validate:full:strict": "node scripts/validate-full-strict.js",
     "validate:full": "npm run format && npm run type-check && npm run lint && npm run test:full && npm run test:e2e:full",
     "validate:coverage": "cross-env NODE_ENV=test jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent --coverageThreshold={\"global\":{\"statements\":90,\"branches\":80,\"functions\":90,\"lines\":90}}",
-    "pre-commit": "npx lint-staged",
+    "validate:coverage:strict": "node scripts/validate-coverage-strict.js",
+    "pre-commit": "npm run validate:staged:strict",
     "pre-push": "npm run validate:full:strict",
     "start:dev": "node scripts/timed-run.js \"cross-env NODE_ENV=development npx nest start --watch --builder swc --preserveWatchOutput\" \"🔄 Inicio completo con watch (Development)\"",
     "start:prod": "node dist/main",
@@ -65,7 +66,7 @@
     "*.ts": [
       "npm run format",
       "npm run type-check:staged",
-      "npx eslint --cache --max-warnings=0",
+      "npx eslint --cache --max-warnings=0 --fix",
       "npm run test:quick:staged"
     ],
     "*.{json,md,yml,yaml}": [

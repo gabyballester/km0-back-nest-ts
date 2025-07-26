@@ -58,7 +58,10 @@ npm run db:studio:prod # 🖥️ Studio producción
 ```bash
 npm run validate:quick # ⚡ Validación rápida
 npm run validate:full  # 📊 Validación completa
-npm run validate:coverage # 📈 Validación con coverage
+npm run validate:coverage # 📈 Validación con coverage (90%)
+npm run validate:coverage:strict # 📈 Validación con coverage (100%)
+npm run validate:staged:strict # 🔒 Validación staged estricta (pre-commit)
+npm run validate:full:strict # 🔒 Validación completa estricta (pre-push)
 npm run type-check     # 🔍 Verificación de tipos
 npm run lint           # 🧹 Linting y auto-fix
 npm run format         # ✨ Formateo de código
@@ -70,6 +73,43 @@ npm run format         # ✨ Formateo de código
 npm run build          # 🏗️ Build de producción
 npm run build:dev      # 🔧 Build de desarrollo
 ```
+
+---
+
+## 🛡️ **ESTRATEGIA DE VALIDACIÓN Y CALIDAD**
+
+### **Pre-commit (Archivos Staged)**
+
+```bash
+npm run validate:staged:strict
+```
+
+- ✅ **Formato**: Prettier en archivos staged
+- ✅ **Type-check**: TypeScript en archivos staged
+- ✅ **ESLint**: Linting estricto con auto-fix
+- ✅ **Tests rápidos**: Solo archivos modificados
+- ✅ **Cobertura global**: Verificación 100% en todo el proyecto
+- ⏱️ **Tiempo**: ~5-6 segundos
+
+### **Pre-push (Proyecto Completo)**
+
+```bash
+npm run validate:full:strict
+```
+
+- ✅ **Formato**: Prettier en todo el proyecto
+- ✅ **Type-check**: TypeScript completo
+- ✅ **ESLint**: Linting estricto sin auto-fix
+- ✅ **Tests completos**: Con cobertura 100%
+- ✅ **Tests E2E**: Validación end-to-end
+- ⏱️ **Tiempo**: ~8-10 segundos
+
+### **🎯 Beneficios de esta Estrategia**
+
+- **Velocidad**: Pre-commit rápido, pre-push completo
+- **Calidad**: 100% cobertura garantizada
+- **Seguridad**: Bloqueo de commits/push con errores
+- **Consistencia**: Mismos estándares en todo el equipo
 
 ---
 

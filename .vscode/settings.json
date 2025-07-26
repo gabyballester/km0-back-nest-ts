@@ -20,5 +20,6 @@
   "eslint.format.enable": true,
   "prettier.requireConfig": true,
   "prettier.useEditorConfig": false,
-  "vsicons.presets.nestjs": true
+  "vsicons.presets.nestjs": true,
+  "compile-hero.disable-compile-files-on-did-save-code": false
 }
