@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentLogger } from './shared/utils/environment-logger';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ENV_VALUES } from './shared/constants/environment';
 
 async function bootstrap() {
   try {
@@ -12,7 +13,10 @@ async function bootstrap() {
     // Obtener configuración
     const configService = app.get(ConfigService);
     const port = configService.get<number>('env.port', 3000);
-    const environment = configService.get<string>('env.nodeEnv', 'development');
+    const environment = configService.get<string>(
+      'env.nodeEnv',
+      ENV_VALUES.NODE_ENV.DEVELOPMENT,
+    );
 
     // Configurar Swagger
     const config = new DocumentBuilder()

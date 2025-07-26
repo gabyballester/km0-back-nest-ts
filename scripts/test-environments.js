@@ -80,7 +80,7 @@ async function testEnvironment(environment) {
   try {
     // Probar el comando de información del entorno
     const result = await runCommand('npm', ['run', `env:${environment}`], {
-      NODE_ENV: environment,
+      [ENV_KEYS.NODE_ENV]: environment,
     });
 
     log('✅ Environment info command:', 'green');
@@ -93,7 +93,7 @@ async function testEnvironment(environment) {
       environment === 'prod' ? 'start:prod' : `start:${environment}`;
     const startProcess = spawn('npm', ['run', startCommand], {
       stdio: 'pipe',
-      env: { ...process.env, NODE_ENV: environment },
+      env: { ...process.env, [ENV_KEYS.NODE_ENV]: environment },
       cwd: process.cwd(),
     });
 
@@ -120,6 +120,18 @@ async function testEnvironment(environment) {
   }
 }
 
+// Constantes para entornos
+const ENVIRONMENTS = {
+  DEV: 'dev',
+  TEST: 'test',
+  PROD: 'prod',
+};
+
+// Constantes para variables de entorno
+const ENV_KEYS = {
+  NODE_ENV: 'NODE_ENV',
+};
+
 async function main() {
   logHeader('NESTJS ENVIRONMENT TESTING SCRIPT');
 
@@ -128,7 +140,7 @@ async function main() {
   log('• Production (prod)', 'red');
   log('• Test (test)', 'yellow');
 
-  const environments = ['dev', 'test', 'prod'];
+  const environments = [ENVIRONMENTS.DEV, ENVIRONMENTS.TEST, ENVIRONMENTS.PROD];
 
   for (const env of environments) {
     await testEnvironment(env);

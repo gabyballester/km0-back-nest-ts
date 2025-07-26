@@ -5,14 +5,26 @@
  * Solo ejecuta husky en entornos de desarrollo
  */
 
+// Constantes para entornos
+const ENVIRONMENTS = {
+  DEVELOPMENT: 'development',
+  PRODUCTION: 'production',
+  TEST: 'test',
+};
+
+// Constantes para variables de entorno
+const ENV_KEYS = {
+  NODE_ENV: 'NODE_ENV',
+};
+
 const { execSync } = require('child_process');
 
-const nodeEnv = process.env.NODE_ENV ?? 'development';
+const nodeEnv = process.env[ENV_KEYS.NODE_ENV] ?? ENVIRONMENTS.DEVELOPMENT;
 
 console.log(`🔧 Environment: ${nodeEnv}`);
 
 // Solo ejecutar husky en entornos de desarrollo
-if (nodeEnv !== 'production') {
+if (nodeEnv !== ENVIRONMENTS.PRODUCTION) {
   try {
     console.log('🐕 Installing Husky hooks...');
     execSync('husky', { stdio: 'inherit' });

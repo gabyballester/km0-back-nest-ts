@@ -7,6 +7,18 @@
 
 const { execSync } = require('child_process');
 
+// Constantes para entornos
+const ENVIRONMENTS = {
+  DEVELOPMENT: 'development',
+  PRODUCTION: 'production',
+  TEST: 'test',
+};
+
+// Constantes para variables de entorno
+const ENV_KEYS = {
+  NODE_ENV: 'NODE_ENV',
+};
+
 console.log('🛡️ Verificando seguridad de comandos de base de datos...');
 
 // Comandos peligrosos que NUNCA deben usarse en producción
@@ -26,11 +38,11 @@ const SAFE_COMMANDS = [
 ];
 
 function checkEnvironment() {
-  const nodeEnv = process.env.NODE_ENV;
+  const nodeEnv = process.env[ENV_KEYS.NODE_ENV];
 
-  console.log(`🌍 Entorno detectado: ${nodeEnv || 'development'}`);
+  console.log(`🌍 Entorno detectado: ${nodeEnv || ENVIRONMENTS.DEVELOPMENT}`);
 
-  if (nodeEnv === 'production') {
+  if (nodeEnv === ENVIRONMENTS.PRODUCTION) {
     console.log(
       '🚨 PRODUCCIÓN detectada - Validaciones de seguridad activadas',
     );
@@ -58,7 +70,9 @@ function checkPackageScripts() {
 
       if (isDangerous) {
         // Verificar si es un script de desarrollo (aceptable)
-        const isDevScript = name.includes('dev') || name.includes('test');
+        const isDevScript =
+          name.includes(ENVIRONMENTS.DEVELOPMENT) ||
+          name.includes(ENVIRONMENTS.TEST);
         const isSafeContext =
           command.includes('--create-only') ||
           command.includes('--accept-data-loss');
