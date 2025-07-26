@@ -22,7 +22,9 @@ import { envConfig } from './config/env.config';
       envFilePath: [
         '.env',
         '.env.local',
-        `.env.${process.env.NODE_ENV ?? 'development'}`,
+        '.env.development',
+        '.env.test',
+        '.env.production',
       ],
     }),
     // Security module (rate limiting, etc.)

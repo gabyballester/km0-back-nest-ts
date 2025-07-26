@@ -24,6 +24,15 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     try {
       // Create adapter based on configuration
       this.adapter = this.databaseFactory.createAdapter();
+      const ormType = this.databaseFactory.getOrmType();
+      const databaseUrl = this.configService.get<string>('DATABASE_URL');
+
+      // Show connection info
+      const dbInfo = new URL(databaseUrl);
+      console.log(`🗄️  ORM: ${ormType.toUpperCase()}`);
+      console.log(
+        `🔗 Database: ${dbInfo.hostname}:${dbInfo.port}${dbInfo.pathname}`,
+      );
 
       // Connect to database
       await this.adapter.connect();
@@ -35,6 +44,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       if (!isHealthy) {
         throw new Error('Base de datos no está funcionando correctamente');
       }
+
+      console.log(
+        `✅ Base de datos conectada correctamente con ${ormType.toUpperCase()}`,
+      );
     } catch (error) {
       this.status = DatabaseStatus.ERROR;
       console.error('❌ Error al inicializar la base de datos:', error);
