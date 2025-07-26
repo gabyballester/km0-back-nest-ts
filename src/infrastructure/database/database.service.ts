@@ -115,9 +115,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       if (result && result.length > 0) {
         const info = result[0];
         return {
-          database_name: info.current_database || 'unknown',
-          current_user: info.current_user || 'unknown',
-          postgres_version: info.version || 'unknown',
+          database_name: info.current_database ?? 'unknown',
+          current_user: info.current_user ?? 'unknown',
+          postgres_version: info.version ?? 'unknown',
         };
       }
 
@@ -136,7 +136,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       // Extraer el nombre de la base de datos de la URL de forma segura
       const url = new URL(databaseUrl);
       const pathParts = url.pathname.split('/');
-      return pathParts[pathParts.length - 1] || 'km0_db';
+      return pathParts[pathParts.length - 1] ?? 'km0_db';
     } catch {
       return 'km0_db';
     }

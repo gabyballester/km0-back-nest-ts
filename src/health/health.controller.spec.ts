@@ -130,19 +130,19 @@ describe('HealthController', () => {
       expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
     });
 
-    it('should get default environment when ConfigService returns empty string', () => {
+    it('should preserve empty string from ConfigService', () => {
       jest.spyOn(configService, 'get').mockReturnValue('');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       const result = (controller as any).getEnvironment();
-      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result).toBe(''); // ?? preserva strings vacíos
     });
 
-    it('should get default environment when ConfigService returns false', () => {
+    it('should preserve false from ConfigService', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.spyOn(configService, 'get').mockReturnValue(false as any);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       const result = (controller as any).getEnvironment();
-      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result).toBe(false); // ?? preserva valores falsy válidos
     });
 
     it('should get memory info correctly', () => {
@@ -224,23 +224,23 @@ describe('HealthController', () => {
       expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
     });
 
-    it('should return default environment if ConfigService returns empty string', () => {
+    it('should preserve empty string from ConfigService in getHealth', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       jest.spyOn(configService, 'get').mockReturnValue('');
 
       const result = controller.getHealth();
 
-      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result.environment).toBe(''); // ?? preserva strings vacíos
     });
 
-    it('should return default environment if ConfigService returns false', () => {
+    it('should preserve false from ConfigService in getHealth', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.spyOn(configService, 'get').mockReturnValue(false as any);
 
       const result = controller.getHealth();
 
-      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result.environment).toBe(false); // ?? preserva valores falsy válidos
     });
   });
 
@@ -358,7 +358,7 @@ describe('HealthController', () => {
       expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
     });
 
-    it('should return default environment if ConfigService returns empty string in detailed health', () => {
+    it('should preserve empty string from ConfigService in detailed health', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
         database_name: 'test_db',
@@ -369,10 +369,10 @@ describe('HealthController', () => {
 
       const result = controller.getDetailedHealth();
 
-      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result.environment).toBe(''); // ?? preserva strings vacíos
     });
 
-    it('should return default environment if ConfigService returns false in detailed health', () => {
+    it('should preserve false from ConfigService in detailed health', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
         database_name: 'test_db',
@@ -384,7 +384,7 @@ describe('HealthController', () => {
 
       const result = controller.getDetailedHealth();
 
-      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result.environment).toBe(false); // ?? preserva valores falsy válidos
     });
 
     it('should handle null database info', () => {
@@ -457,7 +457,7 @@ describe('HealthController', () => {
       expect(result.database.info.version).toBe('unknown');
     });
 
-    it('should handle database info with empty string database_name', () => {
+    it('should preserve empty string database_name', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
         database_name: '',
@@ -470,12 +470,12 @@ describe('HealthController', () => {
 
       const result = controller.getDetailedHealth();
 
-      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.name).toBe(''); // ?? preserva strings vacíos
       expect(result.database.info.type).toBe('PostgreSQL');
       expect(result.database.info.version).toBe('PostgreSQL 14.0');
     });
 
-    it('should handle database info with empty string postgres_version', () => {
+    it('should preserve empty string postgres_version', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
         database_name: 'test_db',
@@ -490,10 +490,10 @@ describe('HealthController', () => {
 
       expect(result.database.info.name).toBe('test_db');
       expect(result.database.info.type).toBe('PostgreSQL');
-      expect(result.database.info.version).toBe('unknown');
+      expect(result.database.info.version).toBe(''); // ?? preserva strings vacíos
     });
 
-    it('should handle database info with falsy database_name', () => {
+    it('should preserve falsy database_name (0)', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
@@ -507,12 +507,12 @@ describe('HealthController', () => {
 
       const result = controller.getDetailedHealth();
 
-      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.name).toBe(0); // ?? preserva valores falsy válidos
       expect(result.database.info.type).toBe('PostgreSQL');
       expect(result.database.info.version).toBe('PostgreSQL 14.0');
     });
 
-    it('should handle database info with falsy postgres_version', () => {
+    it('should preserve falsy postgres_version (false)', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
@@ -528,7 +528,7 @@ describe('HealthController', () => {
 
       expect(result.database.info.name).toBe('test_db');
       expect(result.database.info.type).toBe('PostgreSQL');
-      expect(result.database.info.version).toBe('unknown');
+      expect(result.database.info.version).toBe(false); // ?? preserva valores falsy válidos
     });
 
     it('should handle undefined database info in getDetailedHealth', () => {
@@ -628,7 +628,7 @@ describe('HealthController', () => {
           current_user: 'test_user',
           postgres_version: 'PostgreSQL 14.0',
         });
-        expect(result).toBe('unknown');
+        expect(result).toBe(''); // ?? preserva strings vacíos
       });
 
       it('should test getDatabaseVersion with empty string postgres_version', () => {
@@ -638,7 +638,7 @@ describe('HealthController', () => {
           current_user: 'test_user',
           postgres_version: '',
         });
-        expect(result).toBe('unknown');
+        expect(result).toBe(''); // ?? preserva strings vacíos
       });
     });
   });

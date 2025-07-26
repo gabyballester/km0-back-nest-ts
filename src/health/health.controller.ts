@@ -20,17 +20,17 @@ export class HealthController {
 
   private getDatabaseName(dbInfo: DatabaseInfo | null): string {
     if (!dbInfo) return 'unknown';
-    return dbInfo.database_name || 'unknown';
+    return dbInfo.database_name ?? 'unknown';
   }
 
   private getDatabaseVersion(dbInfo: DatabaseInfo | null): string {
     if (!dbInfo) return 'unknown';
-    return dbInfo.postgres_version || 'unknown';
+    return dbInfo.postgres_version ?? 'unknown';
   }
 
   private getEnvironment(): string {
     const env = this.configService.get<string>(ENV_KEYS.NODE_ENV);
-    return env || ENV_VALUES.NODE_ENV.DEVELOPMENT;
+    return env ?? ENV_VALUES.NODE_ENV.DEVELOPMENT;
   }
 
   private getMemoryInfo() {
