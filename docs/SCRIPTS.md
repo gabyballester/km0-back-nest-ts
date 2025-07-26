@@ -65,6 +65,17 @@ npm run test:quick
 - **Entorno**: `NODE_ENV=test`
 - **Características**: 4 workers, bail on fail, silent mode
 
+### **Tests de Archivos Modificados**
+
+```bash
+npm run test:staged
+```
+
+- **Descripción**: Ejecuta tests solo en archivos modificados (staged)
+- **Entorno**: `NODE_ENV=test`
+- **Características**: 4 workers, bail on fail, silent mode, findRelatedTests
+- **Uso**: Automático en pre-commit
+
 ### **Tests Unitarios Completos**
 
 ```bash
@@ -150,10 +161,12 @@ npm run format:check
 
 ```bash
 npm run validate:quick
+npm run validate:staged
 npm run validate:full
 ```
 
 - **Quick**: Format + Type-check + Lint
+- **Staged**: Quick + Tests de archivos modificados
 - **Full**: Quick + Tests unitarios + Tests E2E
 
 ---
@@ -197,8 +210,9 @@ npm run db:studio:prod # Studio para producción
 
 - ✅ **Format**: Prettier en archivos staged
 - ✅ **Lint**: ESLint con auto-fix en archivos staged
-- ⏱️ **Tiempo**: ~2-3 segundos
-- 🎯 **Objetivo**: Validación rápida sin bloquear desarrollo
+- ✅ **Tests**: Tests de archivos modificados (findRelatedTests)
+- ⏱️ **Tiempo**: ~5-8 segundos
+- 🎯 **Objetivo**: Validación rápida con tests básicos
 
 **Pre-push (Completo y Riguroso):**
 
