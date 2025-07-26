@@ -1,27 +1,41 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from './database.service';
-import { PrismaService } from './prisma.service';
+import { DatabaseFactory } from './factory/database.factory';
+import { IDatabaseAdapter } from './interfaces';
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
   let configService: ConfigService;
+  let databaseFactory: DatabaseFactory;
+  let mockAdapter: jest.Mocked<IDatabaseAdapter>;
 
   beforeEach(async () => {
+    mockAdapter = {
+      connect: jest.fn(),
+      disconnect: jest.fn(),
+      healthCheck: jest.fn(),
+      getDatabaseInfo: jest.fn(),
+      executeRawQuery: jest.fn(),
+      getOrmInstance: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseService,
         {
-          provide: PrismaService,
-          useValue: {
-            $connect: jest.fn(),
-            $disconnect: jest.fn(),
-          },
-        },
-        {
           provide: ConfigService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: DatabaseFactory,
+          useValue: {
+            createAdapter: jest.fn().mockReturnValue(mockAdapter),
+            getOrmType: jest.fn(),
+            isDrizzle: jest.fn(),
+            isPrisma: jest.fn(),
           },
         },
       ],
@@ -29,6 +43,10 @@ describe('DatabaseService', () => {
 
     service = module.get<DatabaseService>(DatabaseService);
     configService = module.get<ConfigService>(ConfigService);
+    databaseFactory = module.get<DatabaseFactory>(DatabaseFactory);
+
+    // Initialize the adapter for tests
+    (service as any).adapter = mockAdapter;
   });
 
   it('should be defined', () => {
@@ -36,12 +54,14 @@ describe('DatabaseService', () => {
   });
 
   describe('onModuleInit', () => {
-    it('should initialize database connection successfully', () => {
+    it('should initialize database connection successfully', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      mockAdapter.healthCheck.mockResolvedValue(true);
 
-      service.onModuleInit();
+      await service.onModuleInit();
 
+      expect(mockAdapter.connect).toHaveBeenCalled();
+      expect(mockAdapter.healthCheck).toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith(
         '🗄️  Inicializando servicio de base de datos...',
       );
@@ -56,18 +76,38 @@ describe('DatabaseService', () => {
       );
 
       consoleSpy.mockRestore();
-      consoleErrorSpy.mockRestore();
     });
 
-    it('should handle initialization errors', () => {
+    it('should handle initialization errors', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // Simular un error en healthCheck
-      jest.spyOn(service, 'healthCheck').mockReturnValue(false);
+      mockAdapter.healthCheck.mockResolvedValue(false);
 
-      expect(() => service.onModuleInit()).toThrow(
+      await expect(service.onModuleInit()).rejects.toThrow(
         'Base de datos no está funcionando correctamente',
+      );
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ Error al inicializar la base de datos:',
+        expect.any(Error),
+      );
+
+      consoleSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle connection errors', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      mockAdapter.connect.mockRejectedValue(new Error('Connection failed'));
+
+      await expect(service.onModuleInit()).rejects.toThrow('Connection failed');
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ Error al inicializar la base de datos:',
+        expect.any(Error),
       );
 
       consoleSpy.mockRestore();
@@ -76,12 +116,12 @@ describe('DatabaseService', () => {
   });
 
   describe('onModuleDestroy', () => {
-    it('should close database connection successfully', () => {
+    it('should close database connection successfully', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      service.onModuleDestroy();
+      await service.onModuleDestroy();
 
+      expect(mockAdapter.disconnect).toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith(
         '🔄 Cerrando conexión a la base de datos...',
       );
@@ -90,23 +130,15 @@ describe('DatabaseService', () => {
       );
 
       consoleSpy.mockRestore();
-      consoleErrorSpy.mockRestore();
     });
 
-    it('should handle errors during connection closure', () => {
+    it('should handle errors during connection closure', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // Simular un error durante el cierre
-      const originalIsConnected = service['isConnected'];
-      Object.defineProperty(service, 'isConnected', {
-        set: () => {
-          throw new Error('Connection error');
-        },
-        get: () => originalIsConnected,
-      });
+      mockAdapter.disconnect.mockRejectedValue(new Error('Disconnect failed'));
 
-      service.onModuleDestroy();
+      await service.onModuleDestroy();
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '🔄 Cerrando conexión a la base de datos...',
@@ -122,31 +154,33 @@ describe('DatabaseService', () => {
   });
 
   describe('healthCheck', () => {
-    it('should return true when database is connected', () => {
-      // Asegurar que está conectado
-      service['isConnected'] = true;
-      const result = service.healthCheck();
+    it('should return true when database is healthy', async () => {
+      mockAdapter.healthCheck.mockResolvedValue(true);
+
+      const result = await service.healthCheck();
+
       expect(result).toBe(true);
+      expect(mockAdapter.healthCheck).toHaveBeenCalled();
     });
 
-    it('should return false when database is not connected', () => {
-      // Simular desconexión
-      service['isConnected'] = false;
-      const result = service.healthCheck();
+    it('should return false when database is unhealthy', async () => {
+      mockAdapter.healthCheck.mockResolvedValue(false);
+
+      const result = await service.healthCheck();
+
       expect(result).toBe(false);
+      expect(mockAdapter.healthCheck).toHaveBeenCalled();
     });
 
-    it('should handle errors and return false', () => {
+    it('should handle errors and return false', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // Simular un error al acceder a isConnected
-      Object.defineProperty(service, 'isConnected', {
-        get: () => {
-          throw new Error('Access error');
-        },
-      });
+      mockAdapter.healthCheck.mockRejectedValue(
+        new Error('Health check failed'),
+      );
 
-      const result = service.healthCheck();
+      const result = await service.healthCheck();
+
       expect(result).toBe(false);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '❌ Health check falló:',
@@ -158,67 +192,40 @@ describe('DatabaseService', () => {
   });
 
   describe('getDatabaseInfo', () => {
-    it('should return database info when DATABASE_URL is available', () => {
-      const mockDatabaseUrl = 'postgresql://user:pass@localhost:5432/km0_db';
-      jest.spyOn(configService, 'get').mockReturnValue(mockDatabaseUrl);
+    it('should return database info when available', async () => {
+      const mockInfo = {
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      };
 
-      const result = service.getDatabaseInfo();
+      mockAdapter.getDatabaseInfo.mockResolvedValue(mockInfo);
 
-      expect(result).toEqual({
-        database_name: 'km0_db',
-        current_user: 'postgres',
-        postgres_version: 'PostgreSQL',
-      });
+      const result = await service.getDatabaseInfo();
+
+      expect(result).toEqual(mockInfo);
+      expect(mockAdapter.getDatabaseInfo).toHaveBeenCalled();
     });
 
-    it('should return database info with default name when DATABASE_URL is not available', () => {
-      jest.spyOn(configService, 'get').mockReturnValue(undefined);
+    it('should return null when database info is not available', async () => {
+      mockAdapter.getDatabaseInfo.mockResolvedValue(null);
 
-      const result = service.getDatabaseInfo();
+      const result = await service.getDatabaseInfo();
 
-      expect(result).toEqual({
-        database_name: 'km0_db',
-        current_user: 'postgres',
-        postgres_version: 'PostgreSQL',
-      });
+      expect(result).toBeNull();
+      expect(mockAdapter.getDatabaseInfo).toHaveBeenCalled();
     });
 
-    it('should handle malformed DATABASE_URL gracefully', () => {
-      const malformedUrl = 'invalid-url';
-      jest.spyOn(configService, 'get').mockReturnValue(malformedUrl);
-
-      const result = service.getDatabaseInfo();
-
-      expect(result).toEqual({
-        database_name: 'km0_db',
-        current_user: 'postgres',
-        postgres_version: 'PostgreSQL',
-      });
-    });
-
-    it('should handle empty DATABASE_URL gracefully', () => {
-      const emptyUrl = '';
-      jest.spyOn(configService, 'get').mockReturnValue(emptyUrl);
-
-      const result = service.getDatabaseInfo();
-
-      expect(result).toEqual({
-        database_name: 'km0_db',
-        current_user: 'postgres',
-        postgres_version: 'PostgreSQL',
-      });
-    });
-
-    it('should handle errors and return null', () => {
+    it('should handle errors and return null', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // Simular un error en configService.get
-      jest.spyOn(configService, 'get').mockImplementation(() => {
-        throw new Error('Config error');
-      });
+      mockAdapter.getDatabaseInfo.mockRejectedValue(
+        new Error('Database info failed'),
+      );
 
-      const result = service.getDatabaseInfo();
-      expect(result).toBe(null);
+      const result = await service.getDatabaseInfo();
+
+      expect(result).toBeNull();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '❌ Error al obtener información de la base de datos:',
         expect.any(Error),
@@ -228,138 +235,66 @@ describe('DatabaseService', () => {
     });
   });
 
-  describe('extractDatabaseName', () => {
-    it('should extract database name from valid PostgreSQL URL', () => {
-      const url = 'postgresql://user:pass@localhost:5432/my_database';
-      const result = service['extractDatabaseName'](url);
-      expect(result).toBe('my_database');
-    });
+  describe('getAdapter', () => {
+    it('should return the current adapter', () => {
+      const result = service.getAdapter();
 
-    it('should return default name for invalid URL', () => {
-      const url = 'invalid-url';
-      const result = service['extractDatabaseName'](url);
-      expect(result).toBe('km0_db');
-    });
-
-    it('should return default name for URL without path', () => {
-      const url = 'postgresql://user:pass@localhost:5432';
-      const result = service['extractDatabaseName'](url);
-      expect(result).toBe('km0_db'); // || handles empty strings
-    });
-
-    it('should return default name for URL with empty path parts', () => {
-      const url = 'postgresql://user:pass@localhost:5432/';
-      const result = service['extractDatabaseName'](url);
-      expect(result).toBe('km0_db'); // || handles empty strings
+      expect(result).toBe(mockAdapter);
     });
   });
 
-  describe('healthCheckReal', () => {
-    it('should return true when database is healthy', async () => {
-      const mockPrisma = {
-        $queryRaw: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
-      };
-      const serviceWithMockPrisma = new DatabaseService(
-        mockPrisma as unknown as PrismaService,
-        configService,
-      );
+  describe('getStatus', () => {
+    it('should return the current database status', () => {
+      const result = service.getStatus();
 
-      const result = await serviceWithMockPrisma.healthCheckReal();
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('getOrmType', () => {
+    it('should return the current ORM type', () => {
+      const mockOrmType = 'prisma';
+      jest.spyOn(databaseFactory, 'getOrmType').mockReturnValue(mockOrmType);
+
+      const result = service.getOrmType();
+
+      expect(result).toBe(mockOrmType);
+    });
+  });
+
+  describe('isDrizzle', () => {
+    it('should return true when using Drizzle', () => {
+      jest.spyOn(databaseFactory, 'isDrizzle').mockReturnValue(true);
+
+      const result = service.isDrizzle();
 
       expect(result).toBe(true);
-      expect(mockPrisma.$queryRaw).toHaveBeenCalledWith(expect.any(Array));
     });
 
-    it('should return false when database query fails', async () => {
-      const mockPrisma = {
-        $queryRaw: jest.fn().mockRejectedValue(new Error('Database error')),
-      };
-      const serviceWithMockPrisma = new DatabaseService(
-        mockPrisma as unknown as PrismaService,
-        configService,
-      );
+    it('should return false when not using Drizzle', () => {
+      jest.spyOn(databaseFactory, 'isDrizzle').mockReturnValue(false);
 
-      const result = await serviceWithMockPrisma.healthCheckReal();
+      const result = service.isDrizzle();
 
       expect(result).toBe(false);
     });
   });
 
-  describe('getDatabaseInfoReal', () => {
-    it('should return real database info when query succeeds', async () => {
-      const mockPrisma = {
-        $queryRaw: jest.fn().mockResolvedValue([
-          {
-            current_database: 'test_db',
-            current_user: 'test_user',
-            version: 'PostgreSQL 14.0',
-          },
-        ]),
-      };
-      const serviceWithMockPrisma = new DatabaseService(
-        mockPrisma as unknown as PrismaService,
-        configService,
-      );
+  describe('isPrisma', () => {
+    it('should return true when using Prisma', () => {
+      jest.spyOn(databaseFactory, 'isPrisma').mockReturnValue(true);
 
-      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
+      const result = service.isPrisma();
 
-      expect(result).toEqual({
-        database_name: 'test_db',
-        current_user: 'test_user',
-        postgres_version: 'PostgreSQL 14.0',
-      });
+      expect(result).toBe(true);
     });
 
-    it('should return null when query fails', async () => {
-      const mockPrisma = {
-        $queryRaw: jest.fn().mockRejectedValue(new Error('Database error')),
-      };
-      const serviceWithMockPrisma = new DatabaseService(
-        mockPrisma as unknown as PrismaService,
-        configService,
-      );
+    it('should return false when not using Prisma', () => {
+      jest.spyOn(databaseFactory, 'isPrisma').mockReturnValue(false);
 
-      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
+      const result = service.isPrisma();
 
-      expect(result).toBe(null);
-    });
-
-    it('should handle empty result array', async () => {
-      const mockPrisma = {
-        $queryRaw: jest.fn().mockResolvedValue([]),
-      };
-      const serviceWithMockPrisma = new DatabaseService(
-        mockPrisma as unknown as PrismaService,
-        configService,
-      );
-
-      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
-
-      expect(result).toBe(null);
-    });
-
-    it('should handle null values in result', async () => {
-      const mockPrisma = {
-        $queryRaw: jest.fn().mockResolvedValue([
-          {
-            current_database: null,
-            current_user: null,
-            version: null,
-          },
-        ]),
-      };
-      const serviceWithMockPrisma = new DatabaseService(
-        mockPrisma as unknown as PrismaService,
-        configService,
-      );
-
-      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
-
-      expect(result).toEqual({
-        database_name: 'unknown',
-        current_user: 'unknown',
-        postgres_version: 'unknown',
-      });
+      expect(result).toBe(false);
     });
   });
 });

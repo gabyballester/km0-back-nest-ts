@@ -37,7 +37,10 @@ export class HealthController {
 
   private getEnvironment(): string {
     const env = this.configService.get<string>(ENV_KEYS.NODE_ENV);
-    return env ?? ENV_VALUES.NODE_ENV.DEVELOPMENT;
+    if (env === undefined || env === null) {
+      return ENV_VALUES.NODE_ENV.DEVELOPMENT;
+    }
+    return env;
   }
 
   private getMemoryInfo() {
@@ -96,13 +99,13 @@ export class HealthController {
   @ApiInternalServerErrorResponse({
     description: 'Error interno del servidor',
   })
-  getHealth(): {
+  async getHealth(): Promise<{
     status: string;
     timestamp: string;
     environment: string;
     uptime: number;
-  } {
-    const dbStatus = this.databaseService.healthCheck();
+  }> {
+    const dbStatus = await this.databaseService.healthCheck();
 
     return {
       status: dbStatus ? 'healthy' : 'unhealthy',
@@ -189,7 +192,7 @@ export class HealthController {
   @ApiInternalServerErrorResponse({
     description: 'Error interno del servidor',
   })
-  getDetailedHealth(): {
+  async getDetailedHealth(): Promise<{
     status: string;
     timestamp: string;
     environment: string;
@@ -219,9 +222,9 @@ export class HealthController {
       database: boolean;
       config: boolean;
     };
-  } {
-    const dbStatus = this.databaseService.healthCheck();
-    const dbInfo = this.databaseService.getDatabaseInfo();
+  }> {
+    const dbStatus = await this.databaseService.healthCheck();
+    const dbInfo = await this.databaseService.getDatabaseInfo();
 
     return {
       status: dbStatus ? 'healthy' : 'unhealthy',

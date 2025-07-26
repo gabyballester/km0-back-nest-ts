@@ -20,6 +20,7 @@ export const ENV_KEYS = {
 
   // Database
   DATABASE_URL: 'DATABASE_URL',
+  DATABASE_ORM: 'DATABASE_ORM',
 
   // Rate Limiting
   THROTTLE_TTL: 'THROTTLE_TTL',
@@ -44,6 +45,7 @@ export const CONFIG_KEYS = {
 
   // Database configuration
   DATABASE_URL: 'database.url',
+  DATABASE_ORM: 'database.orm',
 
   // Security configuration
   JWT_SECRET: 'jwt.secret',
@@ -75,6 +77,10 @@ export const ENV_VALUES = {
     WARN: 'warn',
     INFO: 'info',
     DEBUG: 'debug',
+  },
+  DATABASE_ORM: {
+    PRISMA: 'prisma',
+    DRIZZLE: 'drizzle',
   },
 } as const;
 

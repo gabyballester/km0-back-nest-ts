@@ -35,6 +35,9 @@ export const envSchema = z.object({
     .string()
     .url('DATABASE_URL must be a valid URL')
     .optional(),
+  [ENV_KEYS.DATABASE_ORM]: z
+    .enum([ENV_VALUES.DATABASE_ORM.PRISMA, ENV_VALUES.DATABASE_ORM.DRIZZLE])
+    .default(ENV_VALUES.DATABASE_ORM.PRISMA),
 
   // Rate Limiting
   [ENV_KEYS.THROTTLE_TTL]: z

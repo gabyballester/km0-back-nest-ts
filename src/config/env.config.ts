@@ -13,6 +13,9 @@ const envSchema = z.object({
     .default(ENV_VALUES.NODE_ENV.DEVELOPMENT),
   [ENV_KEYS.PORT]: z.string().transform(Number).default(4000),
   [ENV_KEYS.DATABASE_URL]: z.string(),
+  [ENV_KEYS.DATABASE_ORM]: z
+    .enum([ENV_VALUES.DATABASE_ORM.PRISMA, ENV_VALUES.DATABASE_ORM.DRIZZLE])
+    .default(ENV_VALUES.DATABASE_ORM.PRISMA),
   [ENV_KEYS.JWT_SECRET]: z.string(),
 });
 
@@ -64,6 +67,7 @@ export const envConfig = registerAs('env', () => {
     nodeEnv: env[ENV_KEYS.NODE_ENV],
     port: env[ENV_KEYS.PORT],
     databaseUrl: env[ENV_KEYS.DATABASE_URL],
+    databaseOrm: env[ENV_KEYS.DATABASE_ORM],
     jwtSecret: env[ENV_KEYS.JWT_SECRET],
     isDevelopment: env[ENV_KEYS.NODE_ENV] === ENV_VALUES.NODE_ENV.DEVELOPMENT,
     isProduction: env[ENV_KEYS.NODE_ENV] === ENV_VALUES.NODE_ENV.PRODUCTION,

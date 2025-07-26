@@ -201,11 +201,17 @@ npm run validate:full
 ### **Generación y Migración**
 
 ```bash
+# Prisma (ORM actual)
 npm run db:generate    # Genera cliente Prisma
 npm run db:push        # Push schema a DB
 npm run db:migrate     # Migración de desarrollo
 npm run db:migrate:deploy  # Migración de producción
 npm run db:migrate:reset   # Reset migraciones
+
+# Drizzle (ORM alternativo)
+npm run db:drizzle:generate  # Genera migraciones Drizzle
+npm run db:drizzle:migrate   # Ejecuta migraciones Drizzle
+npm run db:drizzle:push      # Push schema a BD
 ```
 
 ### **Entornos Específicos**

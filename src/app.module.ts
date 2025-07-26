@@ -5,8 +5,7 @@ import { AppService } from './app.service';
 import { SecurityModule } from './modules/security/security.module';
 import { SecurityMiddleware } from './modules/security/security.middleware';
 import { HealthController } from './health/health.controller';
-import { DatabaseService } from './infrastructure/database/database.service';
-import { PrismaService } from './infrastructure/database/prisma.service';
+import { DatabaseModule } from './infrastructure/database/database.module';
 import { envConfig } from './config/env.config';
 
 /**
@@ -30,9 +29,11 @@ import { envConfig } from './config/env.config';
     }),
     // Security module (rate limiting, etc.)
     SecurityModule,
+    // Database module with ORM abstraction
+    DatabaseModule,
   ],
   controllers: [AppController, HealthController],
-  providers: [AppService, DatabaseService, PrismaService],
+  providers: [AppService],
 })
 export class AppModule {
   /**
