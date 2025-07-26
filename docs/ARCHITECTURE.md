@@ -148,6 +148,17 @@ modules/users/
 
 ## 📈 Política de Cobertura y Documentación
 
-- El proyecto mantiene 100% de cobertura en todos los archivos relevantes.
-- Se excluyen archivos puramente declarativos, de configuración o constantes para evitar falsos negativos.
-- La documentación y la cobertura están siempre alineadas y reflejan el estado real del código.
+### 🎯 **Umbrales de Cobertura**
+
+- **Umbrales configurados:** 80% branches, 90% functions/lines/statements
+- **Cobertura real:** 100% en todas las métricas
+- **Validación automática:** Pre-commit y pre-push hooks
+- **Archivos excluidos:** Solo archivos declarativos/configuración
+
+### 📊 **Estado Actual**
+
+- **Módulos implementados:** Health, Security
+- **Tests:** 204 tests pasando
+- **Cobertura:** 100% en todos los archivos relevantes
+- **Documentación:** Siempre alineada con el estado real del código
+- **Swagger:** Configurado y documentado

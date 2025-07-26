@@ -2,16 +2,35 @@
 
 > **Cobertura global actual: 100% statements, 100% branches, 100% functions, 100% lines.**
 >
+> **Umbrales configurados:** 80% branches, 90% functions/lines/statements (fuente de verdad)
+>
 > La documentación y la cobertura están siempre alineadas y actualizadas. Ver también [`docs/SUMMARY.md`](SUMMARY.md) y [`docs/CHANGELOG.md`](CHANGELOG.md).
 
-## 📊 Cobertura Cumplida
+## 📊 Cobertura y Umbrales
 
-### Umbrales Globales Actuales
+### 📈 **Umbrales de Cobertura (Fuente de Verdad)**
 
-- **Statements**: 95% ✅ (98.21%)
-- **Branches**: 50% ✅ (50%)
-- **Functions**: 90% ✅ (91.66%)
-- **Lines**: 95% ✅ (98.21%)
+Los umbrales están configurados en `jest.config.js` y son la **fuente de verdad** para las validaciones:
+
+```javascript
+coverageThreshold: {
+  global: {
+    branches: 80,    // 80% de cobertura de ramas
+    functions: 90,   // 90% de cobertura de funciones
+    lines: 90,       // 90% de cobertura de líneas
+    statements: 90,  // 90% de cobertura de statements
+  },
+}
+```
+
+### 🎯 **Estado Actual**
+
+- **Cobertura real:** 100% en todas las métricas
+- **Umbrales mínimos:** 80% branches, 90% functions/lines/statements
+- **Validación automática:** Pre-commit y pre-push hooks
+- **Scripts disponibles:**
+  - `npm run validate:coverage:strict` - Usa umbrales configurados
+  - `npm run validate:coverage:100` - Aspiración al 100%
 
 ### Archivos con Mejor Cobertura
 

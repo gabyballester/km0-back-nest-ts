@@ -89,7 +89,7 @@ CORS_ORIGIN=https://tu-dominio.com
 
 ```bash
 # Verificar que todo funcione localmente
-npm run test:cov
+npm run validate:full:strict  # Validación completa
 npm run build:prod
 npm run start:prod
 ```

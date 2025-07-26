@@ -20,6 +20,20 @@ npm run test:full    # Lento, solo para CI/CD
 npm run test:e2e:full # Lento, solo para CI/CD
 ```
 
+### 🛡️ **Sistema de Validación Automática**
+
+**Pre-commit (Archivos Staged):**
+
+- ✅ Formato, Type-check, ESLint, Tests rápidos
+- ✅ Cobertura según umbrales configurados
+- ⏱️ Tiempo: ~5-6 segundos
+
+**Pre-push (Proyecto Completo):**
+
+- ✅ Validación completa + Tests E2E
+- ✅ Cobertura según umbrales configurados
+- ⏱️ Tiempo: ~8-10 segundos
+
 **📖 Ver documentación completa:** [docs/SCRIPTS.md](./docs/SCRIPTS.md)
 
 ## 🏗️ Arquitectura Modular + Clean Architecture
@@ -142,9 +156,11 @@ DATABASE_URL=postgresql://username:password@host:port/database
 ### 🛡️ Calidad
 
 - **Cobertura**: 100% statements, 100% branches, 100% functions, 100% lines
+- **Umbrales configurados**: 80% branches, 90% functions/lines/statements
 - **Linting**: 0 warnings, 0 errors
 - **TypeScript**: Strict mode habilitado
 - **Prettier**: Formato consistente
+- **Validación automática**: Pre-commit y pre-push hooks
 
 ### 🏗️ Arquitectura
 
@@ -201,19 +217,34 @@ npm run format:check   # Verificar formato sin cambiar
 
 ## 🏆 Cobertura y Calidad
 
-- **Cobertura global:**
-  - Statements: 100%
-  - Branches: 100%
-  - Functions: 100%
-  - Lines: 100%
-- **Archivos excluidos:** Solo archivos puramente declarativos, de configuración o constantes (ver [`docs/TESTING.md`](docs/TESTING.md)).
-- **Estrategia:**
-  - Se prioriza la cobertura real de lógica de negocio y paths críticos.
-  - Se excluyen archivos que no aportan valor al testing unitario.
-  - La documentación y la cobertura están siempre alineadas con el estado real del código.
-- **Endpoints críticos (`/health`, `/health/detailed`)**:
-  - 100% cubiertos por tests y documentados en Swagger.
-  - Ejemplos de respuesta y descripciones claras en la documentación generada.
+### 📊 **Umbrales de Cobertura (Fuente de Verdad)**
+
+Los umbrales están configurados en `jest.config.js` y son la **fuente de verdad**:
+
+```javascript
+coverageThreshold: {
+  global: {
+    branches: 80,    // 80% de cobertura de ramas
+    functions: 90,   // 90% de cobertura de funciones
+    lines: 90,       // 90% de cobertura de líneas
+    statements: 90,  // 90% de cobertura de statements
+  },
+}
+```
+
+### 🎯 **Estado Actual**
+
+- **Cobertura real:** 100% en todas las métricas
+- **Umbrales mínimos:** 80% branches, 90% functions/lines/statements
+- **Archivos excluidos:** Solo archivos declarativos/configuración
+- **Validación automática:** Pre-commit y pre-push hooks
+
+### 📈 **Estrategia de Calidad**
+
+- **Umbrales realistas:** Configurables según necesidades del proyecto
+- **Aspiración al 100%:** Script especial disponible (`npm run validate:coverage:100`)
+- **Validación automática:** Bloqueo de commits/push con errores
+- **Documentación alineada:** Siempre actualizada con el estado real
 
 ---
 
@@ -225,6 +256,7 @@ npm run format:check   # Verificar formato sin cambiar
 - **[Arquitectura](./docs/ARCHITECTURE.md)**: Estructura modular y principios
 - **[Testing](./docs/TESTING.md)**: Estrategia y mejores prácticas
 - **[Deployment](./docs/DEPLOYMENT.md)**: Configuración de producción
+- **[Swagger API](./docs/SWAGGER.md)**: Documentación de API y configuración
 
 ## 🚨 Reglas Importantes
 

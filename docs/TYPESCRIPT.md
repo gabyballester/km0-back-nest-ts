@@ -7,6 +7,7 @@
 - **Seguridad Máxima**: Configuración estricta para prevenir errores en runtime
 - **Calidad**: Zero tolerancia a errores y warnings
 - **Robustez**: Detección temprana de problemas potenciales
+- **Validación Automática**: Pre-commit y pre-push hooks con validación estricta
 
 ---
 
@@ -63,7 +64,8 @@
 
   ```typescript
   // ❌ Sin noImplicitAny - Permite any implícito
-  function processData(data) { // any implícito
+  function processData(data) {
+    // any implícito
     return data.length;
   }
 
