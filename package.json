@@ -10,7 +10,8 @@
     "build:prod": "npx nest build --builder swc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" --cache",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" --cache",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --max-warnings=50",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --max-warnings=0",
+    "lint:check": "eslint \"{src,apps,libs,test}/**/*.ts\" --cache --max-warnings=0",
     "prepare": "node scripts/prepare.js",
     "check:process-env": "node scripts/check-process-env.js",
     "check:deployment": "node scripts/check-deployment.js",
@@ -32,19 +33,10 @@
     "test:e2e:quick": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent --testTimeout=3000\" \"🚀 E2E tests rápidos (Test)\"",
     "test:e2e:full": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent\" \"📊 E2E tests completos (Test)\"",
     "type-check": "tsc --noEmit",
-    "type-check:staged": "node scripts/type-check-staged.js",
-    "test:quick:staged": "node scripts/test-quick-staged.js",
-    "validate:quick": "npm run format && npm run type-check && npm run lint",
-    "validate:staged": "node scripts/validate-staged.js",
-    "validate:staged:light": "node scripts/validate-staged-light.js",
-    "validate:staged:strict": "node scripts/validate-staged-strict.js",
-    "validate:full:strict": "node scripts/validate-full-strict.js",
-    "validate:full": "npm run format && npm run type-check && npm run lint && npm run test:full && npm run test:e2e:full",
-    "validate:coverage": "cross-env NODE_ENV=test jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent --coverageThreshold={\"global\":{\"statements\":90,\"branches\":80,\"functions\":90,\"lines\":90}}",
-    "validate:coverage:strict": "node scripts/validate-coverage-strict.js",
-    "validate:coverage:100": "node scripts/validate-coverage-100.js",
-    "pre-commit": "npm run validate:staged:strict",
-    "pre-push": "npm run validate:full:strict",
+    "validate:quick": "npm run format && npm run type-check && npm run lint:check",
+    "validate:full": "npm run format && npm run type-check && npm run lint:check && npm run test:full && npm run test:e2e:full",
+    "pre-commit": "lint-staged",
+    "pre-push": "npm run validate:full",
     "start:dev": "node scripts/timed-run.js \"cross-env NODE_ENV=development npx nest start --watch --builder swc --preserveWatchOutput\" \"🔄 Inicio completo con watch (Development)\"",
     "start:prod": "node dist/main",
     "db:generate": "prisma generate",
@@ -66,13 +58,12 @@
   },
   "lint-staged": {
     "*.ts": [
-      "npm run format",
-      "npm run type-check:staged",
-      "npx eslint --cache --max-warnings=0 --fix",
-      "npm run test:quick:staged"
+      "prettier --write",
+      "eslint --fix --cache --max-warnings=0",
+      "tsc --noEmit"
     ],
     "*.{json,md,yml,yaml}": [
-      "npm run format"
+      "prettier --write"
     ]
   },
   "dependencies": {

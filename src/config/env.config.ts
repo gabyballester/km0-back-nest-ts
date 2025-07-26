@@ -1,6 +1,11 @@
 import { registerAs } from '@nestjs/config';
 import { z } from 'zod';
-import { ENV_KEYS, ENV_VALUES, isTest } from '../shared/constants/environment';
+import {
+  ENV_KEYS,
+  ENV_VALUES,
+  isTest,
+  validateEnvironment,
+} from '../shared/constants/environment';
 
 // Schema de validación para variables de entorno
 const envSchema = z.object({
@@ -20,6 +25,11 @@ const envSchema = z.object({
 export const validateEnv = () => {
   try {
     const env = envSchema.parse(process.env);
+
+    // Validación adicional con Zod schemas
+    if (!validateEnvironment.nodeEnv(env[ENV_KEYS.NODE_ENV])) {
+      throw new Error(`Invalid NODE_ENV: ${env[ENV_KEYS.NODE_ENV]}`);
+    }
 
     // Mostrar información del entorno por consola (solo en desarrollo y producción)
     if (!isTest(env[ENV_KEYS.NODE_ENV])) {

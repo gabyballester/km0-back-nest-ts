@@ -122,3 +122,6 @@ export const isTest = (env: string): env is typeof ENV_VALUES.NODE_ENV.TEST => {
 export const isValidNodeEnv = (env: string): env is NodeEnv => {
   return Object.values(ENV_VALUES.NODE_ENV).includes(env as NodeEnv);
 };
+
+// Re-export schemas for convenience
+export * from './environment.schema';
