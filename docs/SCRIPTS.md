@@ -5,8 +5,7 @@
 ### **🚀 Scripts de Inicio**
 
 ```bash
-npm run start:quick    # 🚀 Inicio rápido sin watch
-npm run start:full     # 🔄 Inicio completo con watch
+npm run start:dev      # 🔄 Inicio desarrollo con hot reload (recomendado)
 npm run start:prod     # 🏭 Inicio de producción
 ```
 
@@ -76,25 +75,15 @@ npm run build:dev      # 🔧 Build de desarrollo
 
 ## 🚀 **SCRIPTS DE INICIO**
 
-### **Inicio Rápido**
+### **Inicio de Desarrollo (Recomendado)**
 
 ```bash
-npm run start:quick
-```
-
-- **Descripción**: Inicia la aplicación en modo desarrollo sin watch
-- **Tiempo**: ~2-3 segundos
-- **Uso**: Para pruebas rápidas y desarrollo
-
-### **Inicio Completo**
-
-```bash
-npm run start:full
+npm run start:dev
 ```
 
 - **Descripción**: Inicia la aplicación con hot reload y watch
 - **Tiempo**: ~3-4 segundos
-- **Uso**: Para desarrollo continuo
+- **Uso**: Para desarrollo continuo (recomendado por la comunidad y documentación oficial de NestJS)
 
 ### **Inicio de Producción**
 

@@ -45,8 +45,8 @@ export class HealthController {
   private getCpuInfo() {
     const cpuUsage = process.cpuUsage();
     return {
-      load: [cpuUsage.user, cpuUsage.system],
-      cores: os.cpus().length,
+      load: [cpuUsage.user, cpuUsage.system], // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+      cores: os.cpus().length, // eslint-disable-line @typescript-eslint/no-unsafe-member-access
     };
   }
 

@@ -10,7 +10,7 @@
 npm run test:fast    # Tests rápidos (~2.7s)
 npm run lint         # Linting rápido (~1s)
 npm run format       # Formatear (~0.5s)
-npm run start:dev    # Servidor desarrollo
+npm run start:dev    # Servidor desarrollo con hot reload
 ```
 
 **❌ NUNCA usar en desarrollo:**
@@ -81,7 +81,7 @@ npm run env:setup
 # Ejecutar tests rápidos (OBLIGATORIO)
 npm run test:fast
 
-# Iniciar servidor desarrollo
+# Iniciar servidor desarrollo con hot reload
 npm run start:dev
 ```
 
@@ -156,7 +156,7 @@ npm run test:fast      # Tests unitarios sin cobertura (~2.7s)
 npm run test:e2e:fast  # Tests e2e optimizados (~3s)
 npm run lint           # ESLint + Prettier con cache (~1s)
 npm run format         # Solo Prettier (~0.5s)
-npm run start:dev      # Servidor desarrollo con hot reload
+npm run start:dev      # Servidor desarrollo con hot reload (recomendado)
 ```
 
 ### 🐌 Scripts Lentos (CI/CD)

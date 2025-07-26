@@ -136,7 +136,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       // Extraer el nombre de la base de datos de la URL de forma segura
       const url = new URL(databaseUrl);
       const pathParts = url.pathname.split('/');
-      return pathParts[pathParts.length - 1] ?? 'km0_db';
+      const lastPart = pathParts[pathParts.length - 1];
+      return lastPart || 'km0_db'; // Use || to handle empty strings too
     } catch {
       return 'km0_db';
     }

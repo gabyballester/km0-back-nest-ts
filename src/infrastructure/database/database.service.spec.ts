@@ -241,16 +241,16 @@ describe('DatabaseService', () => {
       expect(result).toBe('km0_db');
     });
 
-    it('should return empty string for URL without path', () => {
+    it('should return default name for URL without path', () => {
       const url = 'postgresql://user:pass@localhost:5432';
       const result = service['extractDatabaseName'](url);
-      expect(result).toBe(''); // ?? preserva strings vacíos
+      expect(result).toBe('km0_db'); // || handles empty strings
     });
 
-    it('should return empty string for URL with empty path parts', () => {
+    it('should return default name for URL with empty path parts', () => {
       const url = 'postgresql://user:pass@localhost:5432/';
       const result = service['extractDatabaseName'](url);
-      expect(result).toBe(''); // ?? preserva strings vacíos
+      expect(result).toBe('km0_db'); // || handles empty strings
     });
   });
 

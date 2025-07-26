@@ -19,5 +19,6 @@
   "eslint.workingDirectories": ["."],
   "eslint.format.enable": true,
   "prettier.requireConfig": true,
-  "prettier.useEditorConfig": false
+  "prettier.useEditorConfig": false,
+  "vsicons.presets.nestjs": true
 }
