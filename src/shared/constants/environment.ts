@@ -123,5 +123,5 @@ export const isValidNodeEnv = (env: string): env is NodeEnv => {
   return Object.values(ENV_VALUES.NODE_ENV).includes(env as NodeEnv);
 };
 
-// Re-export schemas for convenience
-export * from './environment.schema';
+// Los schemas se importan directamente desde environment.schema.ts
+// para evitar dependencias circulares

@@ -1,5 +1,46 @@
 import { z } from 'zod';
-import { ENV_KEYS, ENV_VALUES, CONFIG_KEYS } from './environment';
+
+// Definir las constantes directamente aquí para evitar dependencia circular
+const ENV_KEYS = {
+  NODE_ENV: 'NODE_ENV',
+  PORT: 'PORT',
+  HOST: 'HOST',
+  JWT_SECRET: 'JWT_SECRET',
+  JWT_EXPIRES_IN: 'JWT_EXPIRES_IN',
+  COOKIE_SECRET: 'COOKIE_SECRET',
+  DATABASE_URL: 'DATABASE_URL',
+  THROTTLE_TTL: 'THROTTLE_TTL',
+  THROTTLE_LIMIT: 'THROTTLE_LIMIT',
+  CORS_ORIGIN: 'CORS_ORIGIN',
+  LOG_LEVEL: 'LOG_LEVEL',
+} as const;
+
+const ENV_VALUES = {
+  NODE_ENV: {
+    DEVELOPMENT: 'development',
+    PRODUCTION: 'production',
+    TEST: 'test',
+  },
+  LOG_LEVEL: {
+    ERROR: 'error',
+    WARN: 'warn',
+    INFO: 'info',
+    DEBUG: 'debug',
+  },
+} as const;
+
+const CONFIG_KEYS = {
+  ENV_NODE_ENV: 'env.nodeEnv',
+  ENV_PORT: 'env.port',
+  ENV_HOST: 'env.host',
+  DATABASE_URL: 'database.url',
+  JWT_SECRET: 'jwt.secret',
+  JWT_EXPIRES_IN: 'jwt.expiresIn',
+  THROTTLE_TTL: 'throttle.ttl',
+  THROTTLE_LIMIT: 'throttle.limit',
+  CORS_ORIGIN: 'cors.origin',
+  LOG_LEVEL: 'log.level',
+} as const;
 
 /**
  * Schema for environment variable keys validation
