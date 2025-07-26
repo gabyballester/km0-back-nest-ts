@@ -272,12 +272,12 @@ npm run build:dev
 ### **Pre-commit**
 
 ```bash
-npm run validate:staged
+npm run validate:staged:light
 ```
 
 - **Descripción**: Valida archivos staged antes del commit
 - **Incluye**: format, type-check, lint, test:quick
-- **Tiempo**: ~5-6 segundos
+- **Tiempo**: ~4-5 segundos
 
 ### **Pre-push**
 
