@@ -3,7 +3,7 @@ services:
     name: km0-market-backend
     runtime: node
     plan: free
-    buildCommand: npm install && npm run db:prod && npm run build:prod
+    buildCommand: npm install && npm run db:generate && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /health
     envVars:
@@ -11,10 +11,22 @@ services:
         value: production
       - key: PORT
         value: 4000
+      - key: HOST
+        value: 0.0.0.0
       - key: JWT_SECRET
         generateValue: true
       - key: COOKIE_SECRET
         generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: THROTTLE_TTL
+        value: 60
+      - key: THROTTLE_LIMIT
+        value: 100
       - key: CORS_ORIGIN
         value: https://tu-frontend-domain.com
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        sync: false
     autoDeploy: true

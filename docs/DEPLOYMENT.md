@@ -127,14 +127,14 @@ SAFE_DEPLOYMENT_MODE=true npm run db:prod
 
 ---
 
-## 🚀 **DEPLOYMENT EN RAILWAY**
+## 🚀 **DEPLOYMENT EN RENDER**
 
 ### **Paso 1: Preparar el Proyecto**
 
 ```bash
 # Verificar que todo funcione localmente
-npm run validate:full:strict  # Validación completa
-npm run build:prod
+npm run validate:full  # Validación completa
+npm run build
 npm run start:prod
 ```
 
