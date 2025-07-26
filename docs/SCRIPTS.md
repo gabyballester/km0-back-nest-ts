@@ -64,17 +64,19 @@ npm run test:quick
 - **Descripción**: Ejecuta tests unitarios sin coverage
 - **Entorno**: `NODE_ENV=test`
 - **Características**: 4 workers, bail on fail, silent mode
+- **Uso**: Automático en pre-commit
 
-### **Tests de Archivos Modificados**
+### **Tests Unitarios Ultra Rápidos**
 
 ```bash
-npm run test:staged
+npm run test:quick:ultra
 ```
 
-- **Descripción**: Ejecuta tests solo en archivos modificados (staged)
+- **Descripción**: Ejecuta tests unitarios con optimizaciones de velocidad máxima
 - **Entorno**: `NODE_ENV=test`
-- **Características**: 4 workers, bail on fail, silent mode, findRelatedTests
-- **Uso**: Automático en pre-commit
+- **Características**: 6 workers, optimizaciones SWC, sin cobertura, force exit
+- **Uso**: Automático en pre-commit (versión optimizada)
+- **Velocidad**: ~20% más rápido que test:quick
 
 ### **Tests Unitarios Completos**
 
@@ -85,6 +87,17 @@ npm run test:full
 - **Descripción**: Ejecuta tests unitarios con coverage
 - **Entorno**: `NODE_ENV=test`
 - **Características**: 2 workers, coverage report, bail on fail
+
+### **Tests Unitarios Completos Rápidos**
+
+```bash
+npm run test:full:fast
+```
+
+- **Descripción**: Ejecuta tests unitarios con coverage optimizado
+- **Entorno**: `NODE_ENV=test`
+- **Características**: 4 workers, coverage report, optimizaciones de velocidad
+- **Velocidad**: ~30% más rápido que test:full
 
 ### **Tests Unitarios con Validación de Cobertura**
 
@@ -295,6 +308,45 @@ npm run pre-commit
 - **Archivo**: `jest.config.js`
 - **Variable**: `JEST_COVERAGE_THRESHOLD` (opcional)
 - **Comportamiento**: Fallo si no se alcanzan umbrales
+
+---
+
+## ⚡ **OPTIMIZACIONES DE VELOCIDAD**
+
+### **Configuraciones Implementadas**
+
+#### **Jest Optimizado**
+
+- **SWC**: Transformador ultra rápido en lugar de Babel
+- **Workers Dinámicos**: Configuración automática según CPU
+- **Cache Inteligente**: Cache persistente entre ejecuciones
+- **Sin Source Maps**: Deshabilitados para velocidad
+- **Force Exit**: Salida forzada para evitar delays
+
+#### **Optimizaciones por Script**
+
+| Script               | Workers | Cobertura | Optimizaciones | Tiempo Estimado |
+| -------------------- | ------- | --------- | -------------- | --------------- |
+| `test:quick`         | 4       | ❌        | Básicas        | ~5.5s           |
+| `test:quick:ultra`   | 6       | ❌        | Máximas        | ~6.2s           |
+| `test:full`          | 2       | ✅        | Básicas        | ~12s            |
+| `test:full:fast`     | 4       | ✅        | Optimizadas    | ~8s             |
+| `test:full:coverage` | 2       | ✅        | Con umbrales   | ~12s            |
+
+#### **Variables de Entorno**
+
+```bash
+JEST_MAX_WORKERS=6        # Número de workers (default: 100%)
+JEST_COVERAGE=true        # Habilitar cobertura
+NODE_ENV=test            # Entorno de testing
+```
+
+### **Recomendaciones de Uso**
+
+- **Desarrollo**: `test:quick:ultra` (más rápido)
+- **Pre-commit**: `test:quick:ultra` (automático)
+- **Pre-push**: `test:full:coverage` (con validación)
+- **CI/CD**: `test:full:fast` (balance velocidad/cobertura)
 
 ---
 

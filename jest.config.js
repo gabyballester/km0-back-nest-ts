@@ -18,6 +18,9 @@ module.exports = {
           },
           target: 'es2020',
         },
+        // Optimizaciones de SWC para velocidad
+        minify: false,
+        sourceMaps: false,
       },
     ],
   },
@@ -46,7 +49,7 @@ module.exports = {
       },
   testEnvironment: 'node',
   // Optimizaciones para velocidad máxima
-  maxWorkers: '100%',
+  maxWorkers: process.env.JEST_MAX_WORKERS || '100%',
   bail: true,
   verbose: false,
   silent: true,
@@ -61,16 +64,16 @@ module.exports = {
   // Configuración para SWC
   extensionsToTreatAsEsm: [],
   globals: {},
-  // Configuración de cobertura
-  coverageReporters: ['text', 'lcov', 'json'],
-  collectCoverage: true,
+  // Configuración de cobertura (solo cuando se necesita)
+  coverageReporters: process.env.JEST_COVERAGE ? ['text', 'lcov', 'json'] : [],
+  collectCoverage: process.env.JEST_COVERAGE === 'true',
   // Optimizaciones adicionales
-  clearMocks: true,
-  resetMocks: true,
-  restoreMocks: true,
+  clearMocks: false, // Deshabilitar para velocidad
+  resetMocks: false, // Deshabilitar para velocidad
+  restoreMocks: false, // Deshabilitar para velocidad
   // Optimizaciones de velocidad extrema
-  detectOpenHandles: true,
-  forceExit: false,
+  detectOpenHandles: false, // Deshabilitar para velocidad
+  forceExit: true, // Forzar salida para velocidad
   // Optimizaciones adicionales
   maxConcurrency: 10,
   // Configuración para evitar conflictos con legacy
@@ -82,4 +85,6 @@ module.exports = {
   modulePathIgnorePatterns: ['/legacy/'],
   // Configuración de resolución de módulos
   moduleDirectories: ['node_modules'],
+  // Optimizaciones adicionales para Node.js 22
+  injectGlobals: true,
 };
