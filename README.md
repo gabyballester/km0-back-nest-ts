@@ -155,8 +155,8 @@ DATABASE_URL=postgresql://username:password@host:port/database
 
 ### 🛡️ Calidad
 
-- **Cobertura**: 100% statements, 100% branches, 100% functions, 100% lines
-- **Umbrales configurados**: 80% branches, 90% functions/lines/statements
+- **Cobertura real**: 100% statements, 100% branches, 100% functions, 100% lines
+- **Umbrales mínimos**: 80% branches, 90% functions/lines/statements
 - **Linting**: 0 warnings, 0 errors
 - **TypeScript**: Strict mode habilitado
 - **Prettier**: Formato consistente
@@ -253,6 +253,7 @@ coverageThreshold: {
 ## 📚 Documentación
 
 - **[Scripts Rápidos](./docs/SCRIPTS.md)**: Uso obligatorio de scripts optimizados
+- **[Flujo de Trabajo](./docs/WORKFLOW.md)**: Estrategia de ramas y desarrollo
 - **[Arquitectura](./docs/ARCHITECTURE.md)**: Estructura modular y principios
 - **[Testing](./docs/TESTING.md)**: Estrategia y mejores prácticas
 - **[Deployment](./docs/DEPLOYMENT.md)**: Configuración de producción

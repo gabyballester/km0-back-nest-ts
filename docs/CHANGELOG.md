@@ -633,7 +633,7 @@ npm run validate:full
 
 - **Métricas de performance** en scripts
 - **Tiempos de ejecución** optimizados
-- **Cobertura de tests** al 100%
+- **Cobertura de tests** al 100% (umbrales: 80% branches, 90% functions/lines/statements)
 - **Logs estructurados** por entorno
 - **Monitoreo de recursos** del sistema
 
@@ -643,7 +643,7 @@ npm run validate:full
 - **Linting**: ~1s (con cache)
 - **Formateo**: ~0.5s
 - **Startup**: ~2s
-- **Cobertura**: 100% statements, branches, functions, lines
+- **Cobertura**: 100% statements, branches, functions, lines (umbrales: 80% branches, 90% functions/lines/statements)
 
 ---
 
