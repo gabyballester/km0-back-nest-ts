@@ -4,29 +4,43 @@
 
 ### **Ramas Principales**
 
-- **`master`**: Rama principal para despliegue
-  - Solo se usa para mergear cuando todo está correcto
-  - Siempre debe estar lista para despliegue
-  - Contiene solo código validado y probado
+- **`master`**: Rama de producción
+  - Solo código validado y listo para despliegue
+  - Siempre estable y funcional
+  - Se mergea desde `develop` cuando está listo
+
+- **`develop`**: Rama de desarrollo principal
+  - Rama base para todas las features
+  - Integración continua de funcionalidades
+  - Validación automática en cada push
+
+### **Ramas de Trabajo**
 
 - **`fix/*`**: Ramas para correcciones
   - Ejemplo: `fix/update-coverage-documentation`
   - Para correcciones de bugs o documentación
+  - Se mergean a `develop`
 
 - **`feat/*`**: Ramas para nuevas funcionalidades
   - Ejemplo: `feat/user-authentication`
   - Para nuevas características
+  - Se mergean a `develop`
 
 - **`docs/*`**: Ramas para documentación
   - Ejemplo: `docs/api-documentation`
   - Para actualizaciones de documentación
+  - Se mergean a `develop`
 
 ## 🚀 **FLUJO DE TRABAJO**
 
 ### **1. Crear Rama para Tarea**
 
 ```bash
-# Crear y cambiar a nueva rama
+# Asegurar que estamos en develop
+git checkout develop
+git pull origin develop
+
+# Crear y cambiar a nueva rama desde develop
 git checkout -b fix/nombre-de-la-tarea
 
 # O para nuevas funcionalidades
@@ -59,23 +73,36 @@ npm run validate:full:strict
 git push origin fix/nombre-de-la-tarea
 ```
 
-### **4. Merge a Master**
+### **4. Merge a Develop**
 
 ```bash
-# Solo cuando todo esté correcto
-git checkout master
+# Primero mergear a develop
+git checkout develop
 git merge fix/nombre-de-la-tarea
 
 # O usar Pull Request en GitHub
-# 1. Crear Pull Request
+# 1. Crear Pull Request a develop
 # 2. Revisar cambios
 # 3. Asegurar que pasan todas las validaciones
-# 4. Merge a master
+# 4. Merge a develop
+```
+
+### **5. Release a Master (Cuando esté listo)**
+
+```bash
+# Solo cuando develop esté estable y listo para producción
+git checkout master
+git merge develop
+
+# O crear Pull Request de develop a master
+# 1. Crear Pull Request develop → master
+# 2. Revisión final
+# 3. Merge a master (producción)
 ```
 
 ## 🛡️ **REGLAS OBLIGATORIAS**
 
-### **✅ Antes de Merge a Master**
+### **✅ Antes de Merge a Develop**
 
 1. **Validación completa pasando:**
 
@@ -98,29 +125,42 @@ git merge fix/nombre-de-la-tarea
    - Documentación técnica actualizada
    - Swagger actualizado si hay cambios en API
 
+### **✅ Antes de Release a Master**
+
+1. **Develop estable:** Todas las features integradas y probadas
+2. **Validación completa:** `npm run validate:full:strict`
+3. **Tests de integración:** Verificar que todo funciona junto
+4. **Documentación final:** Actualizada y alineada
+5. **Revisión de código:** Pull Request review
+
 ### **❌ NUNCA en Master**
 
 - Commits directos sin validación
 - Código sin tests
 - Cambios sin documentación
 - Errores de linting o TypeScript
+- Merge directo sin pasar por develop
 
 ## 📋 **EJEMPLO DE FLUJO COMPLETO**
 
 ### **Escenario: Corregir documentación de cobertura**
 
 ```bash
-# 1. Crear rama
+# 1. Asegurar que estamos en develop
+git checkout develop
+git pull origin develop
+
+# 2. Crear rama desde develop
 git checkout -b fix/update-coverage-documentation
 
-# 2. Hacer cambios
+# 3. Hacer cambios
 # Editar archivos .md
 # Actualizar información de cobertura
 
-# 3. Validar cambios
+# 4. Validar cambios
 npm run validate:staged:strict
 
-# 4. Commit
+# 5. Commit
 git commit -m "fix: actualizar documentación de cobertura
 
 - ✅ README.md actualizado con umbrales correctos
@@ -128,14 +168,15 @@ git commit -m "fix: actualizar documentación de cobertura
 - ✅ docs/CHANGELOG.md actualizado
 - ✅ Información de cobertura alineada con jest.config.js"
 
-# 5. Validación completa
+# 6. Validación completa
 npm run validate:full:strict
 
-# 6. Push
+# 7. Push
 git push origin fix/update-coverage-documentation
 
-# 7. Crear Pull Request en GitHub
-# 8. Revisar y mergear a master
+# 8. Crear Pull Request a develop
+# 9. Revisar y mergear a develop
+# 10. Cuando develop esté estable, crear Pull Request develop → master
 ```
 
 ## 🎯 **BENEFICIOS DE ESTE FLUJO**
@@ -143,10 +184,13 @@ git push origin fix/update-coverage-documentation
 ### **✅ Ventajas**
 
 1. **Master siempre estable:** Lista para despliegue
-2. **Trazabilidad:** Cada cambio tiene su rama
-3. **Validación obligatoria:** No se puede mergear código defectuoso
-4. **Revisión de código:** Pull Requests para revisión
-5. **Rollback fácil:** Si algo falla, se puede revertir
+2. **Develop como integración:** Todas las features se integran aquí
+3. **Trazabilidad:** Cada cambio tiene su rama
+4. **Validación obligatoria:** No se puede mergear código defectuoso
+5. **Revisión de código:** Pull Requests para revisión
+6. **Rollback fácil:** Si algo falla, se puede revertir
+7. **Releases controlados:** Solo se mergea a master cuando está listo
+8. **Desarrollo paralelo:** Múltiples features en develop
 
 ### **🛡️ Seguridad**
 
@@ -213,15 +257,23 @@ npm run lint
 
 ### **Flujo Estándar**
 
-1. **Crear rama** para cada tarea
+1. **Crear rama desde develop** para cada tarea
 2. **Desarrollar** con validaciones locales
 3. **Validar completamente** antes de push
-4. **Crear Pull Request** para revisión
-5. **Mergear a master** solo cuando todo esté correcto
+4. **Crear Pull Request a develop** para revisión
+5. **Mergear a develop** cuando esté validado
+6. **Release a master** cuando develop esté estable
 
-### **Master = Despliegue**
+### **Master = Producción**
 
-- **Siempre estable** y lista para producción
-- **Validación completa** en cada merge
+- **Siempre estable** y lista para despliegue
+- **Validación completa** en cada release
 - **Documentación alineada** con el código
 - **Tests pasando** sin excepciones
+
+### **Develop = Integración**
+
+- **Rama de desarrollo** principal
+- **Integración continua** de features
+- **Validación automática** en cada push
+- **Base para nuevas** ramas de trabajo
