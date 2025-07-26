@@ -1,9 +1,14 @@
+// Error ESLint: variable sin usar
+const unusedVar = 123;
+// Error TypeScript: asignación incorrecta de tipo
+const numberVar: number = 'esto es un string';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentLogger } from './shared/utils/environment-logger';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ENV_VALUES, CONFIG_KEYS } from './shared/constants/environment';
+import { ENV_VALUES } from './shared/constants/environment';
+import { CONFIG_KEYS } from './shared/constants/environment.schema';
 
 async function bootstrap() {
   try {
@@ -12,7 +17,7 @@ async function bootstrap() {
 
     // Obtener configuración
     const configService = app.get(ConfigService);
-    const port = configService.get<number>(CONFIG_KEYS.ENV_PORT, 3000);
+    const port = configService.get<number>(CONFIG_KEYS.ENV_PORT, 4000);
     const environment = configService.get<string>(
       CONFIG_KEYS.ENV_NODE_ENV,
       ENV_VALUES.NODE_ENV.DEVELOPMENT,

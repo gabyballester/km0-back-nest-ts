@@ -11,7 +11,7 @@ const envSchema = z.object({
       ENV_VALUES.NODE_ENV.TEST,
     ])
     .default(ENV_VALUES.NODE_ENV.DEVELOPMENT),
-  [ENV_KEYS.PORT]: z.string().transform(Number).default(3000),
+  [ENV_KEYS.PORT]: z.string().transform(Number).default(4000),
   [ENV_KEYS.DATABASE_URL]: z.string(),
   [ENV_KEYS.JWT_SECRET]: z.string(),
 });

@@ -29,7 +29,7 @@ const ENV_VALUES = {
   },
 } as const;
 
-const CONFIG_KEYS = {
+export const CONFIG_KEYS = {
   ENV_NODE_ENV: 'env.nodeEnv',
   ENV_PORT: 'env.port',
   ENV_HOST: 'env.host',
