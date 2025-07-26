@@ -32,6 +32,8 @@ module.exports = {
     '/shared/constants/api.ts$',
     '/shared/constants/security.ts$',
     '/shared/constants/validation.ts$',
+    '/dist/',
+    '/node_modules/',
   ],
   coverageThreshold: process.env.JEST_COVERAGE_THRESHOLD
     ? JSON.parse(process.env.JEST_COVERAGE_THRESHOLD)
