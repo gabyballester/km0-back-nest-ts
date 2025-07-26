@@ -210,8 +210,8 @@ npm run db:studio:prod # Studio para producción
 
 - ✅ **Format**: Prettier en archivos staged
 - ✅ **Lint**: ESLint con auto-fix en archivos staged
-- ✅ **Tests**: Tests de archivos modificados (findRelatedTests)
-- ⏱️ **Tiempo**: ~5-8 segundos
+- ✅ **Tests**: Tests rápidos (sin coverage)
+- ⏱️ **Tiempo**: ~7-10 segundos
 - 🎯 **Objetivo**: Validación rápida con tests básicos
 
 **Pre-push (Completo y Riguroso):**
@@ -220,7 +220,7 @@ npm run db:studio:prod # Studio para producción
 - ✅ **Type-check**: TypeScript completo (proyecto global)
 - ✅ **Lint**: ESLint completo
 - ✅ **Tests**: Unitarios + E2E con coverage
-- ⏱️ **Tiempo**: ~15-20 segundos
+- ⏱️ **Tiempo**: ~12-15 segundos
 - 🎯 **Objetivo**: Garantizar calidad antes de push
 
 **¿Por qué no type-check en pre-commit?**
