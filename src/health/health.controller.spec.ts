@@ -4,6 +4,13 @@ import { HealthController } from './health.controller';
 import { DatabaseService } from '../infrastructure/database/database.service';
 import { ENV_VALUES } from '../shared/constants/environment';
 
+// Interface for database info in tests
+interface DatabaseInfo {
+  database_name: string;
+  current_user: string;
+  postgres_version: string;
+}
+
 // Mock Swagger decorators for tests
 jest.mock('@nestjs/swagger', () => ({
   ApiTags: (): (() => void) => (): void => {},
@@ -400,6 +407,94 @@ describe('HealthController', () => {
         current_user: 'test_user',
         postgres_version: false as any, // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
       });
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('test_db');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
+
+    it('should handle undefined database info in getDetailedHealth', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest
+        .spyOn(databaseService, 'getDatabaseInfo')
+        .mockReturnValue(undefined as unknown as DatabaseInfo | null);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
+
+    it('should handle database info with undefined database_name property', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: undefined as unknown as string,
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      } as unknown as DatabaseInfo);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('PostgreSQL 14.0');
+    });
+
+    it('should handle database info with undefined postgres_version property', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: undefined as unknown as string,
+      } as unknown as DatabaseInfo);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('test_db');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('unknown');
+    });
+
+    it('should handle database info with null database_name property', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: null as unknown as string,
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      } as unknown as DatabaseInfo);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.database.info.name).toBe('unknown');
+      expect(result.database.info.type).toBe('PostgreSQL');
+      expect(result.database.info.version).toBe('PostgreSQL 14.0');
+    });
+
+    it('should handle database info with null postgres_version property', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: null as unknown as string,
+      } as unknown as DatabaseInfo);
       jest
         .spyOn(configService, 'get')
         .mockReturnValue(ENV_VALUES.NODE_ENV.DEVELOPMENT);
