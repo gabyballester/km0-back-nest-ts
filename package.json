@@ -59,6 +59,7 @@
     "db:studio:dev": "dotenv -e .env.development -- prisma studio",
     "db:studio:test": "dotenv -e .env.test -- prisma studio",
     "db:studio:prod": "dotenv -e .env -- prisma studio",
+    "db:safety": "node scripts/check-db-safety.js",
     "deploy:railway": "npm run test:full && npm run build:prod",
     "deploy:render": "npm run test:full && npm run build:prod",
     "deploy:vercel": "npm run test:full && npm run build"

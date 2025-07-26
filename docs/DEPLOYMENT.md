@@ -83,6 +83,50 @@ HOST=0.0.0.0
 CORS_ORIGIN=https://tu-dominio.com
 ```
 
+## 🛡️ **SEGURIDAD CRÍTICA DE BASE DE DATOS**
+
+### **⚠️ ADVERTENCIA IMPORTANTE**
+
+**NUNCA uses estos comandos en producción:**
+
+```bash
+# ❌ PELIGROSO - Puede destruir datos
+prisma migrate dev
+prisma migrate reset
+prisma db push --force-reset
+```
+
+**✅ SIEMPRE usa estos comandos en producción:**
+
+```bash
+# ✅ SEGURO - Solo aplica migraciones existentes
+prisma migrate deploy
+
+# ✅ SEGURO - Sincroniza esquema sin destruir datos
+prisma db push
+
+# ✅ SEGURO - Script de producción con validaciones
+npm run db:prod
+```
+
+### **🛡️ Script de Producción Seguro**
+
+Nuestro script `scripts/production-deploy.js` incluye:
+
+- ✅ **Validaciones de seguridad** automáticas
+- ✅ **Detección de comandos peligrosos**
+- ✅ **Manejo inteligente** de diferentes escenarios
+- ✅ **Baseline automático** para bases de datos existentes
+
+### **🚨 Variables de Seguridad**
+
+```bash
+# Para operaciones críticas en producción
+SAFE_DEPLOYMENT_MODE=true npm run db:prod
+```
+
+---
+
 ## 🚀 **DEPLOYMENT EN RAILWAY**
 
 ### **Paso 1: Preparar el Proyecto**

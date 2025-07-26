@@ -70,11 +70,25 @@ function createBaselineForExistingDatabase() {
     '🛡️  Creando baseline para base de datos existente (mejor práctica oficial)...',
   );
 
-  // 1. Crear migración inicial sin aplicar
+  // 🚨 VALIDACIÓN CRÍTICA: Verificar que estamos en entorno seguro
+  if (process.env.NODE_ENV === 'production') {
+    console.log('⚠️  ADVERTENCIA: Operación en PRODUCCIÓN detectada');
+    console.log('🛡️  Verificando que la operación sea SEGURA...');
+
+    // Verificar que la operación sea solo de lectura
+    if (!process.env.SAFE_DEPLOYMENT_MODE) {
+      console.error('❌ ERROR: Deployment no seguro detectado');
+      console.error('🚨 Para operaciones en producción, usar:');
+      console.error('   SAFE_DEPLOYMENT_MODE=true npm run db:prod');
+      throw new Error('Deployment no seguro en producción');
+    }
+  }
+
+  // 1. Crear migración inicial sin aplicar (SÓLO LECTURA)
   if (
     !safeExec(
       'npx prisma migrate dev --name initial --create-only',
-      'Creando migración inicial',
+      'Creando migración inicial (SÓLO LECTURA)',
     )
   ) {
     throw new Error('No se pudo crear la migración inicial');
@@ -84,17 +98,37 @@ function createBaselineForExistingDatabase() {
   if (
     !safeExec(
       'npx prisma migrate resolve --applied initial',
-      'Marcando migración como baseline',
+      'Marcando migración como baseline (SÓLO LECTURA)',
     )
   ) {
     throw new Error('No se pudo marcar la migración como baseline');
   }
 
-  console.log('✅ Baseline creado correctamente (base de datos no modificada)');
+  console.log('✅ Baseline creado correctamente (base de datos NO modificada)');
+  console.log('🛡️  Operación SEGURA completada');
 }
 
 function deployProduction() {
   try {
+    // 🚨 VALIDACIÓN CRÍTICA: Verificar entorno de producción
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🚨 ========================================');
+      console.log('🛡️  DEPLOYMENT DE PRODUCCIÓN DETECTADO');
+      console.log('========================================');
+      console.log('⚠️  Verificando seguridad de base de datos...');
+
+      // Verificar que no se usen comandos peligrosos
+      if (
+        process.argv.includes('migrate dev') &&
+        !process.argv.includes('--create-only')
+      ) {
+        console.error('❌ ERROR CRÍTICO: Comando peligroso detectado');
+        console.error('🚨 NUNCA usar "prisma migrate dev" en producción');
+        console.error('✅ Usar "prisma migrate deploy" en su lugar');
+        throw new Error('Comando peligroso detectado en producción');
+      }
+    }
+
     // 1. Generar cliente Prisma (siempre necesario)
     if (!safeExec('npx prisma generate', 'Generando cliente Prisma')) {
       throw new Error('No se pudo generar el cliente Prisma');
