@@ -37,10 +37,12 @@
     "validate:quick": "npm run format && npm run type-check && npm run lint",
     "validate:staged": "node scripts/validate-staged.js",
     "validate:staged:light": "node scripts/validate-staged-light.js",
+    "validate:staged:strict": "node scripts/validate-staged-strict.js",
+    "validate:full:strict": "node scripts/validate-full-strict.js",
     "validate:full": "npm run format && npm run type-check && npm run lint && npm run test:full && npm run test:e2e:full",
     "validate:coverage": "cross-env NODE_ENV=test jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent --coverageThreshold={\"global\":{\"statements\":90,\"branches\":80,\"functions\":90,\"lines\":90}}",
-    "pre-commit": "npm run validate:staged:light",
-    "pre-push": "npm run validate:full",
+    "pre-commit": "npm run validate:staged:strict",
+    "pre-push": "npm run validate:full:strict",
     "start:quick": "node scripts/timed-run.js \"cross-env NODE_ENV=development npx nest start --builder swc\" \"🚀 Inicio rápido (Development)\"",
     "start:full": "node scripts/timed-run.js \"cross-env NODE_ENV=development npx nest start --watch --builder swc --preserveWatchOutput\" \"🔄 Inicio completo con watch (Development)\"",
     "start:prod": "node dist/main",
@@ -64,7 +66,7 @@
     "*.ts": [
       "npm run format",
       "npm run type-check:staged",
-      "npm run lint"
+      "npx eslint --cache --max-warnings=0"
     ],
     "*.{json,md,yml,yaml}": [
       "npm run format"
