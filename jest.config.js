@@ -1,6 +1,6 @@
 module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
+  rootDir: '.',
 
   testRegex: '.*\\.spec\\.ts$',
   transform: {
@@ -21,8 +21,8 @@ module.exports = {
       },
     ],
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
+  collectCoverageFrom: ['src/**/*.(t|j)s'],
+  coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: [
     '/main.ts$',
     '/env.config.ts$',
@@ -57,7 +57,7 @@ module.exports = {
   testTimeout: 2000,
   setupFilesAfterEnv: [],
   // Excluir archivos innecesarios
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/legacy/'],
   // Configuración para SWC
   extensionsToTreatAsEsm: [],
   globals: {},
@@ -73,4 +73,13 @@ module.exports = {
   forceExit: false,
   // Optimizaciones adicionales
   maxConcurrency: 10,
+  // Configuración para evitar conflictos con legacy
+  haste: {
+    throwOnModuleCollision: false,
+    enableSymlinks: false,
+  },
+  // Deshabilitar el mapeo de Haste completamente
+  modulePathIgnorePatterns: ['/legacy/'],
+  // Configuración de resolución de módulos
+  moduleDirectories: ['node_modules'],
 };

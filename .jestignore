@@ -1,0 +1,7 @@
+legacy/
+node_modules/
+dist/
+coverage/
+.jest-cache/
+generated/
+src/.jest-cache/

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# Cache directories
+.jest-cache/
+.cache/
+
+# Generated files
+generated/
+
+# Legacy folder (solo consulta)
+legacy/
+
+# Environment files
+.env*
+
+# Package files
+package-lock.json
+yarn.lock
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

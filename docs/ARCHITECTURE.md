@@ -1,164 +1,151 @@
 # Arquitectura del Proyecto
 
-## 🏗️ Estructura Modular + Clean Architecture
-
-### 📁 Organización de Carpetas
+## Estructura de Carpetas
 
 ```
-src/
-├── shared/                    # Recursos compartidos
-│   ├── constants/            # Constantes globales
-│   ├── decorators/           # Decoradores personalizados
-│   ├── filters/              # Filtros de excepción
-│   ├── guards/               # Guards globales
-│   ├── interceptors/         # Interceptores globales
-│   ├── pipes/                # Pipes de validación
-│   └── utils/                # Utilidades comunes
-│
-├── modules/                   # Módulos de negocio
-│   ├── auth/                 # Autenticación
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── guards/
-│   │   ├── strategies/
-│   │   └── auth.module.ts
-│   │
-│   ├── users/                # Gestión de usuarios
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── entities/
-│   │   ├── dto/
-│   │   └── users.module.ts
-│   │
-│   ├── products/             # Gestión de productos
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── entities/
-│   │   ├── dto/
-│   │   └── products.module.ts
-│   │
-│   ├── orders/               # Gestión de pedidos
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── entities/
-│   │   ├── dto/
-│   │   └── orders.module.ts
-│   │
-│   └── security/             # Seguridad (rate limiting, etc.)
-│       ├── controllers/
-│       ├── services/
-│       ├── middleware/
-│       └── security.module.ts
-│
-├── infrastructure/            # Capa de infraestructura
-│   ├── database/             # Configuración de BD
-│   ├── cache/                # Configuración de caché
-│   ├── external/             # APIs externas
-│   └── messaging/            # Mensajería
-│
-├── config/                   # Configuración
-├── health/                   # Health checks
-└── app.module.ts             # Módulo raíz
+backend/
+├── src/                    # Código fuente principal
+│   ├── config/            # Configuración de la aplicación
+│   ├── health/            # Endpoints de salud
+│   ├── infrastructure/    # Capa de infraestructura
+│   ├── modules/           # Módulos de la aplicación
+│   └── shared/            # Utilidades compartidas
+├── test/                  # Tests end-to-end
+├── prisma/                # Configuración de base de datos
+├── docs/                  # Documentación del proyecto
+├── scripts/               # Scripts de utilidad
+├── legacy/                # ⚠️ SOLO CONSULTA - Código legacy de referencia
+└── dist/                  # Archivos compilados (generado)
 ```
 
-## 🎯 Principios de Arquitectura
+## Carpeta Legacy
 
-### 1. **Separación de Responsabilidades**
+La carpeta `legacy/` contiene código de proyectos anteriores y ejemplos de referencia. **Esta carpeta está completamente excluida de todas las herramientas de desarrollo**:
 
-- **Módulos**: Cada módulo maneja una funcionalidad específica
-- **Shared**: Recursos reutilizables entre módulos
-- **Infrastructure**: Configuración de servicios externos
+- **Jest**: Excluida en `testPathIgnorePatterns` y `modulePathIgnorePatterns`
+- **TypeScript**: Excluida en `tsconfig.json` y `tsconfig.build.json`
+- **ESLint**: Excluida en `.eslintignore`
+- **Prettier**: Excluida en `.prettierignore`
+- **Git**: No se ignora para mantener el historial de referencia
 
-### 2. **Escalabilidad**
+### Propósito
 
-- **Fácil agregar módulos**: Estructura consistente
-- **Independencia**: Cada módulo puede evolucionar por separado
-- **Reutilización**: Shared components entre módulos
+- Consulta de patrones y soluciones implementadas anteriormente
+- Referencia de arquitecturas y configuraciones
+- Ejemplos de integración con diferentes tecnologías
 
-### 3. **Testabilidad**
+### Uso
 
-- **Tests por módulo**: Cada módulo tiene sus propios tests
-- **Mocks independientes**: Fácil mockear dependencias
-- **Cobertura granular**: Medir cobertura por módulo
+- **Solo consulta manual**: No se ejecuta, valida ni compila
+- **No modificar**: Mantener como referencia histórica
+- **No referenciar**: No importar código de legacy en el proyecto principal
 
-## 📋 Convenciones de Nomenclatura
+## Configuración de Herramientas
 
-### **Módulos**
+### TypeScript
 
-- `auth.module.ts` - Módulo de autenticación
-- `users.module.ts` - Módulo de usuarios
-- `products.module.ts` - Módulo de productos
+- **Target**: ES2023 (compatible con Node.js 22+)
+- **Module Resolution**: Node16
+- **Strict Mode**: Habilitado completamente
+- **Exclusiones**: `node_modules`, `dist`, `legacy`
 
-### **Controllers**
+### Jest
 
-- `auth.controller.ts` - Controlador de autenticación
-- `users.controller.ts` - Controlador de usuarios
+- **Framework**: Jest con SWC para velocidad
+- **Coverage**: 100% en archivos con lógica de negocio
+- **Exclusiones**: Constantes, schemas, módulos declarativos
+- **Performance**: Cache habilitado, workers optimizados
 
-### **Services**
+### ESLint
 
-- `auth.service.ts` - Servicio de autenticación
-- `users.service.ts` - Servicio de usuarios
+- **Configuración**: TypeScript + NestJS rules
+- **Strict**: `max-warnings=0`
+- **Exclusiones**: `node_modules`, `dist`, `legacy`, `generated`
 
-### **DTOs**
+### Prettier
 
-- `create-user.dto.ts` - DTO para crear usuario
-- `update-user.dto.ts` - DTO para actualizar usuario
+- **Configuración**: Estándar de la comunidad
+- **Exclusiones**: Archivos generados y legacy
 
-## 🔧 Estructura de un Módulo Típico
+## Arquitectura Hexagonal
+
+El proyecto sigue la arquitectura hexagonal (puertos y adaptadores):
 
 ```
-modules/users/
-├── controllers/
-│   └── users.controller.ts
-├── services/
-│   └── users.service.ts
-├── entities/
-│   └── user.entity.ts
-├── dto/
-│   ├── create-user.dto.ts
-│   └── update-user.dto.ts
-├── users.module.ts
-└── users.module.spec.ts
+└── src/
+    ├── modules/           # Capa de aplicación (casos de uso)
+    ├── infrastructure/    # Capa de infraestructura (adaptadores)
+    └── shared/            # Utilidades y constantes compartidas
 ```
 
-## 🚀 Beneficios de esta Arquitectura
+### Principios
 
-### **✅ Ventajas**
+- **Separación de responsabilidades**: Cada capa tiene un propósito específico
+- **Inversión de dependencias**: Las dependencias apuntan hacia el dominio
+- **Testabilidad**: Cada componente es testeable de forma aislada
+- **Mantenibilidad**: Código limpio y bien documentado
 
-1. **Escalabilidad**: Fácil agregar nuevos módulos
-2. **Mantenibilidad**: Código organizado y predecible
-3. **Testabilidad**: Tests independientes por módulo
-4. **Reutilización**: Shared components
-5. **NestJS-friendly**: Se adapta perfectamente al framework
+## Validación y Calidad
 
-### **📈 Métricas de Calidad**
+### Pre-commit Hook
 
-- **Cobertura por módulo**: Medir independientemente
-- **Complejidad ciclomática**: Reducida por separación
-- **Acoplamiento**: Mínimo entre módulos
-- **Cohesión**: Alta dentro de cada módulo
+- Formateo con Prettier
+- Linting con ESLint (solo archivos staged)
+- Validación rápida de tipos
 
-## 🎯 Próximos Pasos
+### Pre-push Hook
 
-1. **Implementar módulos base**: Auth, Users, Products
-2. **Crear shared components**: Guards, Interceptors, Pipes
-3. **Configurar infraestructura**: Database, Cache
-4. **Documentar APIs**: Swagger por módulo
-5. **Tests e2e**: Por funcionalidad de negocio
+- Validación completa de tipos
+- Linting completo del proyecto
+- Tests unitarios e integración
+- Validación de cobertura
 
-## 📈 Política de Cobertura y Documentación
+### Cobertura de Tests
 
-### 🎯 **Umbrales de Cobertura**
+- **Objetivo**: 100% en archivos con lógica de negocio
+- **Exclusiones**: Constantes, schemas, módulos declarativos
+- **Umbrales**: 80% branches, 90% functions/lines/statements
 
-- **Umbrales configurados:** 80% branches, 90% functions/lines/statements
-- **Cobertura real:** 100% en todas las métricas
-- **Validación automática:** Pre-commit y pre-push hooks
-- **Archivos excluidos:** Solo archivos declarativos/configuración
+## Configuración de Entorno
 
-### 📊 **Estado Actual**
+### Variables de Entorno
 
-- **Módulos implementados:** Health, Security
-- **Tests:** 204 tests pasando
-- **Cobertura:** 100% en todos los archivos relevantes
-- **Documentación:** Siempre alineada con el estado real del código
-- **Swagger:** Configurado y documentado
+- **Desarrollo**: `env.development.example`
+- **Test**: `env.test.example`
+- **Producción**: `env.example`
+- **Validación**: Zod schemas en `src/config/env.schema.ts`
+
+### Seguridad
+
+- **Validación**: Todas las variables validadas con Zod
+- **Tipado**: ConfigService con tipos estrictos
+- **Documentación**: Variables documentadas en `/docs/ENVIRONMENT.md`
+
+## Base de Datos
+
+### Prisma ORM
+
+- **Schema**: `prisma/schema.prisma`
+- **Migrations**: Generadas automáticamente
+- **Client**: Generado en `node_modules/.prisma/client`
+- **Studio**: Interfaz visual para desarrollo
+
+### Configuración
+
+- **Desarrollo**: SQLite para desarrollo local
+- **Test**: SQLite en memoria
+- **Producción**: PostgreSQL (configurable)
+
+## Deployment
+
+### Plataforma
+
+- **Render**: Configuración en `render.yaml`
+- **Build**: Automático con validaciones
+- **Health Checks**: Endpoints de salud configurados
+
+### Variables de Producción
+
+- **Base de datos**: PostgreSQL con SSL
+- **Seguridad**: Headers de seguridad configurados
+- **Logging**: Configuración de logs estructurados
