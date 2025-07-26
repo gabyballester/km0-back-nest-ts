@@ -209,8 +209,10 @@ const prismaOperations = {
  * Database operations for Drizzle
  */
 const drizzleOperations = {
-  generate: () =>
-    executeCommand('npx drizzle-kit generate', 'Generate Drizzle migrations'),
+  generate: () => {
+    logInfo('Drizzle generate: Creating migration files from schema changes');
+    executeCommand('npx drizzle-kit generate', 'Generate Drizzle migrations');
+  },
 
   push: (env = '') => {
     const envFlag = env ? `-e .env.${env}` : '';
@@ -236,10 +238,13 @@ const drizzleOperations = {
 
   migrateDeploy: (env = '') => {
     // In production, use process.env directly (no dotenv needed)
-    const command = 'npx drizzle-kit migrate';
-    return executeCommand(
-      command,
-      `Deploy Drizzle migrations (${env || 'current'})`,
+    logInfo('Drizzle deploy strategy: push schema (recommended for production)');
+
+    // Use push strategy for production (more reliable for existing databases)
+    const pushCommand = 'npx drizzle-kit push';
+    executeCommand(
+      pushCommand,
+      `Push Drizzle schema to database (${env || 'current'})`,
     );
   },
 
