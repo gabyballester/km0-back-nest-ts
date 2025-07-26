@@ -29,4 +29,14 @@ services:
         value: info
       - key: DATABASE_URL
         sync: false
+      - key: DATABASE_HOST
+        value: localhost
+      - key: DATABASE_PORT
+        value: 5432
+      - key: DATABASE_NAME
+        value: km0_db
+      - key: DATABASE_USER
+        value: postgres
+      - key: DATABASE_PASSWORD
+        sync: false
     autoDeploy: true
