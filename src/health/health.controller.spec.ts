@@ -1,15 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
-import { DatabaseService } from '../infrastructure/database/database.service';
+import {
+  DatabaseService,
+  DatabaseInfo,
+} from '../infrastructure/database/database.service';
 import { ENV_VALUES } from '../shared/constants/environment';
-
-// Interface for database info in tests
-interface DatabaseInfo {
-  database_name: string;
-  current_user: string;
-  postgres_version: string;
-}
 
 // Mock Swagger decorators for tests
 jest.mock('@nestjs/swagger', () => ({
@@ -504,6 +500,29 @@ describe('HealthController', () => {
       expect(result.database.info.name).toBe('test_db');
       expect(result.database.info.type).toBe('PostgreSQL');
       expect(result.database.info.version).toBe('unknown');
+    });
+
+    // Tests directos para métodos privados para mejorar cobertura de branches
+    describe('private methods direct testing for branch coverage', () => {
+      it('should test getDatabaseName with empty string database_name', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+        const result = (controller as any).getDatabaseName({
+          database_name: '',
+          current_user: 'test_user',
+          postgres_version: 'PostgreSQL 14.0',
+        });
+        expect(result).toBe('unknown');
+      });
+
+      it('should test getDatabaseVersion with empty string postgres_version', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+        const result = (controller as any).getDatabaseVersion({
+          database_name: 'test_db',
+          current_user: 'test_user',
+          postgres_version: '',
+        });
+        expect(result).toBe('unknown');
+      });
     });
   });
 });

@@ -253,4 +253,113 @@ describe('DatabaseService', () => {
       expect(result).toBe('km0_db');
     });
   });
+
+  describe('healthCheckReal', () => {
+    it('should return true when database is healthy', async () => {
+      const mockPrisma = {
+        $queryRaw: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
+      };
+      const serviceWithMockPrisma = new DatabaseService(
+        mockPrisma as unknown as PrismaService,
+        configService,
+      );
+
+      const result = await serviceWithMockPrisma.healthCheckReal();
+
+      expect(result).toBe(true);
+      expect(mockPrisma.$queryRaw).toHaveBeenCalledWith(expect.any(Array));
+    });
+
+    it('should return false when database query fails', async () => {
+      const mockPrisma = {
+        $queryRaw: jest.fn().mockRejectedValue(new Error('Database error')),
+      };
+      const serviceWithMockPrisma = new DatabaseService(
+        mockPrisma as unknown as PrismaService,
+        configService,
+      );
+
+      const result = await serviceWithMockPrisma.healthCheckReal();
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('getDatabaseInfoReal', () => {
+    it('should return real database info when query succeeds', async () => {
+      const mockPrisma = {
+        $queryRaw: jest.fn().mockResolvedValue([
+          {
+            current_database: 'test_db',
+            current_user: 'test_user',
+            version: 'PostgreSQL 14.0',
+          },
+        ]),
+      };
+      const serviceWithMockPrisma = new DatabaseService(
+        mockPrisma as unknown as PrismaService,
+        configService,
+      );
+
+      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
+
+      expect(result).toEqual({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      });
+    });
+
+    it('should return null when query fails', async () => {
+      const mockPrisma = {
+        $queryRaw: jest.fn().mockRejectedValue(new Error('Database error')),
+      };
+      const serviceWithMockPrisma = new DatabaseService(
+        mockPrisma as unknown as PrismaService,
+        configService,
+      );
+
+      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
+
+      expect(result).toBe(null);
+    });
+
+    it('should handle empty result array', async () => {
+      const mockPrisma = {
+        $queryRaw: jest.fn().mockResolvedValue([]),
+      };
+      const serviceWithMockPrisma = new DatabaseService(
+        mockPrisma as unknown as PrismaService,
+        configService,
+      );
+
+      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
+
+      expect(result).toBe(null);
+    });
+
+    it('should handle null values in result', async () => {
+      const mockPrisma = {
+        $queryRaw: jest.fn().mockResolvedValue([
+          {
+            current_database: null,
+            current_user: null,
+            version: null,
+          },
+        ]),
+      };
+      const serviceWithMockPrisma = new DatabaseService(
+        mockPrisma as unknown as PrismaService,
+        configService,
+      );
+
+      const result = await serviceWithMockPrisma.getDatabaseInfoReal();
+
+      expect(result).toEqual({
+        database_name: 'unknown',
+        current_user: 'unknown',
+        postgres_version: 'unknown',
+      });
+    });
+  });
 });

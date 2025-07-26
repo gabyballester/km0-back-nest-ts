@@ -2,6 +2,13 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { ConfigService } from '@nestjs/config';
 
+// Exportar la interfaz para uso en otros módulos
+export interface DatabaseInfo {
+  database_name: string;
+  current_user: string;
+  postgres_version: string;
+}
+
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private isConnected = false;
@@ -54,11 +61,23 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  getDatabaseInfo(): {
-    database_name: string;
-    current_user: string;
-    postgres_version: string;
-  } | null {
+  // Método async para health check real con Prisma (opcional)
+  async healthCheckReal(): Promise<boolean> {
+    try {
+      // Verificación real de conexión usando Prisma
+      // Según la documentación oficial de Prisma, $queryRaw es la forma recomendada
+      // para health checks: https://www.prisma.io/docs/concepts/components/prisma-client/raw-database-access
+      await this.prisma.$queryRaw`SELECT 1`;
+      this.isConnected = true;
+      return true;
+    } catch (error) {
+      console.error('❌ Health check real falló:', error);
+      this.isConnected = false;
+      return false;
+    }
+  }
+
+  getDatabaseInfo(): DatabaseInfo | null {
     try {
       // Información básica de la base de datos
       // En producción, esta información se puede obtener de las variables de entorno
@@ -75,6 +94,37 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       console.error(
         '❌ Error al obtener información de la base de datos:',
+        error,
+      );
+      return null;
+    }
+  }
+
+  // Método para obtener información real de la base de datos (opcional)
+  async getDatabaseInfoReal(): Promise<DatabaseInfo | null> {
+    try {
+      // Obtener información real de PostgreSQL usando Prisma
+      const result = await this.prisma.$queryRaw<
+        Array<{
+          current_database: string;
+          current_user: string;
+          version: string;
+        }>
+      >`SELECT current_database(), current_user, version()`;
+
+      if (result && result.length > 0) {
+        const info = result[0];
+        return {
+          database_name: info.current_database || 'unknown',
+          current_user: info.current_user || 'unknown',
+          postgres_version: info.version || 'unknown',
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error(
+        '❌ Error al obtener información real de la base de datos:',
         error,
       );
       return null;

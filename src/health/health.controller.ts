@@ -1,19 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService } from '../infrastructure/database/database.service';
+import {
+  DatabaseService,
+  DatabaseInfo,
+} from '../infrastructure/database/database.service';
 import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
 import * as os from 'os';
 
-interface DatabaseInfo {
-  database_name: string;
-  current_user: string;
-  postgres_version: string;
-}
-
-/**
- * Health check controller
- * Provides health status endpoints for monitoring
- */
 @Controller('health')
 export class HealthController {
   constructor(
