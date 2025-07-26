@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import {
@@ -12,9 +12,7 @@ import {
  * Provides database connectivity using Prisma ORM
  */
 @Injectable()
-export class PrismaAdapter
-  implements IDatabaseAdapter, OnModuleInit, OnModuleDestroy
-{
+export class PrismaAdapter implements IDatabaseAdapter {
   private prisma: PrismaClient | null = null;
   private status: DatabaseStatus = DatabaseStatus.DISCONNECTED;
   private config: DatabaseAdapterConfig;
@@ -30,20 +28,9 @@ export class PrismaAdapter
     };
   }
 
-  async onModuleInit(): Promise<void> {
-    console.log('🔗 Inicializando PrismaAdapter...');
-    await this.connect();
-  }
-
-  async onModuleDestroy(): Promise<void> {
-    console.log('🔗 Cerrando PrismaAdapter...');
-    await this.disconnect();
-  }
-
   async connect(): Promise<void> {
     try {
       this.status = DatabaseStatus.CONNECTING;
-      console.log('🔗 Conectando a la base de datos con Prisma...');
 
       // Create Prisma client
       this.prisma = new PrismaClient({
@@ -59,7 +46,6 @@ export class PrismaAdapter
       await this.healthCheck();
 
       this.status = DatabaseStatus.CONNECTED;
-      console.log('✅ Conexión a la base de datos establecida con Prisma');
     } catch (error) {
       this.status = DatabaseStatus.ERROR;
       console.error('❌ Error al conectar con Prisma:', error);
@@ -69,15 +55,12 @@ export class PrismaAdapter
 
   async disconnect(): Promise<void> {
     try {
-      console.log('🔄 Cerrando conexión Prisma...');
-
       if (this.prisma) {
         await this.prisma.$disconnect();
         this.prisma = null;
       }
 
       this.status = DatabaseStatus.DISCONNECTED;
-      console.log('✅ Conexión Prisma cerrada');
     } catch (error) {
       console.error('❌ Error al cerrar conexión Prisma:', error);
       throw error;

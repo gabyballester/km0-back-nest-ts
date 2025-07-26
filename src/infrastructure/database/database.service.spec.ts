@@ -6,8 +6,6 @@ import { IDatabaseAdapter } from './interfaces';
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let _configService: ConfigService;
   let databaseFactory: DatabaseFactory;
   let mockAdapter: jest.Mocked<IDatabaseAdapter>;
 
@@ -43,7 +41,6 @@ describe('DatabaseService', () => {
     }).compile();
 
     service = module.get<DatabaseService>(DatabaseService);
-    _configService = module.get<ConfigService>(ConfigService);
     databaseFactory = module.get<DatabaseFactory>(DatabaseFactory);
 
     // Initialize the adapter for tests
@@ -65,18 +62,6 @@ describe('DatabaseService', () => {
       expect(mockAdapter.connect).toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.healthCheck).toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '🗄️  Inicializando servicio de base de datos...',
-      );
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '✅ Conexión a la base de datos establecida',
-      );
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '✅ Base de datos funcionando correctamente',
-      );
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '📊 Base de datos conectada correctamente',
-      );
 
       consoleSpy.mockRestore();
     });
@@ -126,12 +111,6 @@ describe('DatabaseService', () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.disconnect).toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '🔄 Cerrando conexión a la base de datos...',
-      );
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '✅ Conexión a la base de datos cerrada',
-      );
 
       consoleSpy.mockRestore();
     });
@@ -145,13 +124,6 @@ describe('DatabaseService', () => {
 
       await service.onModuleDestroy();
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '🔄 Cerrando conexión a la base de datos...',
-      );
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '✅ Conexión a la base de datos cerrada',
-      );
-
       consoleSpy.mockRestore();
     });
 
@@ -163,9 +135,6 @@ describe('DatabaseService', () => {
 
       await service.onModuleDestroy();
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '🔄 Cerrando conexión a la base de datos...',
-      );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '❌ Error al cerrar conexión:',
         expect.any(Error),

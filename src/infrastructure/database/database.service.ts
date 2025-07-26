@@ -21,8 +21,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    console.log('🗄️  Inicializando servicio de base de datos...');
-
     try {
       // Create adapter based on configuration
       this.adapter = this.databaseFactory.createAdapter();
@@ -31,17 +29,12 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       await this.adapter.connect();
 
       this.status = DatabaseStatus.CONNECTED;
-      console.log('✅ Conexión a la base de datos establecida');
 
       // Verify database is working
       const isHealthy = await this.healthCheck();
       if (!isHealthy) {
         throw new Error('Base de datos no está funcionando correctamente');
       }
-      console.log('✅ Base de datos funcionando correctamente');
-
-      // Show basic information
-      console.log('📊 Base de datos conectada correctamente');
     } catch (error) {
       this.status = DatabaseStatus.ERROR;
       console.error('❌ Error al inicializar la base de datos:', error);
@@ -50,13 +43,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy(): Promise<void> {
-    console.log('🔄 Cerrando conexión a la base de datos...');
     try {
       if (this.adapter) {
         await this.adapter.disconnect();
       }
       this.status = DatabaseStatus.DISCONNECTED;
-      console.log('✅ Conexión a la base de datos cerrada');
     } catch (error) {
       console.error('❌ Error al cerrar conexión:', error);
     }

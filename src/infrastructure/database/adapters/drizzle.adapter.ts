@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
@@ -13,9 +13,7 @@ import {
  * Provides database connectivity using Drizzle ORM
  */
 @Injectable()
-export class DrizzleAdapter
-  implements IDatabaseAdapter, OnModuleInit, OnModuleDestroy
-{
+export class DrizzleAdapter implements IDatabaseAdapter {
   private client: postgres.Sql | null = null;
   private db: ReturnType<typeof drizzle> | null = null;
   private status: DatabaseStatus = DatabaseStatus.DISCONNECTED;
@@ -35,20 +33,9 @@ export class DrizzleAdapter
     };
   }
 
-  async onModuleInit(): Promise<void> {
-    console.log('🔗 Inicializando DrizzleAdapter...');
-    await this.connect();
-  }
-
-  async onModuleDestroy(): Promise<void> {
-    console.log('🔗 Cerrando DrizzleAdapter...');
-    await this.disconnect();
-  }
-
   async connect(): Promise<void> {
     try {
       this.status = DatabaseStatus.CONNECTING;
-      console.log('🔗 Conectando a la base de datos con Drizzle...');
 
       // Create postgres client with SSL for production
       const isProduction = process.env.NODE_ENV === 'production';
@@ -68,7 +55,6 @@ export class DrizzleAdapter
       await this.healthCheck();
 
       this.status = DatabaseStatus.CONNECTED;
-      console.log('✅ Conexión a la base de datos establecida con Drizzle');
     } catch (error) {
       this.status = DatabaseStatus.ERROR;
       console.error('❌ Error al conectar con Drizzle:', error);
@@ -78,8 +64,6 @@ export class DrizzleAdapter
 
   async disconnect(): Promise<void> {
     try {
-      console.log('🔄 Cerrando conexión Drizzle...');
-
       if (this.client) {
         await this.client.end();
         this.client = null;
@@ -87,7 +71,6 @@ export class DrizzleAdapter
 
       this.db = null;
       this.status = DatabaseStatus.DISCONNECTED;
-      console.log('✅ Conexión Drizzle cerrada');
     } catch (error) {
       console.error('❌ Error al cerrar conexión Drizzle:', error);
       throw error;
