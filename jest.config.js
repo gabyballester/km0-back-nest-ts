@@ -27,8 +27,6 @@ module.exports = {
         // Optimizaciones de SWC para velocidad
         minify: false,
         sourceMaps: false,
-        // Evitar generar archivos de salida
-        outputPath: undefined,
       },
     ],
   },
@@ -103,4 +101,18 @@ module.exports = {
   moduleDirectories: ['node_modules'],
   // Optimizaciones adicionales para Node.js 22
   injectGlobals: true,
+  // Configuración para evitar archivos temporales
+  testEnvironmentOptions: {
+    url: 'http://localhost',
+  },
+  // Directorio de trabajo temporal
+  cacheDirectory: '.jest-cache',
+  // Configuración para evitar archivos de salida
+  setupFilesAfterEnv: [],
+  // Configuración específica para evitar compilación
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.test.json',
+    },
+  },
 };

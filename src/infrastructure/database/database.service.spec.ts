@@ -136,6 +136,25 @@ describe('DatabaseService', () => {
       consoleSpy.mockRestore();
     });
 
+    it('should handle case when adapter is null', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      // Set adapter to null
+      (service as unknown as { adapter: IDatabaseAdapter | null }).adapter =
+        null;
+
+      await service.onModuleDestroy();
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '🔄 Cerrando conexión a la base de datos...',
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '✅ Conexión a la base de datos cerrada',
+      );
+
+      consoleSpy.mockRestore();
+    });
+
     it('should handle errors during connection closure', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
@@ -176,6 +195,16 @@ describe('DatabaseService', () => {
       expect(result).toBe(false);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.healthCheck).toHaveBeenCalled();
+    });
+
+    it('should return false when adapter is null', async () => {
+      // Set adapter to null
+      (service as unknown as { adapter: IDatabaseAdapter | null }).adapter =
+        null;
+
+      const result = await service.healthCheck();
+
+      expect(result).toBe(false);
     });
 
     it('should handle errors and return false', async () => {
@@ -222,6 +251,16 @@ describe('DatabaseService', () => {
       expect(result).toBeNull();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.getDatabaseInfo).toHaveBeenCalled();
+    });
+
+    it('should return null when adapter is null', async () => {
+      // Set adapter to null
+      (service as unknown as { adapter: IDatabaseAdapter | null }).adapter =
+        null;
+
+      const result = await service.getDatabaseInfo();
+
+      expect(result).toBeNull();
     });
 
     it('should handle errors and return null', async () => {

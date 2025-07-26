@@ -13,6 +13,7 @@ export default tseslint.config(
       'scripts/**/*',
       '*.config.js',
       '*.config.ts',
+      'drizzle.config.ts',
       'commitlint.config.js',
       'jest.config.js',
       '.jest-cache/**/*',

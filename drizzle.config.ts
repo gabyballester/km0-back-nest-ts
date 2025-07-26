@@ -13,8 +13,6 @@ export default defineConfig({
   },
   verbose: true,
   strict: true,
-  // Generate migrations in SQL format
-  driver: 'pg',
   // Customize migration naming
   migrations: {
     table: 'drizzle_migrations',

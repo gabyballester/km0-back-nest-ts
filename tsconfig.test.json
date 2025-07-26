@@ -3,7 +3,12 @@
   "compilerOptions": {
     "noEmit": true,
     "incremental": false,
-    "outDir": undefined
+    "outDir": null,
+    "tsBuildInfoFile": null,
+    "isolatedModules": true,
+    "sourceMap": false,
+    "declaration": false,
+    "composite": false
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist", "legacy"]
