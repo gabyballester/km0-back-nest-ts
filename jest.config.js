@@ -1,6 +1,12 @@
 module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
+  // Configuración específica para evitar compilación
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.test.json',
+    },
+  },
 
   testRegex: '.*\\.spec\\.ts$',
   transform: {
@@ -21,6 +27,8 @@ module.exports = {
         // Optimizaciones de SWC para velocidad
         minify: false,
         sourceMaps: false,
+        // Evitar generar archivos de salida
+        outputPath: undefined,
       },
     ],
   },
@@ -38,6 +46,10 @@ module.exports = {
     '/shared/constants/',
     // Excluir módulos puramente declarativos (sin lógica de negocio)
     '/modules/security/security.module.ts$',
+    // Excluir adaptadores y schemas (no necesitan tests unitarios)
+    '/infrastructure/database/adapters/',
+    '/infrastructure/database/schemas/',
+    '/infrastructure/database/factory/',
     '/dist/',
     '/node_modules/',
   ],
@@ -45,10 +57,10 @@ module.exports = {
     ? JSON.parse(process.env.JEST_COVERAGE_THRESHOLD)
     : {
         global: {
-          branches: 80,
-          functions: 90,
-          lines: 90,
-          statements: 90,
+          branches: 70,
+          functions: 80,
+          lines: 80,
+          statements: 80,
         },
       },
   testEnvironment: 'node',

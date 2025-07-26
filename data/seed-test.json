@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "email": "test@km0.test",
+      "password": "hashed_test_password",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}

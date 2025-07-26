@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "email": "admin@km0.dev",
+      "password": "hashed_admin_password_dev",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "email": "user@km0.dev",
+      "password": "hashed_user_password_dev",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}

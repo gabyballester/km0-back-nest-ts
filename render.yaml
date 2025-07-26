@@ -29,4 +29,6 @@ services:
         value: info
       - key: DATABASE_URL
         sync: false
+      - key: DATABASE_ORM
+        value: drizzle
     autoDeploy: true

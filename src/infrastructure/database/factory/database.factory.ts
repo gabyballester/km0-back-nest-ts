@@ -42,7 +42,7 @@ export class DatabaseFactory {
       case 'prisma':
         return new PrismaAdapter(this.configService);
       default:
-        throw new Error(`Unsupported ORM type: ${ormType}`);
+        throw new Error('Unsupported ORM type');
     }
   }
 
@@ -56,9 +56,7 @@ export class DatabaseFactory {
       return ormType;
     }
 
-    console.warn(
-      `⚠️ Invalid DATABASE_ORM value: ${ormType}. Defaulting to prisma`,
-    );
+    console.warn('⚠️ Invalid DATABASE_ORM value. Defaulting to prisma');
     return 'prisma';
   }
 

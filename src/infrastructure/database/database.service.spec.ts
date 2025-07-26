@@ -6,7 +6,8 @@ import { IDatabaseAdapter } from './interfaces';
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
-  let configService: ConfigService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let _configService: ConfigService;
   let databaseFactory: DatabaseFactory;
   let mockAdapter: jest.Mocked<IDatabaseAdapter>;
 
@@ -42,11 +43,11 @@ describe('DatabaseService', () => {
     }).compile();
 
     service = module.get<DatabaseService>(DatabaseService);
-    configService = module.get<ConfigService>(ConfigService);
+    _configService = module.get<ConfigService>(ConfigService);
     databaseFactory = module.get<DatabaseFactory>(DatabaseFactory);
 
     // Initialize the adapter for tests
-    (service as any).adapter = mockAdapter;
+    (service as unknown as { adapter: IDatabaseAdapter }).adapter = mockAdapter;
   });
 
   it('should be defined', () => {
@@ -60,7 +61,9 @@ describe('DatabaseService', () => {
 
       await service.onModuleInit();
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.connect).toHaveBeenCalled();
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.healthCheck).toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith(
         '🗄️  Inicializando servicio de base de datos...',
@@ -121,6 +124,7 @@ describe('DatabaseService', () => {
 
       await service.onModuleDestroy();
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.disconnect).toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith(
         '🔄 Cerrando conexión a la base de datos...',
@@ -160,6 +164,7 @@ describe('DatabaseService', () => {
       const result = await service.healthCheck();
 
       expect(result).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.healthCheck).toHaveBeenCalled();
     });
 
@@ -169,6 +174,7 @@ describe('DatabaseService', () => {
       const result = await service.healthCheck();
 
       expect(result).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.healthCheck).toHaveBeenCalled();
     });
 
@@ -204,6 +210,7 @@ describe('DatabaseService', () => {
       const result = await service.getDatabaseInfo();
 
       expect(result).toEqual(mockInfo);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.getDatabaseInfo).toHaveBeenCalled();
     });
 
@@ -213,6 +220,7 @@ describe('DatabaseService', () => {
       const result = await service.getDatabaseInfo();
 
       expect(result).toBeNull();
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.getDatabaseInfo).toHaveBeenCalled();
     });
 

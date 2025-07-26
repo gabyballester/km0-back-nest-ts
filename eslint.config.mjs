@@ -12,6 +12,7 @@ export default tseslint.config(
       'coverage/**/*',
       'scripts/**/*',
       '*.config.js',
+      '*.config.ts',
       'commitlint.config.js',
       'jest.config.js',
       '.jest-cache/**/*',

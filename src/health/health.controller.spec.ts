@@ -135,7 +135,7 @@ describe('HealthController', () => {
       jest.spyOn(configService, 'get').mockReturnValue('');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       const result = (controller as any).getEnvironment();
-      expect(result).toBe(''); // ?? preserva strings vacíos
+      expect(result).toBe(''); // Preserva strings vacíos
     });
 
     it('should preserve false from ConfigService', () => {
@@ -143,7 +143,7 @@ describe('HealthController', () => {
       jest.spyOn(configService, 'get').mockReturnValue(false as any);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       const result = (controller as any).getEnvironment();
-      expect(result).toBe(false); // ?? preserva valores falsy válidos
+      expect(result).toBe(false); // Preserva valores falsy válidos
     });
 
     it('should get memory info correctly', () => {
@@ -273,20 +273,22 @@ describe('HealthController', () => {
       expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
     });
 
-    it('should return unknown when environment is empty string', () => {
+    it('should preserve empty string when environment is empty string', () => {
       jest.spyOn(configService, 'get').mockReturnValue('');
 
       const result = controller['getEnvironment']();
 
-      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result).toBe('');
     });
 
-    it('should return unknown when environment is falsy', () => {
-      jest.spyOn(configService, 'get').mockReturnValue(false as any);
+    it('should preserve false when environment is falsy', () => {
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(false as unknown as string);
 
       const result = controller['getEnvironment']();
 
-      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+      expect(result).toBe(false);
     });
   });
 
@@ -447,17 +449,19 @@ describe('HealthController', () => {
       const result = await controller.getHealth();
 
       expect(result).toHaveProperty('status', 'healthy');
-      expect(result).toHaveProperty('environment', 'unknown');
+      expect(result).toHaveProperty('environment', '');
     });
 
     it('should handle falsy environment', async () => {
       jest.spyOn(databaseService, 'healthCheck').mockResolvedValue(true);
-      jest.spyOn(configService, 'get').mockReturnValue(false as any);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(false as unknown as string);
 
       const result = await controller.getHealth();
 
       expect(result).toHaveProperty('status', 'healthy');
-      expect(result).toHaveProperty('environment', 'unknown');
+      expect(result).toHaveProperty('environment', false);
     });
   });
 
@@ -524,7 +528,10 @@ describe('HealthController', () => {
       const result = await controller.getDetailedHealth();
 
       expect(result).toHaveProperty('status', 'healthy');
-      expect(result).toHaveProperty('environment', 'unknown');
+      expect(result).toHaveProperty(
+        'environment',
+        ENV_VALUES.NODE_ENV.DEVELOPMENT,
+      );
     });
 
     it('should handle null environment in detailed health', async () => {
@@ -539,7 +546,10 @@ describe('HealthController', () => {
       const result = await controller.getDetailedHealth();
 
       expect(result).toHaveProperty('status', 'healthy');
-      expect(result).toHaveProperty('environment', 'unknown');
+      expect(result).toHaveProperty(
+        'environment',
+        ENV_VALUES.NODE_ENV.DEVELOPMENT,
+      );
     });
 
     it('should handle empty string environment in detailed health', async () => {
@@ -554,7 +564,7 @@ describe('HealthController', () => {
       const result = await controller.getDetailedHealth();
 
       expect(result).toHaveProperty('status', 'healthy');
-      expect(result).toHaveProperty('environment', 'unknown');
+      expect(result).toHaveProperty('environment', '');
     });
 
     it('should handle falsy environment in detailed health', async () => {
@@ -564,12 +574,14 @@ describe('HealthController', () => {
         current_user: 'test_user',
         postgres_version: 'PostgreSQL 14.0',
       });
-      jest.spyOn(configService, 'get').mockReturnValue(false as any);
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue(false as unknown as string);
 
       const result = await controller.getDetailedHealth();
 
       expect(result).toHaveProperty('status', 'healthy');
-      expect(result).toHaveProperty('environment', 'unknown');
+      expect(result).toHaveProperty('environment', false);
     });
 
     it('should handle null database info', async () => {

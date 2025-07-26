@@ -79,8 +79,7 @@ env.mirror
 .next
 
 # Nuxt.js build / generate output
-.nuxt
-dist
+.nuxtist
 
 # Gatsby files
 .cache/
@@ -134,7 +133,7 @@ logs
 *.log
 
 # Build outputs
-dist/
+# dist/
 build/
 
 # Test coverage
@@ -160,4 +159,22 @@ generated/
 legacy/
 
 # Nested dist folders
-**/dist/
+
+# Database
+drizzle/
+prisma/migrations/
+
+# Temporary files
+temp-*.js
+temp-*.json
+*.backup
+*.bak
+
+# Data files (keep examples)
+data/*.json
+!data/seed-*.json
+
+# Backup files
+backups/
+*.backup
+*.bak

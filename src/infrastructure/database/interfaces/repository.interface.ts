@@ -54,7 +54,7 @@ export interface RepositoryOptions {
   limit?: number;
   offset?: number;
   orderBy?: {
-    field: keyof any;
+    field: keyof unknown;
     direction: 'asc' | 'desc';
   };
 }
