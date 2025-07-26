@@ -86,6 +86,18 @@ npm run test:full
 - **Entorno**: `NODE_ENV=test`
 - **Características**: 2 workers, coverage report, bail on fail
 
+### **Tests Unitarios con Validación de Cobertura**
+
+```bash
+npm run test:full:coverage
+```
+
+- **Descripción**: Ejecuta tests unitarios con validación de umbrales de cobertura
+- **Entorno**: `NODE_ENV=test`
+- **Características**: 2 workers, coverage report, validación de umbrales, bail on fail
+- **Umbrales**: branches: 80%, functions: 90%, lines: 90%, statements: 90%
+- **Uso**: Automático en pre-push
+
 ### **Tests E2E Rápidos**
 
 ```bash
@@ -221,7 +233,7 @@ npm run test:quick
 npm run format:check
 npm run type-check
 npm run lint:check
-npm run test:full
+npm run test:full:coverage
 npm run test:e2e:full
 ```
 
@@ -240,9 +252,10 @@ npm run test:e2e:full
 - ✅ **Format**: Prettier en todo el proyecto
 - ✅ **Type-check**: TypeScript completo (proyecto global)
 - ✅ **Lint**: ESLint completo
-- ✅ **Tests**: Unitarios + E2E con coverage
+- ✅ **Tests**: Unitarios con validación de cobertura + E2E
+- ✅ **Coverage**: Validación de umbrales (branches: 80%, functions: 90%, lines: 90%, statements: 90%)
 - ⏱️ **Tiempo**: ~12-15 segundos
-- 🎯 **Objetivo**: Garantizar calidad antes de push
+- 🎯 **Objetivo**: Garantizar calidad y cobertura antes de push
 
 **¿Por qué no type-check en pre-commit?**
 

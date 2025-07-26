@@ -16,6 +16,7 @@
     "test:quick": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --maxWorkers=4 --bail --passWithNoTests --silent --no-coverage\" \"🧪 Tests rápidos (Test)\"",
     "test:staged": "cross-env NODE_ENV=test jest --maxWorkers=4 --bail --passWithNoTests --silent --no-coverage --onlyChanged",
     "test:full": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent\" \"📊 Tests completos con coverage (Test)\"",
+    "test:full:coverage": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --coverage --maxWorkers=2 --bail --passWithNoTests --silent --coverageThreshold\" \"📊 Tests completos con validación de cobertura (Test)\"",
     "test:watch": "cross-env NODE_ENV=test jest --watch --maxWorkers=2 --silent",
     "test:debug": "node scripts/timed-run.js \"node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand\" \"🐛 Tests con debug mode\"",
     "test:e2e:quick": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --maxWorkers=1 --bail --silent --testTimeout=3000\" \"🚀 E2E tests rápidos (Test)\"",
