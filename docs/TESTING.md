@@ -164,6 +164,7 @@ grep -r "process\.env" src/ --exclude="env.config.ts"
 - **`env.config.ts`**: Wrapper simple de Zod + NestJS ConfigModule
 - **`env.schema.ts`**: Schema de validación de Zod (solo definiciones)
 - **`env.constants.ts`**: Constantes estáticas (solo valores)
+- **`environment.schema.ts`**: Schema de validación de Zod para constantes (solo definiciones)
 - **`modules/security/security.module.ts`**: Módulo puramente declarativo, sin lógica propia (solo importa y exporta ThrottlerModule). Se excluye para evitar penalización artificial en la cobertura, ya que no contiene lógica de negocio ni ramas relevantes.
 - **Constants**: Solo valores estáticos
 - **Types/Interfaces**: Solo definiciones de TypeScript

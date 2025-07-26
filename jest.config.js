@@ -32,6 +32,7 @@ module.exports = {
     '/shared/constants/api.ts$',
     '/shared/constants/security.ts$',
     '/shared/constants/validation.ts$',
+    '/shared/constants/environment.schema.ts$',
     '/dist/',
     '/node_modules/',
   ],
