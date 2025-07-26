@@ -1,258 +1,187 @@
-# Scripts y Comandos - KM0 Market Backend
+# Scripts del Proyecto - KM0 Market Backend
 
-## 📋 **RESUMEN DE SCRIPTS DISPONIBLES**
+## 📋 **RESUMEN DE LIMPIEZA REALIZADA**
 
-### **🚀 Scripts de Inicio**
+**Fecha**: Diciembre 2024
+**Objetivo**: Simplificar y optimizar los scripts de `package.json` eliminando redundancias y legacy.
 
-```bash
-npm run start:dev      # 🔄 Inicio desarrollo con hot reload (recomendado)
-npm run start:prod     # 🏭 Inicio de producción
-```
+### **Scripts Eliminados/Comentados:**
 
-### **🧪 Scripts de Testing**
+- Scripts de entorno redundantes (`env:*`, `setup:env`, `clean:env`)
+- Scripts de chequeo (`check:process-env`, `check-deployment`, `db:safety`)
+- Scripts de despliegue (`deploy:*`)
+- Scripts de validación legacy (`validate:coverage*`, `validate:staged:strict`, `validate:full:strict`)
 
-```bash
-npm run test:quick     # ⚡ Tests rápidos sin coverage (~3.5s)
-npm run test:full      # 📊 Tests completos con coverage (~5.3s)
-npm run test:watch     # 👀 Tests en modo watch
-npm run test:debug     # 🐛 Tests en modo debug
-npm run test:e2e:quick # ⚡ E2E tests rápidos (~3s)
-npm run test:e2e:full  # 📊 E2E tests completos (~2.6s)
-```
+### **Scripts Mantenidos:**
 
-### **🔧 Scripts de Entorno**
-
-```bash
-npm run env:info       # ℹ️ Ver entorno actual
-npm run env:dev        # 🔧 Verificar entorno desarrollo
-npm run env:test       # 🧪 Verificar entorno testing
-npm run env:prod       # 🏭 Verificar entorno producción
-npm run setup:env      # 🔧 Configurar archivos de entorno
-npm run env:setup      # 📋 Copiar env.mirror a .env
-npm run env:example    # 📋 Copiar env.example a .env
-npm run test:environments # 🧪 Probar todos los entornos
-```
-
-### **🗄️ Scripts de Base de Datos**
-
-```bash
-npm run db:generate    # 🔧 Generar cliente Prisma
-npm run db:push        # 📤 Sincronizar esquema
-npm run db:migrate     # 🔄 Crear migración
-npm run db:studio      # 🖥️ Abrir Prisma Studio
-```
-
-### **🌍 Scripts de Entorno por Base de Datos**
-
-```bash
-npm run db:dev         # 🔧 DB desarrollo
-npm run db:test        # 🧪 DB testing
-npm run db:prod        # 🏭 DB producción
-npm run db:studio:dev  # 🖥️ Studio desarrollo
-npm run db:studio:test # 🖥️ Studio testing
-npm run db:studio:prod # 🖥️ Studio producción
-```
-
-### **🔍 Scripts de Validación**
-
-```bash
-npm run validate:quick # ⚡ Validación rápida
-npm run validate:full  # 📊 Validación completa
-npm run validate:coverage # 📈 Validación con coverage (90%)
-npm run validate:coverage:strict # 📈 Validación con coverage (umbrales configurados)
-npm run validate:coverage:100 # 📈 Validación con coverage (100% - aspiración máxima)
-npm run validate:staged:strict # 🔒 Validación staged estricta (pre-commit)
-npm run validate:full:strict # 🔒 Validación completa estricta (pre-push)
-npm run type-check     # 🔍 Verificación de tipos
-npm run lint           # 🧹 Linting y auto-fix
-npm run format         # ✨ Formateo de código
-```
-
-### **🏗️ Scripts de Build**
-
-```bash
-npm run build          # 🏗️ Build de producción
-npm run build:dev      # 🔧 Build de desarrollo
-```
+- Scripts esenciales de desarrollo, testing y producción
+- Scripts de validación y calidad de código
+- Scripts de base de datos
 
 ---
 
-## 🛡️ **ESTRATEGIA DE VALIDACIÓN Y CALIDAD**
+## 🚀 **SCRIPTS DE INICIO Y BUILD**
 
-### **Pre-commit (Archivos Staged)**
-
-```bash
-npm run validate:staged:strict
-```
-
-- ✅ **Formato**: Prettier en archivos staged
-- ✅ **Type-check**: TypeScript en archivos staged
-- ✅ **ESLint**: Linting estricto con auto-fix
-- ✅ **Tests rápidos**: Solo archivos modificados
-- ✅ **Cobertura global**: Verificación según umbrales configurados
-- ⏱️ **Tiempo**: ~5-6 segundos
-
-### **Pre-push (Proyecto Completo)**
-
-```bash
-npm run validate:full:strict
-```
-
-- ✅ **Formato**: Prettier en todo el proyecto
-- ✅ **Type-check**: TypeScript completo
-- ✅ **ESLint**: Linting estricto sin auto-fix
-- ✅ **Tests completos**: Con cobertura según umbrales configurados
-- ✅ **Tests E2E**: Validación end-to-end
-- ⏱️ **Tiempo**: ~8-10 segundos
-
-### **📊 Umbrales de Cobertura (Fuente de Verdad)**
-
-Los umbrales de cobertura están configurados en `jest.config.js` y son la **fuente de verdad** para las validaciones:
-
-```javascript
-coverageThreshold: {
-  global: {
-    branches: 80,    // 80% de cobertura de ramas
-    functions: 90,   // 90% de cobertura de funciones
-    lines: 90,       // 90% de cobertura de líneas
-    statements: 90,  // 90% de cobertura de statements
-  },
-}
-```
-
-**Scripts disponibles:**
-
-- `npm run validate:coverage:strict` - Usa umbrales configurados
-- `npm run validate:coverage:100` - Aspiración al 100% (validación especial)
-
-### **🎯 Beneficios de esta Estrategia**
-
-- **Velocidad**: Pre-commit rápido, pre-push completo
-- **Calidad**: Cobertura según umbrales garantizada
-- **Seguridad**: Bloqueo de commits/push con errores
-- **Consistencia**: Mismos estándares en todo el equipo
-- **Flexibilidad**: Umbrales configurables según necesidades del proyecto
-
----
-
-## 🚀 **SCRIPTS DE INICIO**
-
-### **Inicio de Desarrollo (Recomendado)**
+### **Desarrollo**
 
 ```bash
 npm run start:dev
 ```
 
-- **Descripción**: Inicia la aplicación con hot reload y watch
-- **Tiempo**: ~3-4 segundos
-- **Uso**: Para desarrollo continuo (recomendado por la comunidad y documentación oficial de NestJS)
+- **Descripción**: Inicia el servidor en modo desarrollo con hot reload
+- **Entorno**: `NODE_ENV=development`
+- **Características**: Watch mode, SWC builder, timed execution
 
-### **Inicio de Producción**
+### **Producción**
 
 ```bash
 npm run start:prod
 ```
 
-- **Descripción**: Inicia la aplicación desde el build de producción
-- **Tiempo**: ~1-2 segundos
-- **Uso**: Para pruebas de producción local
+- **Descripción**: Inicia el servidor de producción desde `dist/`
+- **Uso**: Después de `npm run build`
+
+### **Build**
+
+```bash
+npm run build
+npm run build:prod
+```
+
+- **Descripción**: Compila el proyecto usando SWC builder
+- **Salida**: `dist/` directory
 
 ---
 
 ## 🧪 **SCRIPTS DE TESTING**
 
-### **Tests Rápidos**
+### **Tests Unitarios Rápidos**
 
 ```bash
 npm run test:quick
 ```
 
 - **Descripción**: Ejecuta tests unitarios sin coverage
-- **Tiempo**: ~2-3 segundos
-- **Uso**: Para validaciones rápidas en pre-commit
+- **Entorno**: `NODE_ENV=test`
+- **Características**: 4 workers, bail on fail, silent mode
 
-### **Tests Completos**
+### **Tests Unitarios Completos**
 
 ```bash
 npm run test:full
 ```
 
-- **Descripción**: Ejecuta tests unitarios con coverage completo
-- **Tiempo**: ~4-5 segundos
-- **Uso**: Para validaciones completas en pre-push
+- **Descripción**: Ejecuta tests unitarios con coverage
+- **Entorno**: `NODE_ENV=test`
+- **Características**: 2 workers, coverage report, bail on fail
 
-### **Tests E2E**
+### **Tests E2E Rápidos**
 
 ```bash
-npm run test:e2e:quick  # Rápidos
-npm run test:e2e:full   # Completos
+npm run test:e2e:quick
 ```
 
-- **Descripción**: Ejecuta tests end-to-end
-- **Tiempo**: ~2-3 segundos (quick) / ~5-6 segundos (full)
-- **Uso**: Para validar integración completa
+- **Descripción**: Ejecuta tests end-to-end rápidos
+- **Timeout**: 3 segundos por test
+- **Características**: 1 worker, bail on fail
+
+### **Tests E2E Completos**
+
+```bash
+npm run test:e2e:full
+```
+
+- **Descripción**: Ejecuta tests end-to-end completos
+- **Entorno**: `NODE_ENV=test`
+- **Características**: 1 worker, bail on fail
+
+### **Tests con Watch**
+
+```bash
+npm run test:watch
+```
+
+- **Descripción**: Ejecuta tests en modo watch
+- **Uso**: Desarrollo continuo
+
+### **Tests con Debug**
+
+```bash
+npm run test:debug
+```
+
+- **Descripción**: Ejecuta tests con debugger
+- **Uso**: Depuración de tests
 
 ---
 
-## 🔧 **SCRIPTS DE ENTORNO**
+## 🔍 **SCRIPTS DE VALIDACIÓN Y CALIDAD**
 
-### **Configuración de Entornos**
-
-```bash
-npm run setup:env
-```
-
-- **Descripción**: Crea archivos de entorno desde ejemplos
-- **Archivos creados**: `.env`, `.env.development`, `.env.test`
-- **Estrategia**: `.env` = producción, archivos específicos = sobrescrituras
-
-### **Información de Entorno**
+### **Type Checking**
 
 ```bash
-npm run env:info       # Entorno actual
-npm run env:dev        # Verificar desarrollo
-npm run env:test       # Verificar testing
-npm run env:prod       # Verificar producción
+npm run type-check
 ```
 
-### **Estructura de Archivos de Entorno**
+- **Descripción**: Verifica tipos TypeScript sin emitir archivos
+- **Comando**: `tsc --noEmit`
 
+### **Linting**
+
+```bash
+npm run lint
+npm run lint:check
 ```
-.env                    # Variables base para PRODUCCIÓN
-.env.development        # Sobrescribe variables para desarrollo
-.env.test              # Sobrescribe variables para testing
+
+- **Descripción**: Ejecuta ESLint con/sin auto-fix
+- **Configuración**: `max-warnings=0`
+
+### **Formatting**
+
+```bash
+npm run format
+npm run format:check
 ```
 
-### **Puertos por Entorno**
+- **Descripción**: Ejecuta Prettier con/sin write
+- **Archivos**: `src/**/*.ts`, `test/**/*.ts`
 
-- **Producción**: 4000 (definido en .env)
-- **Desarrollo**: 4000 (heredado de .env)
-- **Testing**: 4001 (sobrescrito en .env.test)
+### **Validación Completa**
+
+```bash
+npm run validate:quick
+npm run validate:full
+```
+
+- **Quick**: Format + Type-check + Lint
+- **Full**: Quick + Tests unitarios + Tests E2E
 
 ---
 
 ## 🗄️ **SCRIPTS DE BASE DE DATOS**
 
-### **Operaciones Básicas**
+### **Generación y Migración**
 
 ```bash
 npm run db:generate    # Genera cliente Prisma
-npm run db:push        # Sincroniza esquema con DB
-npm run db:migrate     # Crea y aplica migraciones
-npm run db:studio      # Abre interfaz visual de Prisma
+npm run db:push        # Push schema a DB
+npm run db:migrate     # Migración de desarrollo
+npm run db:migrate:deploy  # Migración de producción
+npm run db:migrate:reset   # Reset migraciones
 ```
 
-### **Operaciones por Entorno**
+### **Entornos Específicos**
 
 ```bash
-npm run db:dev         # Sincroniza DB desarrollo
-npm run db:test        # Sincroniza DB testing
-npm run db:prod        # Sincroniza DB producción
+npm run db:dev         # DB push para desarrollo
+npm run db:test        # DB push para testing
+npm run db:prod        # DB push para producción (seguro)
 ```
 
-### **Prisma Studio por Entorno**
+### **Prisma Studio**
 
 ```bash
+npm run db:studio      # Studio general
 npm run db:studio:dev  # Studio para desarrollo
 npm run db:studio:test # Studio para testing
 npm run db:studio:prod # Studio para producción
@@ -260,184 +189,108 @@ npm run db:studio:prod # Studio para producción
 
 ---
 
-## 🔍 **SCRIPTS DE VALIDACIÓN**
+## 🔧 **GIT HOOKS**
 
-### **Validación Rápida**
+### **Estrategia de Validación**
 
-```bash
-npm run validate:quick
-```
+**Pre-commit (Rápido y Seguro):**
 
-- **Secuencia**: format → type-check → lint
-- **Tiempo**: ~3-4 segundos
-- **Uso**: Pre-commit hooks
+- ✅ **Format**: Prettier en archivos staged
+- ✅ **Lint**: ESLint con auto-fix en archivos staged
+- ⏱️ **Tiempo**: ~2-3 segundos
+- 🎯 **Objetivo**: Validación rápida sin bloquear desarrollo
 
-### **Validación Completa**
+**Pre-push (Completo y Riguroso):**
 
-```bash
-npm run validate:full
-```
+- ✅ **Format**: Prettier en todo el proyecto
+- ✅ **Type-check**: TypeScript completo (proyecto global)
+- ✅ **Lint**: ESLint completo
+- ✅ **Tests**: Unitarios + E2E con coverage
+- ⏱️ **Tiempo**: ~15-20 segundos
+- 🎯 **Objetivo**: Garantizar calidad antes de push
 
-- **Secuencia**: format → type-check → lint → test:full → test:e2e:full
-- **Tiempo**: ~15-20 segundos
-- **Uso**: Pre-push hooks
+**¿Por qué no type-check en pre-commit?**
 
-### **Validación de Coverage**
-
-```bash
-npm run validate:coverage
-```
-
-- **Descripción**: Valida que el coverage esté por encima del umbral
-- **Umbral**: 100% (statements, branches, functions, lines)
-- **Uso**: CI/CD pipelines
-
----
-
-## 🏗️ **SCRIPTS DE BUILD**
-
-### **Build de Producción**
-
-```bash
-npm run build
-```
-
-- **Descripción**: Compila la aplicación para producción
-- **Tiempo**: ~2-3 segundos
-- **Output**: `dist/` directory
-
-### **Build de Desarrollo**
-
-```bash
-npm run build:dev
-```
-
-- **Descripción**: Compila la aplicación para desarrollo
-- **Tiempo**: ~1-2 segundos
-- **Output**: `dist/` directory con source maps
-
----
-
-## 🔄 **HOOKS DE GIT**
+- Los decoradores de NestJS requieren contexto global de TypeScript
+- Lint-staged ejecuta `tsc --noEmit` sobre archivos individuales
+- Esto causa falsos positivos en decoradores (`@Controller`, `@Get`, etc.)
+- La validación de tipos debe hacerse sobre el proyecto completo
 
 ### **Pre-commit**
 
 ```bash
-npm run validate:staged:light
+npm run pre-commit
 ```
 
-- **Descripción**: Valida archivos staged antes del commit
-- **Incluye**: format, type-check, lint, test:quick
-- **Tiempo**: ~4-5 segundos
+- **Descripción**: Ejecutado automáticamente por Husky
+- **Acciones**: lint-staged (format + lint)
+- **Nota**: Type-check se ejecuta en pre-push para evitar falsos positivos con decoradores de NestJS
 
 ### **Pre-push**
 
-```bash
-npm run validate:full
-```
-
-- **Descripción**: Valida todo el proyecto antes del push
-- **Incluye**: format, type-check, lint, test:full, test:e2e:full
-- **Tiempo**: ~15-20 segundos
+- **Descripción**: Ejecutado automáticamente por Husky
+- **Acciones**: `npm run validate:full`
 
 ---
 
-## 📊 **MÉTRICAS DE PERFORMANCE**
+## 📊 **COBERTURA DE TESTS**
 
-### **Tiempos Promedio**
+### **Umbrales Configurados**
 
-- **Inicio rápido**: 2-3s
-- **Inicio completo**: 3-4s
-- **Tests rápidos**: 2-3s
-- **Tests completos**: 4-5s
-- **E2E tests**: 2-6s
-- **Validación rápida**: 3-4s
-- **Validación completa**: 15-20s
-- **Build**: 2-3s
+- **Branches**: 80%
+- **Functions**: 90%
+- **Lines**: 90%
+- **Statements**: 90%
 
-### **Optimizaciones Implementadas**
+### **Configuración**
 
-- **SWC**: Compilador rápido para TypeScript
-- **Jest**: Configuración optimizada con maxWorkers
-- **ESLint**: Cache habilitado
-- **Prettier**: Cache habilitado
-- **Prisma**: Generación optimizada
+- **Archivo**: `jest.config.js`
+- **Variable**: `JEST_COVERAGE_THRESHOLD` (opcional)
+- **Comportamiento**: Fallo si no se alcanzan umbrales
 
 ---
 
-## 🛠️ **CONFIGURACIÓN AVANZADA**
+## 🚨 **SCRIPTS LEGACY (ELIMINADOS)**
 
-### **Variables de Entorno**
+Los siguientes scripts fueron eliminados por redundancia o falta de uso:
 
-```bash
-NODE_ENV=development|test|production
-PORT=4000|4001
-DATABASE_URL=postgresql://...
-JWT_SECRET=...
-```
+### **Scripts de Entorno**
 
-### **Archivos de Configuración**
+- `env:setup`, `env:example`, `env:info`
+- `env:dev`, `env:test`, `env:prod`
+- `setup:env`, `clean:env`, `test:environments`
 
-- `jest.config.js` - Configuración de Jest
-- `eslint.config.mjs` - Configuración de ESLint
-- `tsconfig.json` - Configuración de TypeScript
-- `nest-cli.json` - Configuración de NestJS
+### **Scripts de Chequeo**
 
-### **Scripts Personalizados**
+- `check:process-env`, `check-deployment`
+- `db:safety`
 
-- `scripts/timed-run.js` - Medición de tiempo de ejecución
-- `scripts/setup-env.js` - Configuración de entornos
-- `scripts/test-environments.js` - Prueba de entornos
-- `scripts/check-process-env.js` - Validación de process.env
+### **Scripts de Despliegue**
 
----
+- `deploy:railway`, `deploy:render`, `deploy:vercel`
 
-## 🚨 **TROUBLESHOOTING**
+### **Scripts de Validación Legacy**
 
-### **Problemas Comunes**
-
-#### **Error: Port already in use**
-
-```bash
-# Solución: Cambiar puerto en .env
-PORT=4001
-```
-
-#### **Error: Database connection failed**
-
-```bash
-# Solución: Verificar DATABASE_URL en .env correspondiente
-npm run db:dev    # Para desarrollo
-npm run db:test   # Para testing
-```
-
-#### **Error: Environment validation failed**
-
-```bash
-# Solución: Verificar variables de entorno
-npm run env:info
-npm run setup:env
-```
-
-#### **Error: Tests failing**
-
-```bash
-# Solución: Ejecutar tests individualmente
-npm run test:quick
-npm run test:full
-```
+- `validate:coverage:strict`, `validate:coverage:100`
+- `validate:staged:strict`, `validate:full:strict`
+- `validate:staged:light`
 
 ---
 
 ## 📚 **REFERENCIAS**
 
+### **Documentación Oficial**
+
 - [NestJS CLI](https://docs.nestjs.com/cli/overview)
 - [Jest Configuration](https://jestjs.io/docs/configuration)
 - [ESLint Configuration](https://eslint.org/docs/user-guide/configuring)
+- [Prettier Configuration](https://prettier.io/docs/en/configuration.html)
 - [Prisma CLI](https://www.prisma.io/docs/reference/api-reference/command-reference)
-- [Cross-env](https://www.npmjs.com/package/cross-env)
 
----
+### **Mejores Prácticas**
 
-**Última actualización**: Julio 2024
-**Versión**: 2.0.0
+- Usar `timed-run.js` para scripts complejos
+- Configurar `max-warnings=0` en ESLint
+- Usar `--bail` en tests para fallo rápido
+- Configurar workers apropiados según CPU
+- Usar `dotenv-cli` para entornos específicos

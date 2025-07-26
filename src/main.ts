@@ -1,7 +1,3 @@
-// Error ESLint: variable sin usar
-const unusedVar = 123;
-// Error TypeScript: asignación incorrecta de tipo
-const numberVar: number = 'esto es un string';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';

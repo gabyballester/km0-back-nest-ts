@@ -61,12 +61,7 @@ ConfigModule.forRoot({
   isGlobal: true,
   load: [envConfig],
   cache: true,
-  envFilePath: [
-    '.env',
-    '.env.local',
-    '.env.development',
-    '.env.test',
-  ],
+  envFilePath: ['.env', '.env.local', '.env.development', '.env.test'],
 });
 ```
 
@@ -246,3 +241,31 @@ const port = this.configService.get<number>('PORT');
 - **Producción**: 4000 (definido en .env)
 - **Desarrollo**: 4000 (heredado de .env)
 - **Testing**: 4001 (sobrescrito en .env.test)
+
+---
+
+## 📦 **CONFIGURACIÓN NPM**
+
+### **Archivo .npmrc**
+
+**Estado actual**: No se utiliza archivo `.npmrc` en este proyecto.
+
+**Decisión tomada**: Según las mejores prácticas de la comunidad y documentación oficial:
+
+1. **✅ Configuración por defecto**: npm funciona correctamente sin `.npmrc` para la mayoría de proyectos
+2. **✅ Configuración global**: Las configuraciones específicas se manejan a nivel de usuario (`npm config`)
+3. **✅ Configuración por proyecto**: Solo se requiere `.npmrc` para configuraciones muy específicas
+4. **✅ Simplicidad**: Evita archivos de configuración innecesarios
+
+**Cuándo usar .npmrc**:
+
+- Configurar registries privados
+- Configurar scopes específicos
+- Configurar autenticación para paquetes privados
+- Configurar scripts de post-install específicos
+- Configurar configuraciones de seguridad específicas
+
+**Referencias**:
+
+- [npm Configuration](https://docs.npmjs.com/cli/v8/using-npm/config)
+- [npmrc Documentation](https://docs.npmjs.com/cli/v8/configuring-npm/npmrc)
