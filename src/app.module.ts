@@ -19,6 +19,11 @@ import { envConfig } from './config/env.config';
       isGlobal: true,
       load: [envConfig],
       cache: true,
+      envFilePath: [
+        '.env',
+        '.env.local',
+        `.env.${process.env.NODE_ENV ?? 'development'}`,
+      ],
     }),
     // Security module (rate limiting, etc.)
     SecurityModule,
