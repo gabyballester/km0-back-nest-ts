@@ -13,6 +13,12 @@ services:
         value: 4000
       - key: HOST
         value: 0.0.0.0
+      - key: DATABASE_ORM
+        value: drizzle
+      - key: DATABASE_URL
+        value: tu_database_url_aqui
+      - key: SEED_ENABLED
+        value: 'true'
       - key: JWT_SECRET
         generateValue: true
       - key: COOKIE_SECRET
@@ -27,8 +33,6 @@ services:
         value: https://tu-frontend-domain.com
       - key: LOG_LEVEL
         value: info
-      - key: DATABASE_URL
-        sync: false
-      - key: DATABASE_ORM
-        value: drizzle
+      - key: SEED_DATA_PATH
+        value: ./data/seed.json
     autoDeploy: true
