@@ -14,3 +14,4 @@ export class AppController {
 // test
 // Test comment for pre-commit
 // Test comment for new strategy
+// Test comment for hooks
