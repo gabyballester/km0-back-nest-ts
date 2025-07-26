@@ -46,12 +46,13 @@ function logWarning(message) {
  * Get environment variables
  */
 function getEnvVars() {
+  // In production (Render), always use process.env directly
+  if (process.env.NODE_ENV === 'production') {
+    return process.env;
+  }
+
   const envFile =
-    process.env.NODE_ENV === 'test'
-      ? '.env.test'
-      : process.env.NODE_ENV === 'production'
-        ? '.env'
-        : '.env.development';
+    process.env.NODE_ENV === 'test' ? '.env.test' : '.env.development';
 
   const envPath = path.join(process.cwd(), envFile);
 
