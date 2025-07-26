@@ -1,11 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  DatabaseService,
-  DatabaseInfo,
-} from '../infrastructure/database/database.service';
+import { DatabaseService } from '../infrastructure/database/database.service';
 import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
 import * as os from 'os';
+
+// Definir la interfaz localmente para evitar problemas de importación
+interface DatabaseInfo {
+  database_name: string;
+  current_user: string;
+  postgres_version: string;
+}
 
 @Controller('health')
 export class HealthController {
@@ -15,13 +19,35 @@ export class HealthController {
   ) {}
 
   private getDatabaseName(dbInfo: DatabaseInfo | null): string {
-    return dbInfo && dbInfo.database_name ? dbInfo.database_name : 'unknown';
+    if (!dbInfo) return 'unknown';
+    return dbInfo.database_name || 'unknown';
   }
 
   private getDatabaseVersion(dbInfo: DatabaseInfo | null): string {
-    return dbInfo && dbInfo.postgres_version
-      ? dbInfo.postgres_version
-      : 'unknown';
+    if (!dbInfo) return 'unknown';
+    return dbInfo.postgres_version || 'unknown';
+  }
+
+  private getEnvironment(): string {
+    const env = this.configService.get<string>(ENV_KEYS.NODE_ENV);
+    return env || ENV_VALUES.NODE_ENV.DEVELOPMENT;
+  }
+
+  private getMemoryInfo() {
+    const memUsage = process.memoryUsage();
+    return {
+      used: Math.round(memUsage.heapUsed / 1024 / 1024),
+      total: Math.round(memUsage.heapTotal / 1024 / 1024),
+      free: Math.round((memUsage.heapTotal - memUsage.heapUsed) / 1024 / 1024),
+    };
+  }
+
+  private getCpuInfo() {
+    const cpuUsage = process.cpuUsage();
+    return {
+      load: [cpuUsage.user, cpuUsage.system],
+      cores: os.cpus().length,
+    };
   }
 
   /**
@@ -40,9 +66,7 @@ export class HealthController {
     return {
       status: dbStatus ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
-      environment:
-        this.configService.get<string>(ENV_KEYS.NODE_ENV) ||
-        ENV_VALUES.NODE_ENV.DEVELOPMENT,
+      environment: this.getEnvironment(),
       uptime: process.uptime(),
     };
   }
@@ -86,16 +110,10 @@ export class HealthController {
     const dbStatus = this.databaseService.healthCheck();
     const dbInfo = this.databaseService.getDatabaseInfo();
 
-    // Get system information
-    const memUsage = process.memoryUsage();
-    const cpuUsage = process.cpuUsage();
-
     return {
       status: dbStatus ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
-      environment:
-        this.configService.get<string>(ENV_KEYS.NODE_ENV) ||
-        ENV_VALUES.NODE_ENV.DEVELOPMENT,
+      environment: this.getEnvironment(),
       uptime: process.uptime(),
       database: {
         status: dbStatus ? 'connected' : 'disconnected',
@@ -108,17 +126,8 @@ export class HealthController {
       system: {
         nodeVersion: process.version,
         platform: process.platform,
-        memory: {
-          used: Math.round(memUsage.heapUsed / 1024 / 1024),
-          total: Math.round(memUsage.heapTotal / 1024 / 1024),
-          free: Math.round(
-            (memUsage.heapTotal - memUsage.heapUsed) / 1024 / 1024,
-          ),
-        },
-        cpu: {
-          load: [cpuUsage.user, cpuUsage.system],
-          cores: os.cpus().length,
-        },
+        memory: this.getMemoryInfo(),
+        cpu: this.getCpuInfo(),
       },
       services: {
         database: dbStatus,

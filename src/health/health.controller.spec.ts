@@ -1,11 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
-import {
-  DatabaseService,
-  DatabaseInfo,
-} from '../infrastructure/database/database.service';
+import { DatabaseService } from '../infrastructure/database/database.service';
 import { ENV_VALUES } from '../shared/constants/environment';
+
+// Definir la interfaz localmente para evitar problemas de importación
+interface DatabaseInfo {
+  database_name: string;
+  current_user: string;
+  postgres_version: string;
+}
 
 // Mock Swagger decorators for tests
 jest.mock('@nestjs/swagger', () => ({
@@ -104,6 +108,71 @@ describe('HealthController', () => {
       const result = (controller as any).getDatabaseVersion(dbInfo);
       expect(result).toBe('unknown');
     });
+
+    it('should get environment from ConfigService', () => {
+      jest.spyOn(configService, 'get').mockReturnValue('production');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getEnvironment();
+      expect(result).toBe('production');
+    });
+
+    it('should get default environment when ConfigService returns undefined', () => {
+      jest.spyOn(configService, 'get').mockReturnValue(undefined);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getEnvironment();
+      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should get default environment when ConfigService returns null', () => {
+      jest.spyOn(configService, 'get').mockReturnValue(null);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getEnvironment();
+      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should get default environment when ConfigService returns empty string', () => {
+      jest.spyOn(configService, 'get').mockReturnValue('');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getEnvironment();
+      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should get default environment when ConfigService returns false', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(configService, 'get').mockReturnValue(false as any);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getEnvironment();
+      expect(result).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should get memory info correctly', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getMemoryInfo();
+      expect(result).toHaveProperty('used');
+      expect(result).toHaveProperty('total');
+      expect(result).toHaveProperty('free');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(typeof result.used).toBe('number');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(typeof result.total).toBe('number');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(typeof result.free).toBe('number');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(result.free).toBe(result.total - result.used);
+    });
+
+    it('should get cpu info correctly', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      const result = (controller as any).getCpuInfo();
+      expect(result).toHaveProperty('load');
+      expect(result).toHaveProperty('cores');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(Array.isArray(result.load)).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(result.load).toHaveLength(2);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(typeof result.cores).toBe('number');
+    });
   });
 
   describe('getHealth', () => {
@@ -149,6 +218,25 @@ describe('HealthController', () => {
     it('should return default environment if ConfigService returns null', () => {
       jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
       jest.spyOn(configService, 'get').mockReturnValue(null);
+
+      const result = controller.getHealth();
+
+      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should return default environment if ConfigService returns empty string', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(configService, 'get').mockReturnValue('');
+
+      const result = controller.getHealth();
+
+      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should return default environment if ConfigService returns false', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(configService, 'get').mockReturnValue(false as any);
 
       const result = controller.getHealth();
 
@@ -264,6 +352,35 @@ describe('HealthController', () => {
         postgres_version: 'PostgreSQL 14.0',
       });
       jest.spyOn(configService, 'get').mockReturnValue(null);
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should return default environment if ConfigService returns empty string in detailed health', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      });
+      jest.spyOn(configService, 'get').mockReturnValue('');
+
+      const result = controller.getDetailedHealth();
+
+      expect(result.environment).toBe(ENV_VALUES.NODE_ENV.DEVELOPMENT);
+    });
+
+    it('should return default environment if ConfigService returns false in detailed health', () => {
+      jest.spyOn(databaseService, 'healthCheck').mockReturnValue(true);
+      jest.spyOn(databaseService, 'getDatabaseInfo').mockReturnValue({
+        database_name: 'test_db',
+        current_user: 'test_user',
+        postgres_version: 'PostgreSQL 14.0',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(configService, 'get').mockReturnValue(false as any);
 
       const result = controller.getDetailedHealth();
 
