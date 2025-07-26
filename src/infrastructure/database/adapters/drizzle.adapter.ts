@@ -50,12 +50,15 @@ export class DrizzleAdapter
       this.status = DatabaseStatus.CONNECTING;
       console.log('🔗 Conectando a la base de datos con Drizzle...');
 
-      // Create postgres client
+      // Create postgres client with SSL for production
+      const isProduction = process.env.NODE_ENV === 'production';
+
       this.client = postgres(this.config.connectionString, {
         max: this.config.maxConnections,
         idle_timeout: this.config.idleTimeout,
         connect_timeout: this.config.connectionTimeout,
         onnotice: () => {}, // Suppress notices
+        ssl: isProduction ? { rejectUnauthorized: false } : false,
       });
 
       // Create drizzle instance
