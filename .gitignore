@@ -133,7 +133,7 @@ logs
 *.log
 
 # Build outputs
-# dist/
+dist/
 build/
 
 # Test coverage

@@ -1,5 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
 import { config } from 'dotenv';
+import { ENV_KEYS } from './src/shared/constants/environment';
 
 // Load environment variables
 config();
@@ -9,7 +10,7 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || '',
+    url: process.env[ENV_KEYS.DATABASE_URL] || '',
   },
   verbose: true,
   strict: true,

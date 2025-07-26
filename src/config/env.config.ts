@@ -15,7 +15,7 @@ const envSchema = z.object({
   [ENV_KEYS.DATABASE_URL]: z.string(),
   [ENV_KEYS.DATABASE_ORM]: z
     .enum([ENV_VALUES.DATABASE_ORM.PRISMA, ENV_VALUES.DATABASE_ORM.DRIZZLE])
-    .default(ENV_VALUES.DATABASE_ORM.PRISMA),
+    .default(ENV_VALUES.DATABASE_ORM.DRIZZLE),
   [ENV_KEYS.JWT_SECRET]: z.string(),
 });
 

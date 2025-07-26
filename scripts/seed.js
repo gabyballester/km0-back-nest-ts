@@ -133,6 +133,7 @@ async function seedDrizzle() {
 const { drizzle } = require('drizzle-orm/postgres-js');
 const postgres = require('postgres');
 const { users } = require('../src/infrastructure/database/schemas/user.schema');
+const { ENV_KEYS } = require('../src/shared/constants/environment');
 
 // Load environment variables
 require('dotenv').config();
@@ -140,7 +141,7 @@ require('dotenv').config();
 async function main() {
   console.log('🌱 Seeding database with Drizzle...');
 
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env[ENV_KEYS.DATABASE_URL];
   if (!connectionString) {
     throw new Error('DATABASE_URL is required');
   }

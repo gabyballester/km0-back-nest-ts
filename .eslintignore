@@ -15,6 +15,10 @@ coverage/
 # Generated files
 generated/
 
+# Config files
+*.config.ts
+*.config.js
+
 # Legacy folder (solo consulta)
 legacy/
 

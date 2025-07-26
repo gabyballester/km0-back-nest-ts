@@ -10,6 +10,9 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Import environment constants
+const { ENV_KEYS } = require('../src/shared/constants/environment');
+
 // Colors for console output
 const colors = {
   reset: '\x1b[0m',
@@ -83,7 +86,7 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: process.env[ENV_KEYS.DATABASE_URL] || '',
   },
   verbose: true,
   strict: true,

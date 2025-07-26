@@ -30,6 +30,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src/**/*", "test/**/*", "drizzle.config.ts"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist", "legacy"]
 }
