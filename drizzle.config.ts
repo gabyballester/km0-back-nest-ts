@@ -1,7 +1,8 @@
 import { defineConfig } from 'drizzle-kit';
+import { config } from 'dotenv';
 import { ENV_KEYS } from './src/shared/constants/environment';
 
-// Load environment variables
+// Cargar variables de entorno de manera segura
 config();
 
 export default defineConfig({
