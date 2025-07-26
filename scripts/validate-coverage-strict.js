@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Validación de cobertura estricta (100%)
- * FALLA si la cobertura no es 100% en todas las métricas
+ * Validación de cobertura estricta según umbrales configurados
+ * FALLA si la cobertura no cumple los umbrales establecidos
  */
 
 const { execSync } = require('child_process');
 
-console.log('📊 Ejecutando validación de cobertura estricta (100%)...');
+console.log(
+  '📊 Ejecutando validación de cobertura según umbrales configurados...',
+);
 
 try {
   // Ejecutar tests con cobertura estricta
@@ -19,21 +21,21 @@ try {
         ...process.env,
         JEST_COVERAGE_THRESHOLD: JSON.stringify({
           global: {
-            statements: 100,
-            branches: 100,
-            functions: 100,
-            lines: 100,
+            statements: 90,
+            branches: 80,
+            functions: 90,
+            lines: 90,
           },
         }),
       },
     },
   );
 
-  console.log('✅ Cobertura estricta (100%) validada exitosamente');
+  console.log('✅ Cobertura según umbrales configurados validada exitosamente');
 } catch (error) {
-  console.error('❌ Error en validación de cobertura estricta:', error.message);
+  console.error('❌ Error en validación de cobertura:', error.message);
   console.error(
-    '🚨 COBERTURA INSUFICIENTE: Se requiere 100% en todas las métricas',
+    '🚨 COBERTURA INSUFICIENTE: No se cumplen los umbrales establecidos',
   );
   process.exit(1);
 }

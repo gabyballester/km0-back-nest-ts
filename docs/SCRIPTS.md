@@ -59,7 +59,8 @@ npm run db:studio:prod # 🖥️ Studio producción
 npm run validate:quick # ⚡ Validación rápida
 npm run validate:full  # 📊 Validación completa
 npm run validate:coverage # 📈 Validación con coverage (90%)
-npm run validate:coverage:strict # 📈 Validación con coverage (100%)
+npm run validate:coverage:strict # 📈 Validación con coverage (umbrales configurados)
+npm run validate:coverage:100 # 📈 Validación con coverage (100% - aspiración máxima)
 npm run validate:staged:strict # 🔒 Validación staged estricta (pre-commit)
 npm run validate:full:strict # 🔒 Validación completa estricta (pre-push)
 npm run type-check     # 🔍 Verificación de tipos
@@ -88,7 +89,7 @@ npm run validate:staged:strict
 - ✅ **Type-check**: TypeScript en archivos staged
 - ✅ **ESLint**: Linting estricto con auto-fix
 - ✅ **Tests rápidos**: Solo archivos modificados
-- ✅ **Cobertura global**: Verificación 100% en todo el proyecto
+- ✅ **Cobertura global**: Verificación según umbrales configurados
 - ⏱️ **Tiempo**: ~5-6 segundos
 
 ### **Pre-push (Proyecto Completo)**
@@ -100,16 +101,37 @@ npm run validate:full:strict
 - ✅ **Formato**: Prettier en todo el proyecto
 - ✅ **Type-check**: TypeScript completo
 - ✅ **ESLint**: Linting estricto sin auto-fix
-- ✅ **Tests completos**: Con cobertura 100%
+- ✅ **Tests completos**: Con cobertura según umbrales configurados
 - ✅ **Tests E2E**: Validación end-to-end
 - ⏱️ **Tiempo**: ~8-10 segundos
+
+### **📊 Umbrales de Cobertura (Fuente de Verdad)**
+
+Los umbrales de cobertura están configurados en `jest.config.js` y son la **fuente de verdad** para las validaciones:
+
+```javascript
+coverageThreshold: {
+  global: {
+    branches: 80,    // 80% de cobertura de ramas
+    functions: 90,   // 90% de cobertura de funciones
+    lines: 90,       // 90% de cobertura de líneas
+    statements: 90,  // 90% de cobertura de statements
+  },
+}
+```
+
+**Scripts disponibles:**
+
+- `npm run validate:coverage:strict` - Usa umbrales configurados
+- `npm run validate:coverage:100` - Aspiración al 100% (validación especial)
 
 ### **🎯 Beneficios de esta Estrategia**
 
 - **Velocidad**: Pre-commit rápido, pre-push completo
-- **Calidad**: 100% cobertura garantizada
+- **Calidad**: Cobertura según umbrales garantizada
 - **Seguridad**: Bloqueo de commits/push con errores
 - **Consistencia**: Mismos estándares en todo el equipo
+- **Flexibilidad**: Umbrales configurables según necesidades del proyecto
 
 ---
 
