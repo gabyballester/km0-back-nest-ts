@@ -82,15 +82,6 @@
     "db:backup:restore": "node scripts/db-backup.js restore",
     "db:backup:list": "node scripts/db-backup.js list"
   },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "eslint --fix --cache --max-warnings=0 --no-warn-ignored"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
   "dependencies": {
     "@nestjs/cli": "^11.0.7",
     "@nestjs/common": "^11.0.1",
