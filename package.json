@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start:dev": "node scripts/timed-run.js \"dotenv -e .env.development -- cross-env NODE_ENV=development npx nest start --watch --builder swc --preserveWatchOutput\" \"🔄 Inicio completo con watch (Development)\"",
-    "start:prod": "dotenv -e .env -- node dist/main",
+    "start:prod": "node dist/main",
     "build": "npx nest build --builder swc",
     "build:prod": "npx nest build --builder swc",
     "test:quick:ultra": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --maxWorkers=8 --bail --passWithNoTests --silent --no-coverage\" \"⚡ Tests ultra rápidos (Test)\"",
@@ -31,7 +31,7 @@
     "db:studio": "prisma studio",
     "db:dev": "dotenv -e .env.development -- prisma db push --accept-data-loss",
     "db:test": "dotenv -e .env.test -- prisma db push --accept-data-loss",
-    "db:prod": "node scripts/production-deploy.js",
+    "db:prod": "node scripts/drizzle-production-deploy.js",
     "db:studio:dev": "dotenv -e .env.development -- prisma studio",
     "db:studio:test": "dotenv -e .env.test -- prisma studio",
     "db:studio:prod": "dotenv -e .env -- prisma studio"
