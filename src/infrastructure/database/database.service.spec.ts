@@ -25,16 +25,25 @@ describe('DatabaseService', () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(),
+            get: jest.fn((key: string) => {
+              switch (key) {
+                case 'DATABASE_URL':
+                  return 'postgresql://test:test@localhost:5432/test';
+                case 'DATABASE_ORM':
+                  return 'drizzle';
+                default:
+                  return undefined;
+              }
+            }),
           },
         },
         {
           provide: DatabaseFactory,
           useValue: {
             createAdapter: jest.fn().mockReturnValue(mockAdapter),
-            getOrmType: jest.fn(),
-            isDrizzle: jest.fn(),
-            isPrisma: jest.fn(),
+            getOrmType: jest.fn().mockReturnValue('drizzle'),
+            isDrizzle: jest.fn().mockReturnValue(true),
+            isPrisma: jest.fn().mockReturnValue(false),
           },
         },
       ],
@@ -57,7 +66,6 @@ describe('DatabaseService', () => {
       mockAdapter.healthCheck.mockResolvedValue(true);
 
       await service.onModuleInit();
-
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockAdapter.connect).toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method

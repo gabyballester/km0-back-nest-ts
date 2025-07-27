@@ -100,11 +100,11 @@ describe('Environment Constants', () => {
       expect(ENV_DEFAULTS[ENV_KEYS.NODE_ENV]).toBe(
         ENV_VALUES.NODE_ENV.DEVELOPMENT,
       );
-      expect(ENV_DEFAULTS[ENV_KEYS.PORT]).toBe('4000');
+      expect(ENV_DEFAULTS[ENV_KEYS.PORT]).toBe(4000);
       expect(ENV_DEFAULTS[ENV_KEYS.HOST]).toBe('localhost');
       expect(ENV_DEFAULTS[ENV_KEYS.JWT_EXPIRES_IN]).toBe('1d');
-      expect(ENV_DEFAULTS[ENV_KEYS.THROTTLE_TTL]).toBe('60');
-      expect(ENV_DEFAULTS[ENV_KEYS.THROTTLE_LIMIT]).toBe('100');
+      expect(ENV_DEFAULTS[ENV_KEYS.THROTTLE_TTL]).toBe(60);
+      expect(ENV_DEFAULTS[ENV_KEYS.THROTTLE_LIMIT]).toBe(100);
       expect(ENV_DEFAULTS[ENV_KEYS.CORS_ORIGIN]).toBe('http://localhost:3000');
       expect(ENV_DEFAULTS[ENV_KEYS.LOG_LEVEL]).toBe(ENV_VALUES.LOG_LEVEL.INFO);
     });
