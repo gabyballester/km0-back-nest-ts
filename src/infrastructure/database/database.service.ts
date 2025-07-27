@@ -27,6 +27,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       const ormType = this.databaseFactory.getOrmType();
       const databaseUrl = this.configService.get<string>('DATABASE_URL');
 
+      if (!databaseUrl) {
+        throw new Error('DATABASE_URL is not configured');
+      }
+
       // Show connection info
       const dbInfo = new URL(databaseUrl);
       console.log(`🗄️  ORM: ${ormType.toUpperCase()}`);
