@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -40,8 +40,6 @@ export class AppModule {
    * Configure global middleware
    */
   configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(SecurityMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+    consumer.apply(SecurityMiddleware).forRoutes('*');
   }
 }

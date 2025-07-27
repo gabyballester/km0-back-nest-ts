@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { MiddlewareConsumer } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -66,9 +66,6 @@ describe('AppModule', () => {
     appModule.configure(mockConsumer);
 
     expect(mockApply).toHaveBeenCalled();
-    expect(mockForRoutes).toHaveBeenCalledWith({
-      path: '*',
-      method: RequestMethod.ALL,
-    });
+    expect(mockForRoutes).toHaveBeenCalledWith('*');
   });
 });
