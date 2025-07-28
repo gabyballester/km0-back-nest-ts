@@ -12,7 +12,6 @@
     "start:dev": "node scripts/timed-run.js \"dotenv -e .env.development -- cross-env NODE_ENV=development npx nest start --watch --builder swc --preserveWatchOutput\" \"🔄 Inicio completo con watch (Development)\"",
     "start:prod": "node dist/main",
     "build": "nest build --builder swc",
-    "build:prod": "nest build --builder swc",
     "test:quick:ultra": "node scripts/timed-run.js \"cross-env NODE_ENV=test jest --maxWorkers=8 --bail --passWithNoTests --silent --no-coverage\" \"⚡ Tests ultra rápidos (Test)\"",
     "test:full:ultra": "node scripts/timed-run.js \"cross-env NODE_ENV=test JEST_COVERAGE=true jest --coverage --maxWorkers=6 --bail --passWithNoTests --silent\" \"📊 Tests completos ultra rápidos con coverage (Test)\"",
     "test:watch": "cross-env NODE_ENV=test jest --watch --maxWorkers=2 --silent",
