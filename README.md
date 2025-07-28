@@ -87,12 +87,12 @@ src/
 
 - **Development**: `http://localhost:4000`
 - **Test**: `http://localhost:6000`
-- **Production**: `https://km0-market.onrender.com`
+- **Production**: `https://km0-back-nest-ts-d4ah.onrender.com`
 
 ### Documentación de API
 
 - **Swagger UI**: `http://localhost:4000/docs` (desarrollo)
-- **Swagger UI**: `https://km0-market.onrender.com/docs` (producción)
+- **Swagger UI**: `https://km0-back-nest-ts-d4ah.onrender.com/docs` (producción)
 - **API Endpoints**: `http://localhost:4000/example/info` (información de endpoints)
 
 ### Instalación
