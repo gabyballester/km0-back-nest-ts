@@ -269,3 +269,83 @@ const port = this.configService.get<number>('PORT');
 
 - [npm Configuration](https://docs.npmjs.com/cli/v8/using-npm/config)
 - [npmrc Documentation](https://docs.npmjs.com/cli/v8/configuring-npm/npmrc)
+
+# Gestión de Variables de Entorno
+
+## Configuración de Puertos por Entorno
+
+### Configuración Correcta
+
+- **Development**: `PORT=4000`, `HOST=localhost`
+- **Test**: `PORT=6000`, `HOST=localhost`
+- **Production**: `PORT=8000`, `HOST=0.0.0.0`
+
+### Problema Resuelto: ConfigService Keys
+
+**Problema:**
+El servidor de producción se iniciaba en el puerto 4000 en lugar del 8000 configurado.
+
+**Causa:**
+En `src/main.ts` se estaban usando las claves incorrectas del `ConfigService`:
+
+```typescript
+// ❌ INCORRECTO
+const port = configService.get<number>(CONFIG_KEYS.ENV_PORT) ?? 4000;
+const host = configService.get<string>(CONFIG_KEYS.ENV_HOST) ?? 'localhost';
+```
+
+**Solución:**
+Usar las claves directas que coinciden con la configuración registrada:
+
+```typescript
+// ✅ CORRECTO
+const port = configService.get<number>('PORT') ?? 4000;
+const host = configService.get<string>('HOST') ?? 'localhost';
+```
+
+**Explicación:**
+
+- `CONFIG_KEYS.ENV_PORT` = `'env.port'` (no existe en la configuración)
+- `CONFIG_KEYS.ENV_HOST` = `'env.host'` (no existe en la configuración)
+- `'PORT'` y `'HOST'` son las claves reales registradas en `env.config.ts`
+
+## Archivos de Entorno
+
+### Estructura de Archivos
+
+- `.env` - Variables de entorno por defecto
+- `.env.development` - Configuración específica para desarrollo
+- `.env.test` - Configuración específica para tests
+- `.env.production` - Configuración específica para producción
+
+### Carga de Archivos
+
+El `ConfigModule` carga los archivos en el siguiente orden:
+
+1. `.env` (siempre se carga)
+2. `.env.local` (si existe)
+3. Archivo específico del entorno (`.env.development`, `.env.test`, `.env.production`)
+
+### Variables Críticas
+
+- `NODE_ENV` - Entorno de ejecución
+- `PORT` - Puerto del servidor
+- `HOST` - Host del servidor (0.0.0.0 para producción)
+- `DATABASE_URL` - URL de conexión a la base de datos
+- `JWT_SECRET` - Secreto para JWT
+- `COOKIE_SECRET` - Secreto para cookies
+- `CORS_ORIGIN` - Origen permitido para CORS
+
+## Verificación
+
+### Scripts de Verificación
+
+```bash
+npm run check:ports     # Verificar configuración de puertos
+npm run db:check:ssl    # Verificar configuración SSL
+npm run check:dependencies  # Verificar dependencias
+```
+
+### Validación Automática
+
+El proyecto incluye validación automática de variables de entorno usando Zod schemas en `src/config/env.config.ts`.

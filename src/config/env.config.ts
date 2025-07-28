@@ -51,6 +51,7 @@ const envSchema = z.object({
 // Función para validar y obtener variables de entorno
 export const validateEnv = () => {
   try {
+    // Usar process.env que incluye las variables de cross-env
     const env = envSchema.parse(process.env);
 
     // Log de configuración del entorno

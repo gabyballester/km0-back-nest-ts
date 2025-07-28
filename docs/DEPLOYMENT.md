@@ -111,6 +111,12 @@ Port scan timeout reached, failed to detect open port 8000
 1. Verificar que `HOST=0.0.0.0` esté configurado en producción
 2. Ejecutar `npm run check:ports` para validar configuración
 3. Asegurar que el servidor escuche en el host correcto
+4. **Importante**: Usar las claves correctas en `ConfigService`:
+   - ✅ `configService.get('PORT')` y `configService.get('HOST')`
+   - ❌ `configService.get('env.port')` y `configService.get('env.host')`
+
+**Causa Raíz:**
+El problema se debía a que en `src/main.ts` se estaban usando las claves incorrectas del `ConfigService`. Las claves `CONFIG_KEYS.ENV_PORT` (`'env.port'`) y `CONFIG_KEYS.ENV_HOST` (`'env.host'`) no existían en la configuración registrada, por lo que se usaban los valores por defecto (4000 y localhost).
 
 ### Error SSL/TLS Required
 
@@ -145,13 +151,33 @@ Error: Cannot find module 'drizzle-kit'
 **Síntoma:**
 
 ```
-[LegacyRouteConverter] Unsupported route path: "/api/*"
+[LegacyRouteConverter] Unsupported route path: "/api/v1/*"
 ```
+
+**Explicación:**
+
+Este warning aparece debido a cambios en la librería `path-to-regexp` utilizada por NestJS. En versiones anteriores, los símbolos `?`, `*`, y `+` se usaban para denotar parámetros opcionales o repetitivos. La versión más reciente requiere el uso de parámetros nombrados.
+
+**Causa:**
+
+El prefijo global `api/v1` se interpreta como un patrón de ruta con wildcard, aunque en realidad es solo un prefijo estático.
 
 **Solución:**
 
-- Las rutas están configuradas correctamente en `main.ts`
-- Esta advertencia es informativa y no afecta la funcionalidad
+- **Estado actual**: Las rutas están configuradas correctamente en `main.ts`
+- **Impacto**: Esta advertencia es **informativa** y **NO afecta la funcionalidad**
+- **Comportamiento**: La aplicación funciona normalmente y las rutas se resuelven correctamente
+- **Resolución**: El sistema intenta auto-convertir el patrón automáticamente
+
+**Verificación:**
+
+```bash
+# Las siguientes rutas funcionan correctamente:
+GET /api/v1/example          # ✅ Funciona
+GET /api/v1/example/info     # ✅ Funciona
+GET /health                  # ✅ Funciona (excluida del versionado)
+GET /docs                    # ✅ Funciona (excluida del versionado)
+```
 
 ### Vulnerabilidades de Seguridad
 

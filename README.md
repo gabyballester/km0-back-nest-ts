@@ -71,6 +71,10 @@ src/
 
 **📖 Ver documentación completa:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 
+**🔧 Troubleshooting:** [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)
+
+**📖 API Guide:** [docs/API_VERSIONING.md](./docs/API_VERSIONING.md)
+
 ## 🚀 Inicio Rápido
 
 ### Prerrequisitos
@@ -89,6 +93,7 @@ src/
 
 - **Swagger UI**: `http://localhost:4000/docs` (desarrollo)
 - **Swagger UI**: `https://km0-market.onrender.com/docs` (producción)
+- **API Endpoints**: `http://localhost:4000/example/info` (información de endpoints)
 
 ### Instalación
 
