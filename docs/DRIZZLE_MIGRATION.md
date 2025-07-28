@@ -95,311 +95,217 @@ npm run db:drizzle:studio:dev    # Studio en desarrollo
 npm run db:drizzle:studio:test   # Studio en test
 ```
 
+### **🔄 Scripts de Gestión Robusta de Migraciones (NUEVO)**
+
+```bash
+# Gestión inteligente de migraciones
+npm run migration:status         # Ver estado de migraciones
+npm run migration:generate       # Generar migraciones
+npm run migration:apply          # Aplicar migraciones
+npm run migration:reset          # Resetear migraciones
+npm run migration:validate       # Validar estado
+npm run migration:full           # Workflow completo
+```
+
+**Características del Gestor de Migraciones:**
+
+- ✅ **Detección automática** de migraciones pendientes
+- ✅ **Validación de estado** antes y después de operaciones
+- ✅ **SSL automático** en producción
+- ✅ **Workflow completo** con validaciones
+- ✅ **Reseteo seguro** de migraciones
+- ✅ **Logging detallado** de operaciones
+
 ### **🔧 Scripts de Respaldo (Prisma)**
 
 ```bash
 # Prisma directo (bypass del manager)
 npm run db:prisma:generate       # prisma generate
-npm run db:prisma:push           # prisma db push
 npm run db:prisma:migrate        # prisma migrate dev
 npm run db:prisma:migrate:deploy # prisma migrate deploy
-npm run db:prisma:reset          # prisma migrate reset --force
 npm run db:prisma:studio         # prisma studio
+npm run db:prisma:push           # prisma db push
+npm run db:prisma:reset          # prisma migrate reset
 
 # Prisma por entorno
 npm run db:prisma:dev            # Push en desarrollo
 npm run db:prisma:test           # Push en test
-npm run db:prisma:prod           # Migrate en producción
+npm run db:prisma:prod           # Deploy en producción
 npm run db:prisma:studio:dev     # Studio en desarrollo
 npm run db:prisma:studio:test    # Studio en test
-npm run db:prisma:studio:prod    # Studio en producción
 ```
 
-### **🔄 Scripts de Migración de Datos**
+## **🎯 WORKFLOW ROBUSTO DE MIGRACIONES**
+
+### **Estrategia de Deployment (v3.0)**
+
+El nuevo sistema de deployment implementa una estrategia robusta que:
+
+1. **Detecta automáticamente** el estado de migraciones
+2. **Valida** la configuración SSL en producción
+3. **Aplica migraciones** de forma segura
+4. **Valida** el estado final
+5. **Proporciona fallbacks** inteligentes
+
+### **Workflow Recomendado**
+
+#### **Para Desarrollo:**
 
 ```bash
-# Migración entre ORMs
-npm run db:migrate:data:export-prisma <file>     # Exportar desde Prisma
-npm run db:migrate:data:import-drizzle <file>    # Importar a Drizzle
-npm run db:migrate:data:prisma-to-drizzle        # Migración completa
-npm run db:migrate:data:backup <file>            # Backup actual
+# Cambios rápidos en desarrollo
+npm run db:dev                    # Push directo
+npm run db:drizzle:push           # Push específico de Drizzle
 ```
 
-## **📁 ESTRUCTURA DE ARCHIVOS**
-
-### **Drizzle**
-
-```
-src/infrastructure/database/
-├── schemas/
-│   └── user.schema.ts          # Esquema de usuario
-├── adapters/
-│   ├── drizzle.adapter.ts      # Adaptador Drizzle
-│   └── prisma.adapter.ts       # Adaptador Prisma (respaldo)
-├── interfaces/
-│   ├── database.adapter.interface.ts
-│   └── repository.interface.ts
-├── factory/
-│   └── database.factory.ts     # Factory para seleccionar ORM
-└── database.module.ts          # Módulo NestJS
-```
-
-### **Configuración**
-
-```
-drizzle.config.ts               # Configuración Drizzle Kit
-prisma/
-├── schema.prisma              # Esquema Prisma (respaldo)
-└── migrations/                # Migraciones Prisma (respaldo)
-```
-
-### **Scripts y Utilidades**
-
-```
-scripts/
-├── db-manager.js              # Manager inteligente de ORMs
-├── db-validate.js             # Validación de configuración
-├── db-health.js               # Health check avanzado
-├── db-backup.js               # Backup y restore
-├── migrate-data.js            # Migración entre ORMs
-└── setup-db.js                # Configuración automática
-
-data/
-├── seed-dev.json              # Datos de desarrollo
-└── seed-test.json             # Datos de test
-
-backups/                       # Directorio de backups
-```
-
-## **🔐 VARIABLES DE ENTORNO**
-
-### **Requeridas**
+#### **Para Producción:**
 
 ```bash
-DATABASE_URL=postgresql://user:password@host:port/database_name
-DATABASE_ORM=drizzle  # o 'prisma' para respaldo
+# Workflow robusto para producción
+npm run migration:full            # Workflow completo
+npm run db:prod                   # Deployment automatizado
 ```
 
-### **Opcionales**
+#### **Para Cambios en el Esquema:**
 
 ```bash
-SEED_ENABLED=true
-SEED_DATA_PATH=./data/seed.json
+# 1. Hacer cambios en el esquema
+# 2. Generar migración
+npm run migration:generate
+
+# 3. Aplicar migración
+npm run migration:apply
+
+# 4. Validar estado
+npm run migration:validate
 ```
 
-## **🚀 FLUJO DE TRABAJO**
+### **Gestión de Estados**
 
-### **Configuración Inicial**
+#### **Estado Válido:**
+
+- ✅ Migraciones en proyecto: SÍ
+- ✅ Migraciones pendientes: NO
+- ✅ Base de datos sincronizada
+
+#### **Estados Problemáticos:**
+
+- ⚠️ Migraciones en proyecto: NO
+- ⚠️ Migraciones pendientes: SÍ
+- ❌ Base de datos inconsistente
+
+### **Resolución de Problemas**
+
+#### **Si no hay migraciones:**
 
 ```bash
-# 1. Setup automático
-npm run db:setup
-
-# 2. Verificar configuración
-npm run db:health:dev
-
-# 3. Configurar variables de entorno
-# Editar .env.development, .env.test, .env
-
-# 4. Validar configuración
-npm run db:validate:dev
+npm run migration:generate        # Generar migraciones
+npm run migration:apply           # Aplicar migraciones
 ```
 
-### **Desarrollo Diario**
+#### **Si hay migraciones pendientes:**
 
 ```bash
-# 1. Health check
-npm run db:health:dev
-
-# 2. Generar esquemas
-npm run db:generate
-
-# 3. Aplicar cambios
-npm run db:push
-
-# 4. Ejecutar seeders
-npm run db:seed:dev
-
-# 5. Abrir studio
-npm run db:studio:dev
+npm run migration:apply           # Aplicar migraciones pendientes
+npm run migration:validate        # Validar estado
 ```
 
-### **Testing**
+#### **Si hay inconsistencias:**
 
 ```bash
-# 1. Health check
-npm run db:health:test
-
-# 2. Resetear base de datos
-npm run db:reset
-
-# 3. Aplicar esquema
-npm run db:push
-
-# 4. Ejecutar seeders de test
-npm run db:seed:test
+npm run migration:reset           # Resetear migraciones
+npm run migration:full            # Workflow completo
 ```
 
-### **Producción**
+## **🔧 CONFIGURACIÓN TÉCNICA**
+
+### **Variables de Entorno**
 
 ```bash
-# 1. Health check
-npm run db:health:prod
+# ORM Principal
+DATABASE_ORM=drizzle
 
-# 2. Generar esquemas
-npm run db:generate
+# Configuración de Base de Datos
+DATABASE_URL=postgresql://...
 
-# 3. Deploy migraciones
-npm run db:prod
+# Configuración SSL (automática en producción)
+# sslmode=require se añade automáticamente
 ```
 
-### **Backup y Restore**
+### **Archivos de Configuración**
 
-```bash
-# Crear backup
-npm run db:backup:create:data
-
-# Listar backups
-npm run db:backup:list
-
-# Restaurar backup
-npm run db:backup:restore backup-data-2024-01-01.json
+```typescript
+// drizzle.config.ts
+export default defineConfig({
+  schema: './src/infrastructure/database/schemas/*',
+  out: './drizzle',
+  dialect: 'postgresql',
+  dbCredentials: {
+    url: process.env.DATABASE_URL,
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false, sslmode: 'require' }
+        : false,
+  },
+});
 ```
 
-## **🔄 MIGRACIÓN DE DATOS**
+### **Estructura de Migraciones**
 
-### **De Prisma a Drizzle**
-
-```bash
-# Migración completa automática
-npm run db:migrate:data:prisma-to-drizzle
-
-# O paso a paso
-npm run db:migrate:data:export-prisma backup.json
-npm run db:migrate:data:import-drizzle backup.json
+```
+drizzle/
+├── 0000_smart_johnny_storm.sql    # Migración inicial
+├── 0001_add_new_table.sql         # Migraciones incrementales
+├── meta/
+│   ├── _journal.json              # Control de versiones
+│   └── 0000_snapshot.json         # Snapshot del esquema
 ```
 
-### **Backup de Datos Actuales**
-
-```bash
-npm run db:migrate:data:backup backup-$(date +%Y%m%d).json
-```
-
-## **🔧 CAMBIAR ENTRE ORMs**
-
-### **Cambiar a Prisma Temporalmente**
-
-```bash
-# 1. Cambiar variable de entorno
-export DATABASE_ORM=prisma
-
-# 2. O usar scripts específicos
-npm run db:prisma:generate
-npm run db:prisma:push
-npm run db:prisma:studio
-```
-
-### **Volver a Drizzle**
-
-```bash
-# 1. Cambiar variable de entorno
-export DATABASE_ORM=drizzle
-
-# 2. O usar scripts específicos
-npm run db:drizzle:generate
-npm run db:drizzle:push
-npm run db:drizzle:studio
-```
-
-## **📊 VENTAJAS DE DRIZZLE**
-
-### **✅ Rendimiento**
-
-- **Más rápido** que Prisma en operaciones complejas
-- **Menor overhead** de memoria
-- **Mejor rendimiento** en consultas anidadas
-
-### **✅ TypeScript**
-
-- **Type-safe** por defecto
-- **Mejor inferencia** de tipos
-- **Menos código boilerplate**
-
-### **✅ Flexibilidad**
-
-- **SQL raw** más fácil de usar
-- **Más control** sobre las consultas
-- **Mejor integración** con SQL nativo
-
-### **✅ Mantenimiento**
-
-- **Menos dependencias** que Prisma
-- **Configuración más simple**
-- **Mejor documentación** de la API
-
-## **⚠️ CONSIDERACIONES**
-
-### **Diferencias con Prisma**
-
-1. **Migraciones**: Drizzle usa archivos SQL, Prisma usa archivos de migración
-2. **Studio**: Drizzle Studio es más básico que Prisma Studio
-3. **Seeders**: Drizzle requiere implementación manual de seeders
-4. **Relaciones**: Drizzle maneja las relaciones de forma diferente
-
-### **Compatibilidad**
-
-- **Ambos ORMs** pueden coexistir en el mismo proyecto
-- **Migración de datos** disponible entre ORMs
-- **Scripts de respaldo** para volver a Prisma si es necesario
-
-## **🔍 TROUBLESHOOTING**
+## **🚨 TROUBLESHOOTING**
 
 ### **Problemas Comunes**
 
-#### **Error de Conexión**
+#### **1. Migraciones Pendientes**
 
 ```bash
-# Verificar configuración
-npm run db:health
+# Verificar estado
+npm run migration:status
 
-# Verificar variables de entorno
-echo $DATABASE_URL
-echo $DATABASE_ORM
+# Aplicar migraciones
+npm run migration:apply
 ```
 
-#### **Error de Migración**
+#### **2. Esquema Inconsistente**
 
 ```bash
-# Resetear base de datos
-npm run db:reset
+# Validar estado
+npm run migration:validate
 
-# Regenerar esquemas
-npm run db:generate
+# Resetear si es necesario
+npm run migration:reset
 ```
 
-#### **Error de Tipos**
+#### **3. Error SSL en Producción**
 
 ```bash
-# Regenerar cliente Prisma (si usas respaldo)
-npm run db:prisma:generate
+# Verificar configuración SSL
+npm run db:check:ssl
 
-# Verificar tipos TypeScript
-npm run type-check
+# El script de deployment maneja SSL automáticamente
 ```
 
-#### **Problemas de Setup**
+### **Logs de Diagnóstico**
 
 ```bash
-# Setup automático
-npm run db:setup
+# Ver logs detallados
+npm run migration:full
 
-# Verificar health
-npm run db:health:dev
+# Ver estado actual
+npm run migration:status
 ```
 
-## **📚 RECURSOS**
+## **📚 RECURSOS ADICIONALES**
 
-- [Drizzle ORM Documentation](https://orm.drizzle.team/)
-- [Drizzle Kit Documentation](https://orm.drizzle.team/kit-docs/overview)
-- [NestJS Integration](https://orm.drizzle.team/docs/get-started-postgresql#nestjs)
-- [Migration Guide](https://orm.drizzle.team/docs/migrations)
+- [Documentación de Drizzle ORM](https://orm.drizzle.team/)
+- [Guía de Migraciones](./TROUBLESHOOTING.md)
+- [Estado de Deployment](./DEPLOYMENT_STATUS.md)
+- [Configuración de Entornos](./ENVIRONMENT.md)

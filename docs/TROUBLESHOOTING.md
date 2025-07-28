@@ -1,6 +1,6 @@
-# Troubleshooting Guide - KM0 Market Backend
+# Guía de Solución de Problemas
 
-## 🚨 Warnings y Errores Comunes
+## 🚨 **Problemas Comunes y Soluciones**
 
 ### 1. Warning de LegacyRouteConverter
 
@@ -8,28 +8,6 @@
 
 ```
 WARN [LegacyRouteConverter] Unsupported route path: "/api/v1/*"
-```
-
-**Explicación:**
-Este warning aparece debido a cambios en la librería `path-to-regexp` utilizada por NestJS. En versiones anteriores, los símbolos `?`, `*`, y `+` se usaban para denotar parámetros opcionales o repetitivos. La versión más reciente requiere el uso de parámetros nombrados.
-
-**Causa:**
-El prefijo global `api/v1` se interpreta como un patrón de ruta con wildcard, aunque en realidad es solo un prefijo estático.
-
-**Impacto:**
-
-- ✅ **NO afecta la funcionalidad**
-- ✅ **Las rutas funcionan correctamente**
-- ✅ **Es solo un warning informativo**
-
-**Verificación:**
-
-```bash
-# Las siguientes rutas funcionan correctamente:
-GET /api/v1/example          # ✅ Funciona
-GET /api/v1/example/info     # ✅ Funciona
-GET /health                  # ✅ Funciona (excluida del versionado)
-GET /docs                    # ✅ Funciona (excluida del versionado)
 ```
 
 **Solución:**
@@ -60,235 +38,218 @@ export class ExampleController {
 - ✅ Mayor control por controlador
 - ✅ Fácil de mantener y debuggear
 
----
-
-### 2. Vulnerabilidades de Seguridad en Dependencias
+### 2. Problema de Nomenclatura: Prisma → Drizzle
 
 **Síntoma:**
 
 ```
-4 moderate severity vulnerabilities
+Is created_at column in users table created or renamed from another column?
+❯ + created_at             create column
+  ~ createdAt › created_at rename column
+```
+
+**Causa:**
+Diferencia en convenciones de nomenclatura entre Prisma y Drizzle:
+
+- **Prisma**: Usa CamelCase (`createdAt`) en el modelo y Snake_case (`created_at`) en BD
+- **Drizzle**: Requiere mapeo explícito entre ambos
+
+**Solución Implementada:**
+
+1. **Mapeo Correcto en Drizzle Schema:**
+
+```typescript
+export const users = pgTable('users', {
+  createdAt: timestamp('created_at').defaultNow().notNull(), // ← Mapeo explícito
+  updatedAt: timestamp('updated_at').defaultNow().notNull(), // ← Mapeo explícito
+});
+```
+
+2. **Script de Deployment Mejorado:**
+
+```javascript
+// Priorizar migrate sobre push para evitar prompts
+if (hasProjectMigrations) {
+  execSync('npx drizzle-kit migrate', { stdio: 'inherit' });
+} else {
+  execSync('npx drizzle-kit push', { stdio: 'inherit' });
+}
+```
+
+**Prevención:**
+
+- ✅ Usar migraciones existentes (`migrate`) en lugar de sincronización (`push`)
+- ✅ Mapeo explícito en todos los esquemas Drizzle
+- ✅ Scripts de deployment no interactivos
+
+### 3. Problema de Migraciones vs Push
+
+**Síntoma:**
+
+```
+No pending migrations to apply
+# O
+Error: No migration files found for changes
+```
+
+**Causa:**
+Conflicto entre el sistema de migraciones y sincronización directa:
+
+- **Migraciones**: Archivos SQL versionados para cambios incrementales
+- **Push**: Sincronización directa del esquema con la base de datos
+- **Estado inconsistente**: Cambios en el esquema sin migraciones generadas
+
+**Escenarios Problemáticos:**
+
+1. **Migración ya aplicada:**
+
+```bash
+# La migración 0000_smart_johnny_storm.sql ya está en la BD
+drizzle-kit migrate  # ← No hace nada
+```
+
+2. **Cambios sin migraciones:**
+
+```bash
+# Esquema modificado pero sin generar migraciones
+drizzle-kit migrate  # ← Falla, no encuentra migraciones para los cambios
+```
+
+3. **Estado inconsistente:**
+
+```bash
+# BD no coincide con esquema actual
+drizzle-kit migrate  # ← No puede resolver diferencias
+```
+
+**Solución Implementada:**
+
+1. **Estrategia Inteligente en Deployment:**
+
+```javascript
+if (hasProjectMigrations) {
+  // Usar migraciones si existen
+  applyMigrations();
+} else {
+  // Usar push solo si no hay migraciones
+  safeExec('npx drizzle-kit push', 'Sincronizando esquema');
+}
+```
+
+2. **Workflow Recomendado:**
+
+```bash
+# Para cambios en el esquema
+npm run db:drizzle:generate  # Genera migración
+npm run db:drizzle:migrate   # Aplica migración
+
+# Para desarrollo rápido
+npm run db:dev              # Push en desarrollo
+npm run db:prod             # Migrate en producción
+```
+
+**Prevención:**
+
+- ✅ Generar migraciones para cada cambio en el esquema
+- ✅ Usar migraciones en producción, push solo en desarrollo
+- ✅ Mantener consistencia entre esquema y migraciones
+- ✅ Revisar estado de migraciones antes de deployment
+
+### 4. Error de SSL/TLS en Producción
+
+**Síntoma:**
+
+```
+PostgresError: SSL/TLS required
+```
+
+**Solución:**
+Configurar SSL explícitamente para producción:
+
+```typescript
+// drizzle.config.ts
+dbCredentials: {
+  url: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: false, sslmode: 'require' }
+    : false,
+}
+```
+
+### 5. Error de Build en Producción
+
+**Síntoma:**
+
+```
+npm error could not determine executable to run
+```
+
+**Solución:**
+
+- Mover `@nestjs/cli` a `dependencies`
+- Simplificar comandos de build
+
+### 6. Vulnerabilidades de Seguridad
+
+**Síntoma:**
+
+```
+npm audit found X vulnerabilities
 ```
 
 **Solución:**
 
 ```bash
-# Verificar vulnerabilidades
-npm audit
-
-# Actualizar dependencias
-npm update
-
-# Para vulnerabilidades críticas
-npm audit fix --force
+npm audit fix
+npm audit fix --force  # Solo si es necesario
 ```
 
----
-
-### 3. Error de Conexión SSL en Base de Datos
+### 7. Errores de TypeScript
 
 **Síntoma:**
 
 ```
-❌ Error al conectar con Drizzle: SSL/TLS required
+Type 'X' is not assignable to type 'Y'
 ```
 
 **Solución:**
 
-```bash
-# Verificar configuración SSL
-npm run db:check:ssl
+- Revisar tipos en interfaces
+- Verificar imports
+- Ejecutar `npm run type-check`
 
-# Aplicar configuración SSL
-npm run db:prod
-```
-
----
-
-### 4. Error de Dependencias Faltantes
+### 8. Errores de ESLint
 
 **Síntoma:**
 
 ```
-❌ Error: Cannot find module 'drizzle-kit'
+ESLint: 'X' is defined but never used
 ```
 
 **Solución:**
 
-```bash
-# Reinstalar dependencias
-npm install
+- Usar prefijo `_` para variables no utilizadas
+- Ejecutar `npm run lint:fix`
 
-# Verificar que drizzle-kit esté en dependencies
-npm list drizzle-kit
-```
-
----
-
-### 5. Error de Variables de Entorno
-
-**Síntoma:**
-
-```
-❌ Error de validación de variables de entorno
-```
-
-**Solución:**
+## 🔧 **Comandos de Diagnóstico**
 
 ```bash
-# Configurar variables de entorno
-npm run env:setup
+# Verificar estado del proyecto
+npm run type-check
+npm run lint:check
+npm run test:quick:ultra
 
-# Verificar configuración
-npm run env:check
+# Verificar base de datos
+npm run db:health
+npm run db:validate
+
+# Verificar deployment
+npm run check:deployment
 ```
 
----
+## 📚 **Recursos Adicionales**
 
-## 🔧 Comandos de Diagnóstico
-
-### Verificación Rápida del Sistema
-
-```bash
-# Verificar estado general
-npm run test:quick
-
-# Verificar configuración de base de datos
-npm run db:check:ssl
-
-# Verificar variables de entorno
-npm run env:check
-
-# Verificar dependencias
-npm run deps:check
-```
-
-### Logs de Diagnóstico
-
-```bash
-# Ver logs de la aplicación
-npm run start:dev
-
-# Ver logs de tests
-npm run test:full
-
-# Ver logs de deployment
-npm run deploy:check
-```
-
----
-
-## 📊 Estados de Salud del Sistema
-
-### ✅ Estado Saludable
-
-```
-🚀 NESTJS APPLICATION STARTUP
-✅ Base de datos conectada correctamente con DRIZZLE
-🌍 Environment: development
-🔧 Port: 4000
-🏠 Host: localhost
-```
-
-### ❌ Estado Problemático
-
-```
-❌ APPLICATION STARTUP FAILED
-❌ Error al conectar con Drizzle: SSL/TLS required
-❌ Error de validación de variables de entorno
-```
-
----
-
-## 🎯 Soluciones Rápidas
-
-### Problema: Aplicación no inicia
-
-1. **Verificar variables de entorno:**
-
-   ```bash
-   npm run env:setup
-   ```
-
-2. **Verificar base de datos:**
-
-   ```bash
-   npm run db:check:ssl
-   ```
-
-3. **Reinstalar dependencias:**
-
-   ```bash
-   npm install
-   ```
-
-### Problema: Tests fallan
-
-1. **Ejecutar tests rápidos:**
-
-   ```bash
-   npm run test:quick
-   ```
-
-2. **Verificar configuración de test:**
-
-   ```bash
-   npm run test:config
-   ```
-
-3. **Limpiar cache:**
-
-   ```bash
-   npm run test:clean
-   ```
-
-### Problema: Deployment falla
-
-1. **Verificar configuración de producción:**
-
-   ```bash
-   npm run deploy:check
-   ```
-
-2. **Verificar dependencias de producción:**
-
-   ```bash
-   npm run deps:check
-   ```
-
-3. **Verificar configuración SSL:**
-
-   ```bash
-   npm run db:check:ssl
-   ```
-
----
-
-## 📞 Contacto y Soporte
-
-### Documentación Relacionada
-
-- [Deployment Guide](./DEPLOYMENT.md)
-- [Environment Management](./ENVIRONMENT.md)
-- [Testing Guide](./TESTING.md)
-- [Architecture Guide](./ARCHITECTURE.md)
-
-### Logs Importantes
-
-- **Aplicación**: `npm run start:dev`
-- **Tests**: `npm run test:full`
-- **Deployment**: `npm run deploy:check`
-- **Base de datos**: `npm run db:check:ssl`
-
-### Comandos de Emergencia
-
-```bash
-# Reiniciar completamente
-npm run reset:all
-
-# Verificar estado completo
-npm run health:check
-
-# Backup de emergencia
-npm run backup:emergency
-```
+- [Documentación de NestJS](https://docs.nestjs.com/)
+- [Documentación de Drizzle ORM](https://orm.drizzle.team/)
+- [Guía de API](./API_VERSIONING.md)
+- [Estado de Deployment](./DEPLOYMENT_STATUS.md)

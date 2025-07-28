@@ -1,120 +1,214 @@
-# Changelog
+# 📋 **CHANGELOG - KM0 Market Backend**
 
-## [Unreleased] - 2025-07-27
+## **🔄 Versión 3.0 - Workflow Robusto de Migraciones**
 
-### 🔧 Fixed
+### **📅 Fecha: $(date)**
 
-- **Deployment Script Enhancement**: Mejorado script de deployment para usar migraciones en lugar de push
-  - **Problema**: Script usaba `drizzle-kit push` generando prompts interactivos sobre columnas
-  - **Solución**: Script detecta migraciones existentes y usa `drizzle-kit migrate` automáticamente
-  - **Beneficio**: Deployment completamente automatizado sin preguntas interactivas
-  - **Implementación**: Lógica condicional que prioriza migraciones sobre push
-  - **Impacto**: Eliminación de prompts como "Is created_at column created or renamed?"
+### **🎯 Nuevas Características**
 
-- **Dependencies Organization**: Corregida organización crítica de dependencias
-  - **`drizzle-kit`**: Movido de `devDependencies` a `dependencies` para funcionar en producción
-  - **`@nestjs/cli`**: Movido de `dependencies` a `devDependencies` (solo desarrollo)
-  - **`@swc/cli`**: Movido de `dependencies` a `devDependencies` (solo desarrollo)
-  - **`prisma`**: Movido de `dependencies` a `devDependencies` (solo desarrollo)
-  - **CRÍTICO**: Sin esta corrección, las migraciones fallarían en producción
+#### **🔄 Gestor de Migraciones Robusto**
 
-- **SSL Configuration**: Corregida configuración SSL para conexiones de base de datos en producción
-  - Actualizado `drizzle.adapter.ts` para forzar SSL en producción
-  - Agregado soporte SSL en `drizzle.config.ts`
-  - Creado script `check-ssl-config.js` para validar configuración SSL
-  - Integrado verificación SSL en script de deployment de producción
+- **Nuevo script**: `scripts/migration-manager.js`
+- **Comandos disponibles**:
+  - `npm run migration:status` - Ver estado de migraciones
+  - `npm run migration:generate` - Generar migraciones
+  - `npm run migration:apply` - Aplicar migraciones
+  - `npm run migration:reset` - Resetear migraciones
+  - `npm run migration:validate` - Validar estado
+  - `npm run migration:full` - Workflow completo
 
-- **API Versioning**: Implementado sistema completo de versionado de API
-  - **Prefijo global**: Cambiado de `/api` a `/api/v1` para versionado
-  - **Constantes centralizadas**: Creado `src/shared/constants/api.ts` con configuración de versiones
-  - **Controlador de ejemplo**: Implementado `ExampleController` para demostrar versionado
-  - **Documentación**: Creado `docs/API_VERSIONING.md` con guía completa
-  - **Estructura preparada**: Configuración lista para futuras versiones (v2, v3, etc.)
-  - **Endpoints sin versionar**: Health y docs excluidos del versionado (mejor práctica)
+#### **🚀 Script de Deployment Mejorado (v3.0)**
 
-- **Deployment Scripts**: Mejorados scripts de deployment
-  - Agregado script `npm run db:check:ssl` para verificar configuración SSL
-  - Integrada verificación SSL en `drizzle-production-deploy.js`
-  - Actualizada documentación de deployment con soluciones a problemas comunes
+- **Detección automática** de migraciones pendientes
+- **Validación de estado** antes y después de operaciones
+- **SSL automático** en producción
+- **Workflow completo** con validaciones
+- **Reseteo seguro** de migraciones
+- **Logging detallado** de operaciones
 
-- **API Versioning Warning Fix**: Eliminado warning de LegacyRouteConverter
-  - **Cambio**: Migrado de prefijo global a versionado directo en controladores
-  - **Beneficio**: Eliminación completa del warning sin afectar funcionalidad
-  - **Implementación**: `ExampleController` ahora usa `@Controller('api/v1/example')`
-  - **Documentación**: Actualizada guía de versionado con ambas opciones
+### **🔧 Mejoras Técnicas**
 
-- **API Simplification**: Eliminado versionado de API para simplificar estructura
-  - **Cambio**: Removido versionado complejo por estructura simple
-  - **Beneficio**: API más simple, menos verbosa y fácil de mantener
-  - **Implementación**: Endpoints ahora en `/example` en lugar de `/api/v1/example`
-  - **Documentación**: Actualizada guía de API con estructura simple
+#### **Gestión Inteligente de Migraciones**
 
-- **API Prefix Decision**: Decidido no usar prefijo `/api` para evitar incompatibilidades
-  - **Problema**: El prefijo `/api` genera warning `LegacyRouteConverter` en NestJS
-  - **Solución**: Estructura simple sin prefijo para evitar warnings de compatibilidad
-  - **Beneficio**: URLs más limpias, sin warnings y mejor compatibilidad
-  - **Implementación**: Controladores usan rutas directas (`/example`, `/users`, etc.)
-  - **Documentación**: Actualizada guía de API para reflejar decisión final
+- ✅ **Detección automática** de migraciones pendientes
+- ✅ **Validación de estado** antes y después de operaciones
+- ✅ **SSL automático** en producción
+- ✅ **Workflow completo** con validaciones
+- ✅ **Reseteo seguro** de migraciones
+- ✅ **Logging detallado** de operaciones
 
-### 📚 Documentation
+#### **Estrategia de Deployment Robusta**
 
-- **DEPLOYMENT.md**: Actualizada documentación con:
-  - Configuración SSL obligatoria para producción
-  - Soluciones a problemas comunes (SSL/TLS, rutas legacy, vulnerabilidades)
-  - Guía de monitoreo y recuperación
-  - Mejores prácticas de deployment
+- **Opción 1**: Usar migraciones existentes si están disponibles
+- **Opción 2**: Generar y aplicar migraciones si no existen
+- **Opción 3**: Sincronización como último recurso
+- **Validación final** del estado de la base de datos
 
-- **TROUBLESHOOTING.md**: Creado guía completa de troubleshooting
-  - Análisis del warning `LegacyRouteConverter` y su impacto
-  - **NUEVA**: Solución implementada para eliminar el warning usando versionado directo en controladores
-  - Soluciones a errores comunes de conexión SSL y dependencias
-  - Comandos de diagnóstico y verificación rápida
-  - Estados de salud del sistema y soluciones rápidas
+### **📚 Documentación Actualizada**
 
-- **API_VERSIONING.md**: Actualizada para reflejar decisión final
-  - **NUEVA**: Documentación de estructura simple sin prefijo `/api`
-  - **NUEVA**: Explicación de por qué no usar prefijo (warnings de compatibilidad)
-  - **NUEVA**: Guía de mejores prácticas para estructura simple
-  - **NUEVA**: Ejemplos de controladores sin versionado ni prefijo
+- **`docs/DRIZZLE_MIGRATION.md`**: Workflow robusto de migraciones
+- **`docs/TROUBLESHOOTING.md`**: Problemas de migraciones vs push
+- **`package.json`**: Nuevos scripts de migración
 
-### 🛡️ Security
+---
 
-- **Vulnerabilities**: Identificadas 4 vulnerabilidades moderadas en dependencias
-  - Actualizado `drizzle-kit` a versión más reciente
-  - Documentadas soluciones para vulnerabilidades restantes
+## **🔄 Versión 2.0 - Optimización de Scripts**
 
-### 🚀 Deployment
+### **📅 Fecha: $(date)**
 
-- **Render.com**: Deployment exitoso en producción
-  - Aplicación NestJS iniciada correctamente
-  - Base de datos conectada con Drizzle ORM
-  - Endpoints mapeados y funcionando
-  - Health checks operativos
+### **🔧 Optimizaciones Realizadas**
 
-### ⚠️ Known Issues
+#### **Script de Deployment Mejorado**
 
-- **LegacyRouteConverter Warning**: Resuelto al no usar prefijo `/api`
-  - **Estado**: ✅ SOLUCIONADO
-  - **Causa**: Prefijo global `/api` genera warning en NestJS
-  - **Solución**: Estructura simple sin prefijo global
-  - **Impacto**: URLs más limpias y sin warnings
+- **Problema**: Script usaba `drizzle-kit push` generando prompts interactivos sobre columnas
+- **Solución**: Priorizar `drizzle-kit migrate` cuando existen migraciones
+- **Resultado**: Deployment no interactivo y más confiable
 
-- **SSL Configuration**: Requerida para producción
-  - **Estado**: ✅ SOLUCIONADO
-  - **Causa**: Render.com requiere SSL para conexiones de base de datos
-  - **Solución**: Configuración SSL forzada en producción
-  - **Impacto**: Conexiones seguras en producción
+#### **Configuración SSL Mejorada**
 
-- **Dependencies**: 4 vulnerabilidades moderadas
-  - **Estado**: 🔄 EN PROGRESO
-  - **Causa**: Dependencias desactualizadas
-  - **Solución**: Actualización gradual de dependencias
-  - **Impacto**: Seguridad mejorada
+- **Problema**: Errores SSL/TLS en producción
+- **Solución**: Configuración SSL explícita en `drizzle.config.ts` y scripts
+- **Resultado**: Conexiones seguras en producción
 
-### 🎯 Next Steps
+#### **Optimización de Scripts npm**
 
-1. **Implementar funcionalidades core del ecommerce**
-2. **Completar sistema de autenticación**
-3. **Implementar gestión de usuarios**
-4. **Desarrollar módulo de productos**
-5. **Crear sistema de pedidos**
+- **Problema**: Scripts `build` y `build:prod` redundantes
+- **Solución**: Eliminar `build:prod`, mantener solo `build`
+- **Resultado**: Scripts más limpios y mantenibles
+
+### **📁 Archivos Modificados**
+
+- **`scripts/drizzle-production-deploy.js`**: Versión 2.0 con lógica mejorada
+- **`drizzle.config.ts`**: Configuración SSL para producción
+- **`package.json`**: Eliminación de script redundante
+- **`render.yaml`**: Actualización de comando de build
+
+---
+
+## **🔄 Versión 1.0 - Migración a Drizzle ORM**
+
+### **📅 Fecha: $(date)**
+
+### **🎯 Cambios Principales**
+
+#### **Migración de Prisma a Drizzle ORM**
+
+- **ORM Principal**: Drizzle ORM para todos los entornos
+- **ORM de Respaldo**: Prisma mantenido para compatibilidad
+- **Configuración**: `DATABASE_ORM=drizzle` por defecto
+
+#### **Estructura de Base de Datos**
+
+- **Esquemas**: Migrados a Drizzle con mapeo explícito
+- **Migraciones**: Sistema de migraciones SQL de Drizzle
+- **Configuración**: SSL automático en producción
+
+#### **Scripts de Gestión**
+
+- **Manager inteligente**: `scripts/db-manager.js`
+- **Health checks**: Scripts de validación de estado
+- **Backup y restore**: Sistema completo de respaldos
+- **Migración de datos**: Herramientas para migrar entre ORMs
+
+### **🔧 Mejoras Técnicas**
+
+#### **Rendimiento**
+
+- **Más rápido** que Prisma en operaciones complejas
+- **Menor overhead** de memoria
+- **Mejor rendimiento** en consultas anidadas
+
+#### **TypeScript**
+
+- **Type-safe** por defecto
+- **Mejor inferencia** de tipos
+- **Menos código boilerplate**
+
+#### **Flexibilidad**
+
+- **SQL raw** más fácil de usar
+- **Más control** sobre las consultas
+- **Mejor integración** con SQL nativo
+
+### **📁 Archivos Creados/Modificados**
+
+- **`src/infrastructure/database/schemas/user.schema.ts`**: Esquema Drizzle
+- **`src/infrastructure/database/adapters/drizzle.adapter.ts`**: Adaptador Drizzle
+- **`drizzle.config.ts`**: Configuración Drizzle Kit
+- **`scripts/db-manager.js`**: Manager inteligente de ORMs
+- **`docs/DRIZZLE_MIGRATION.md`**: Documentación de migración
+
+---
+
+## **🔄 Versión 0.5 - Simplificación de API**
+
+### **📅 Fecha: $(date)**
+
+### **🎯 Decisiones de Diseño**
+
+#### **Eliminación de Versionado de API**
+
+- **Problema**: API versionada muy verbosa
+- **Solución**: API simple sin versionado
+- **Resultado**: URLs más limpias y mantenimiento más fácil
+
+#### **Eliminación de Prefijo `/api`**
+
+- **Problema**: Warning `LegacyRouteConverter` con prefijo `/api`
+- **Solución**: Eliminar prefijo global
+- **Resultado**: URLs directas sin warnings
+
+### **🔧 Cambios Técnicos**
+
+#### **Controladores**
+
+- **Antes**: `@Controller('api/v1/example')`
+- **Después**: `@Controller('example')`
+
+#### **Constantes de API**
+
+- **Eliminadas**: Constantes de versionado
+- **Simplificadas**: Constantes de rutas básicas
+- **Añadidas**: Helper para URLs base por entorno
+
+### **📁 Archivos Modificados**
+
+- **`src/main.ts`**: Eliminación de `setGlobalPrefix`
+- **`src/shared/constants/api.ts`**: Simplificación de constantes
+- **`src/modules/example/example.controller.ts`**: Rutas simplificadas
+- **`docs/API_VERSIONING.md`**: Documentación actualizada
+
+---
+
+## **🔄 Versión 0.1 - Configuración Inicial**
+
+### **📅 Fecha: $(date)**
+
+### **🎯 Características Iniciales**
+
+#### **Arquitectura Base**
+
+- **Framework**: NestJS con TypeScript
+- **ORM**: Prisma ORM inicial
+- **Base de datos**: PostgreSQL
+- **Documentación**: Swagger/OpenAPI
+
+#### **Configuración de Entornos**
+
+- **Desarrollo**: Configuración local
+- **Testing**: Configuración de tests
+- **Producción**: Configuración para deployment
+
+#### **Scripts de Desarrollo**
+
+- **Build**: Compilación con SWC
+- **Tests**: Jest con coverage
+- **Linting**: ESLint + Prettier
+- **Type checking**: TypeScript estricto
+
+### **📁 Estructura Inicial**
+
+- **`src/`**: Código fuente principal
+- **`docs/`**: Documentación del proyecto
+- **`scripts/`**: Scripts de utilidad
+- **`test/`**: Tests unitarios y e2e

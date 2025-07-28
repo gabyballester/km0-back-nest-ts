@@ -35,6 +35,12 @@
     "db:studio:test": "dotenv -e .env.test -- prisma studio",
     "db:studio:prod": "dotenv -e .env -- prisma studio",
     "db:check:ssl": "node scripts/check-ssl-config.js",
+    "migration:status": "node scripts/migration-manager.js status",
+    "migration:generate": "node scripts/migration-manager.js generate",
+    "migration:apply": "node scripts/migration-manager.js apply",
+    "migration:reset": "node scripts/migration-manager.js reset",
+    "migration:validate": "node scripts/migration-manager.js validate",
+    "migration:full": "node scripts/migration-manager.js full",
     "check:dependencies": "node scripts/check-dependencies.js",
     "fix:dependencies": "node scripts/check-dependencies.js fix",
     "check:ports": "node scripts/check-port-config.js"

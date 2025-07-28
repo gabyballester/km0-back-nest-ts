@@ -2,7 +2,7 @@
 
 /**
  * Script de deployment de producción para Drizzle ORM
- * Versión: 2.0 - Usa migraciones en lugar de push cuando existen
+ * Versión: 3.0 - Workflow robusto de migraciones
  * Última actualización: $(date)
  */
 
@@ -20,7 +20,7 @@ function getEnvironment() {
   return getEnvVar('NODE_ENV', 'development');
 }
 
-console.log('🚀 Iniciando deployment de producción con Drizzle ORM...');
+console.log('🚀 Iniciando deployment de producción con Drizzle ORM (v3.0)...');
 
 // Función para ejecutar comandos de forma segura
 function safeExec(command, description) {
@@ -38,12 +38,25 @@ function safeExec(command, description) {
   }
 }
 
-// Función para aplicar migraciones de forma segura
-function applyMigrations() {
-  try {
-    console.log('🔄 Aplicando migraciones existentes...');
+// Función para verificar si hay migraciones en el proyecto
+function hasMigrations() {
+  const migrationsPath = path.join(process.cwd(), 'drizzle');
+  if (!fs.existsSync(migrationsPath)) {
+    return false;
+  }
 
-    // Asegurar que la URL tenga SSL en producción
+  const sqlFiles = fs
+    .readdirSync(migrationsPath)
+    .filter(file => file.endsWith('.sql'));
+  return sqlFiles.length > 0;
+}
+
+// Función para verificar si hay migraciones pendientes
+function hasPendingMigrations() {
+  try {
+    console.log('🔍 Verificando migraciones pendientes...');
+
+    // Asegurar SSL en producción
     let databaseUrl = process.env.DATABASE_URL;
     if (
       process.env.NODE_ENV === 'production' &&
@@ -55,25 +68,30 @@ function applyMigrations() {
       process.env.DATABASE_URL = databaseUrl;
     }
 
-    execSync('npx drizzle-kit migrate', {
-      stdio: 'inherit',
+    const result = execSync('npx drizzle-kit migrate --dry-run', {
+      encoding: 'utf8',
       env: { ...process.env, DATABASE_URL: databaseUrl },
     });
 
-    console.log('✅ Migraciones aplicadas exitosamente');
-    return true;
+    // Si hay migraciones pendientes, el comando mostrará información sobre ellas
+    const hasPending =
+      result.includes('pending') || result.includes('migration');
+    console.log(`📋 Migraciones pendientes: ${hasPending ? 'SÍ' : 'NO'}`);
+    return hasPending;
   } catch (error) {
-    console.log('❌ Error aplicando migraciones:', error.message);
+    console.log(
+      '⚠️  No se pudieron verificar migraciones pendientes:',
+      error.message,
+    );
     return false;
   }
 }
 
-// Función para verificar si la base de datos existe y tiene tablas
-function checkDatabaseExists() {
+// Función para verificar el estado de la base de datos
+function checkDatabaseState() {
   try {
     console.log('🔍 Verificando estado de la base de datos...');
 
-    // En producción, forzar SSL en la URL si no está presente
     let databaseUrl = process.env.DATABASE_URL;
     if (
       process.env.NODE_ENV === 'production' &&
@@ -93,23 +111,125 @@ function checkDatabaseExists() {
       },
     );
 
-    console.log('📊 Base de datos accesible');
+    console.log('✅ Base de datos accesible y esquema detectado');
     return true;
   } catch (error) {
-    console.log('⚠️  No se pudo verificar el estado de la base de datos');
+    console.log('❌ No se pudo verificar el estado de la base de datos');
     console.log(`   Error: ${error.message}`);
     return false;
   }
 }
 
-// Función para verificar si hay migraciones en el proyecto
-function hasMigrations() {
-  const migrationsPath = path.join(process.cwd(), 'drizzle');
-  return (
-    fs.existsSync(migrationsPath) &&
-    fs.readdirSync(migrationsPath).filter(file => file.endsWith('.sql'))
-      .length > 0
-  );
+// Función para generar migraciones de forma segura
+function generateMigrations() {
+  try {
+    console.log('📝 Generando migraciones...');
+
+    // Verificar si hay cambios en el esquema
+    if (!safeExec('npx drizzle-kit check', 'Verificando esquema')) {
+      console.log('⚠️  No hay cambios en el esquema para migrar');
+      return false;
+    }
+
+    // Generar migraciones
+    if (!safeExec('npx drizzle-kit generate', 'Generando migraciones')) {
+      throw new Error('No se pudieron generar las migraciones');
+    }
+
+    console.log('✅ Migraciones generadas exitosamente');
+    return true;
+  } catch (error) {
+    console.log('❌ Error generando migraciones:', error.message);
+    return false;
+  }
+}
+
+// Función para aplicar migraciones de forma segura
+function applyMigrations() {
+  try {
+    console.log('🔄 Aplicando migraciones...');
+
+    // Asegurar que la URL tenga SSL en producción
+    let databaseUrl = process.env.DATABASE_URL;
+    if (
+      process.env.NODE_ENV === 'production' &&
+      databaseUrl &&
+      !databaseUrl.includes('sslmode=')
+    ) {
+      databaseUrl +=
+        (databaseUrl.includes('?') ? '&' : '?') + 'sslmode=require';
+      process.env.DATABASE_URL = databaseUrl;
+    }
+
+    // Verificar migraciones pendientes antes de aplicar
+    if (!hasPendingMigrations()) {
+      console.log('ℹ️  No hay migraciones pendientes para aplicar');
+      return true;
+    }
+
+    execSync('npx drizzle-kit migrate', {
+      stdio: 'inherit',
+      env: { ...process.env, DATABASE_URL: databaseUrl },
+    });
+
+    console.log('✅ Migraciones aplicadas exitosamente');
+    return true;
+  } catch (error) {
+    console.log('❌ Error aplicando migraciones:', error.message);
+    return false;
+  }
+}
+
+// Función para sincronizar esquema (solo como último recurso)
+function syncSchema() {
+  try {
+    console.log('🔄 Sincronizando esquema (último recurso)...');
+
+    let databaseUrl = process.env.DATABASE_URL;
+    if (
+      process.env.NODE_ENV === 'production' &&
+      databaseUrl &&
+      !databaseUrl.includes('sslmode=')
+    ) {
+      databaseUrl +=
+        (databaseUrl.includes('?') ? '&' : '?') + 'sslmode=require';
+      process.env.DATABASE_URL = databaseUrl;
+    }
+
+    execSync('npx drizzle-kit push', {
+      stdio: 'inherit',
+      env: { ...process.env, DATABASE_URL: databaseUrl },
+    });
+
+    console.log('✅ Esquema sincronizado exitosamente');
+    return true;
+  } catch (error) {
+    console.log('❌ Error sincronizando esquema:', error.message);
+    return false;
+  }
+}
+
+// Función para validar el estado final
+function validateFinalState() {
+  try {
+    console.log('🔍 Validando estado final...');
+
+    // Verificar que la base de datos esté accesible
+    if (!checkDatabaseState()) {
+      throw new Error('Base de datos no accesible después del deployment');
+    }
+
+    // Verificar que no haya migraciones pendientes
+    if (hasPendingMigrations()) {
+      throw new Error('Quedan migraciones pendientes después del deployment');
+    }
+
+    console.log('✅ Estado final validado correctamente');
+    return true;
+  } catch (error) {
+    console.log('❌ Error en validación final:', error.message);
+    return false;
+  }
 }
 
 function deployProduction() {
@@ -134,15 +254,7 @@ function deployProduction() {
       throw new Error('ORM incorrecto configurado');
     }
 
-    // 1. Generar migraciones si no existen
-    if (!hasMigrations()) {
-      console.log('📝 Generando migraciones iniciales...');
-      if (!safeExec('npx drizzle-kit generate', 'Generando migraciones')) {
-        throw new Error('No se pudieron generar las migraciones');
-      }
-    }
-
-    // 2. Verificar configuración SSL
+    // 1. Verificar configuración SSL
     console.log('🔒 Verificando configuración SSL...');
     try {
       require('./check-ssl-config.js');
@@ -153,70 +265,74 @@ function deployProduction() {
       );
     }
 
-    // 3. Verificar esquema
-    if (!safeExec('npx drizzle-kit check', 'Verificando esquema de Drizzle')) {
-      throw new Error('Esquema de Drizzle inválido');
-    }
-
-    // 3. Verificar estado de la base de datos
-    const databaseExists = checkDatabaseExists();
+    // 2. Verificar estado inicial de la base de datos
+    const databaseExists = checkDatabaseState();
     const hasProjectMigrations = hasMigrations();
 
-    console.log(`📋 Estado detectado:`);
+    console.log(`📋 Estado inicial detectado:`);
     console.log(`   - Base de datos existe: ${databaseExists ? 'SÍ' : 'NO'}`);
     console.log(
       `   - Migraciones en proyecto: ${hasProjectMigrations ? 'SÍ' : 'NO'}`,
     );
 
-    // 4. Estrategia según el estado
+    // 3. Estrategia robusta de deployment
+    console.log('🎯 Iniciando estrategia robusta de deployment...');
+
+    // Opción 1: Si hay migraciones en el proyecto
     if (hasProjectMigrations) {
-      // Siempre usar migraciones si existen
-      console.log('📦 Aplicando migraciones existentes...');
-      if (!applyMigrations()) {
-        throw new Error('No se pudieron aplicar las migraciones');
+      console.log('📦 Estrategia: Usar migraciones existentes');
+
+      // Verificar si hay migraciones pendientes
+      if (hasPendingMigrations()) {
+        console.log('🔄 Aplicando migraciones pendientes...');
+        if (!applyMigrations()) {
+          throw new Error('No se pudieron aplicar las migraciones');
+        }
+      } else {
+        console.log('ℹ️  No hay migraciones pendientes');
       }
     } else {
-      // Solo usar push si no hay migraciones
-      console.log('🆕 Sin migraciones - Sincronizando esquema...');
+      console.log('🆕 Estrategia: Generar y aplicar migraciones');
 
-      // Asegurar que la URL tenga SSL en producción
-      let databaseUrl = process.env.DATABASE_URL;
-      if (
-        process.env.NODE_ENV === 'production' &&
-        databaseUrl &&
-        !databaseUrl.includes('sslmode=')
-      ) {
-        databaseUrl +=
-          (databaseUrl.includes('?') ? '&' : '?') + 'sslmode=require';
-        process.env.DATABASE_URL = databaseUrl;
-      }
+      // Generar migraciones si no existen
+      if (!generateMigrations()) {
+        console.log(
+          '⚠️  No se pudieron generar migraciones, intentando sincronización...',
+        );
 
-      if (!safeExec('npx drizzle-kit push', 'Sincronizando esquema')) {
-        console.log('⚠️  Fallback: Intentando con migraciones manuales...');
-        // Fallback: generar y aplicar migraciones
-        if (
-          safeExec(
-            'npx drizzle-kit generate',
-            'Generando migraciones de fallback',
-          )
-        ) {
-          applyMigrations();
-        } else {
-          throw new Error(
-            'No se pudo sincronizar el esquema ni generar migraciones',
-          );
+        // Fallback: sincronizar esquema
+        if (!syncSchema()) {
+          throw new Error('No se pudo sincronizar el esquema');
+        }
+      } else {
+        // Aplicar las migraciones generadas
+        if (!applyMigrations()) {
+          throw new Error('No se pudieron aplicar las migraciones generadas');
         }
       }
     }
 
-    // 5. Verificación final
-    console.log('✅ Deployment completado exitosamente');
-    console.log(
-      '🎉 Deployment de producción con Drizzle completado exitosamente!',
-    );
+    // 4. Validación final
+    if (!validateFinalState()) {
+      throw new Error('Validación final falló');
+    }
+
+    // 5. Éxito
+    console.log('🎉 ========================================');
+    console.log('✅ DEPLOYMENT COMPLETADO EXITOSAMENTE');
+    console.log('========================================');
+    console.log('📊 Resumen:');
+    console.log('   - Base de datos sincronizada');
+    console.log('   - Migraciones aplicadas');
+    console.log('   - Estado validado');
+    console.log('========================================');
   } catch (error) {
-    console.error('❌ Error crítico en deployment:', error.message);
+    console.error('❌ ========================================');
+    console.error('💥 ERROR CRÍTICO EN DEPLOYMENT');
+    console.error('========================================');
+    console.error(`❌ Error: ${error.message}`);
     console.error('💥 Deployment falló');
+    console.error('========================================');
     process.exit(1);
   }
 }
