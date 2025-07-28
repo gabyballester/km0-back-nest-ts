@@ -1,19 +1,32 @@
-# API Versioning Guide
+# API Guide - Simple Structure
 
 ## 📋 **Resumen**
 
-Este documento explica la estructura de versionado implementada en la API de KM0 Market Backend, que utiliza un enfoque de versionado por URL con prefijos.
+Este documento explica la estructura simple de la API de KM0 Market Backend, sin versionado y sin prefijo `/api` para mantener la simplicidad y facilidad de mantenimiento.
 
-## 🏗️ **Estructura de Versionado**
+## 🎯 **Estrategia de API**
+
+### **API Simple Sin Versionado y Sin Prefijo**
+
+Utilizamos una **estructura simple sin versionado ni prefijo** para mantener la simplicidad:
+
+- ✅ **Simple y directo**
+- ✅ **Fácil de mantener**
+- ✅ **Menos verboso**
+- ✅ **Perfecto para proyectos pequeños/medianos**
+- ✅ **Sin complejidad innecesaria**
+- ✅ **Sin warnings de compatibilidad**
+
+## 🏗️ **Estructura de la API**
 
 ### **URLs de la API**
 
 ```
-# Endpoints versionados (v1)
-GET  /api/v1/example          # Endpoint de ejemplo
-GET  /api/v1/example/info     # Información del versionado
+# Endpoints principales
+GET  /example                 # Endpoint de ejemplo
+GET  /example/info            # Información de la API
 
-# Endpoints sin versionar (siempre disponibles)
+# Endpoints del sistema
 GET  /health                  # Health check básico
 GET  /health/detailed         # Health check detallado
 GET  /docs                    # Documentación Swagger
@@ -23,87 +36,80 @@ GET  /docs                    # Documentación Swagger
 
 ```typescript
 // src/shared/constants/api.ts
-export const API_VERSIONS = {
-  V1: 'v1',
-  V2: 'v2', // Para futuras versiones
+export const API_ROUTES = {
+  HEALTH: 'health',
+  HEALTH_DETAILED: 'health/detailed',
+  DOCS: 'docs',
+  SWAGGER: 'swagger',
 } as const;
 
-export const API_PREFIXES = {
-  BASE: 'api',
-  V1: `api/${API_VERSIONS.V1}`,
-  V2: `api/${API_VERSIONS.V2}`,
+export const API_ENDPOINTS = {
+  HEALTH: `/${API_ROUTES.HEALTH}`,
+  HEALTH_DETAILED: `/${API_ROUTES.HEALTH_DETAILED}`,
+  DOCS: `/${API_ROUTES.DOCS}`,
+  SWAGGER: `/${API_ROUTES.SWAGGER}`,
 } as const;
 ```
 
-## 🎯 **Configuración en main.ts**
+## 🎯 **Configuración de la API**
+
+### **Estructura Simple**
 
 ```typescript
-// Configurar prefijo global con versionado
-app.setGlobalPrefix(API_PREFIXES.V1, {
-  exclude: [`/${API_ROUTES.HEALTH}`, `/${API_ROUTES.DOCS}`],
-});
+// Controladores simples sin versionado ni prefijo
+@Controller('example')
+export class ExampleController {
+  // ...
+}
+
+@Controller('health')
+export class HealthController {
+  // ...
+}
 ```
+
+**✅ Ventajas:**
+
+- Simple y directo
+- Fácil de mantener
+- Sin complejidad innecesaria
+- Perfecto para proyectos pequeños/medianos
+- Sin warnings de compatibilidad
+- URLs más cortas y limpias
 
 ## 📁 **Estructura de Carpetas Recomendada**
 
 ```
 src/
 ├── modules/
-│   ├── v1/                    # Módulos de la versión 1
-│   │   ├── users/
-│   │   ├── products/
-│   │   └── orders/
-│   ├── v2/                    # Módulos de la versión 2 (futuro)
-│   │   ├── users/
-│   │   └── products/
-│   └── shared/                # Módulos compartidos entre versiones
+│   ├── users/                # Módulos de usuarios
+│   ├── products/             # Módulos de productos
+│   ├── orders/               # Módulos de pedidos
+│   └── shared/               # Módulos compartidos
 │       ├── auth/
 │       └── health/
 ├── shared/
 │   └── constants/
-│       └── api.ts            # Constantes de versionado
+│       └── api.ts            # Constantes de API
 ```
 
-## 🔧 **Cómo Crear un Controlador Versionado**
+## 🔧 **Cómo Crear un Controlador**
 
-### **Ejemplo: Controlador de Usuarios v1**
+### **Ejemplo: Controlador de Usuarios**
 
 ```typescript
-// src/modules/v1/users/users.controller.ts
+// src/modules/users/users.controller.ts
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('users-v1')
+@ApiTags('users')
 @Controller('users')
-export class UsersV1Controller {
+export class UsersController {
   @Get()
   getUsers() {
     return {
-      message: 'Users API v1',
-      version: 'v1',
+      message: 'Users API',
       data: [],
-    };
-  }
-}
-```
-
-### **Ejemplo: Controlador de Usuarios v2 (futuro)**
-
-```typescript
-// src/modules/v2/users/users.controller.ts
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-
-@ApiTags('users-v2')
-@Controller('users')
-export class UsersV2Controller {
-  @Get()
-  getUsers() {
-    return {
-      message: 'Users API v2',
-      version: 'v2',
-      data: [],
-      newFeatures: ['pagination', 'filtering'],
     };
   }
 }
@@ -152,14 +158,14 @@ Los siguientes endpoints **NO** deben versionarse y siempre estarán disponibles
 @Get()
 @ApiOperation({
   summary: 'Get users (DEPRECATED)',
-  description: 'This endpoint is deprecated. Use /api/v2/users instead.',
+  description: 'This endpoint is deprecated. Use /users/v2 instead.',
   deprecated: true,
 })
 getUsers() {
   return {
-    message: 'This endpoint is deprecated. Use /api/v2/users instead.',
+    message: 'This endpoint is deprecated. Use /users/v2 instead.',
     deprecated: true,
-    alternative: '/api/v2/users'
+    alternative: '/users/v2'
   };
 }
 ```
@@ -170,28 +176,14 @@ getUsers() {
 
 ```typescript
 // DTOs específicos por versión
-// src/modules/v1/users/dto/create-user.dto.ts
-export class CreateUserV1Dto {
+// src/modules/users/dto/create-user.dto.ts
+export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
   @IsEmail()
   email: string;
-}
-
-// src/modules/v2/users/dto/create-user.dto.ts
-export class CreateUserV2Dto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsEmail()
-  email: string;
-
-  @IsOptional()
-  @IsString()
-  phone?: string; // Nuevo campo en v2
 }
 ```
 
@@ -204,10 +196,8 @@ export class CreateUserV2Dto {
 @Injectable()
 export class VersionTrackingMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: Function) {
-    const version = req.url.split('/')[2]; // Extraer versión de /api/v1/...
-
     // Log para analytics
-    console.log(`API Version: ${version}, Endpoint: ${req.url}`);
+    console.log(`API Endpoint: ${req.url}`);
 
     next();
   }
@@ -218,7 +208,7 @@ export class VersionTrackingMiddleware implements NestMiddleware {
 
 ### **✅ Recomendado**
 
-1. **Usar constantes centralizadas** para rutas y versiones
+1. **Usar constantes centralizadas** para rutas
 2. **Documentar cambios** entre versiones
 3. **Mantener compatibilidad** durante transiciones
 4. **Usar DTOs específicos** por versión
@@ -234,14 +224,14 @@ export class VersionTrackingMiddleware implements NestMiddleware {
 
 ## 🔗 **Referencias**
 
-- [NestJS Global Prefix](https://docs.nestjs.com/controllers#global-prefix)
+- [NestJS Controllers](https://docs.nestjs.com/controllers)
 - [API Versioning Best Practices](https://restfulapi.net/versioning/)
 - [Semantic Versioning](https://semver.org/)
 
 ## 📝 **Notas de Implementación**
 
-- **Prefijo global**: Configurado en `main.ts` con `setGlobalPrefix()`
-- **Exclusiones**: Health y docs excluidos del versionado
+- **Sin prefijo global**: No usamos `setGlobalPrefix()` para evitar warnings
+- **Controladores directos**: Cada controlador define su propia ruta
 - **Constantes**: Centralizadas en `src/shared/constants/api.ts`
-- **Documentación**: Swagger configurado para mostrar versiones
-- **Tests**: Cada versión debe tener sus propios tests
+- **Documentación**: Swagger configurado para mostrar endpoints
+- **Tests**: Cada endpoint debe tener sus propios tests

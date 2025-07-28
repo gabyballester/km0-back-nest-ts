@@ -1,6 +1,7 @@
 /**
  * API-related constants
  * Centralized constants for API responses, status codes, and endpoints
+ * Simple API structure without /api prefix
  */
 
 /**
@@ -32,46 +33,37 @@ export const HTTP_STATUS = {
 } as const;
 
 /**
- * API Response Messages
- * Standard response messages for consistency
+ * HTTP Status Messages
+ * Standard HTTP status messages
  */
-export const API_MESSAGES = {
-  // Success Messages
-  SUCCESS: 'Success',
-  CREATED: 'Resource created successfully',
-  UPDATED: 'Resource updated successfully',
-  DELETED: 'Resource deleted successfully',
+export const HTTP_MESSAGES = {
+  // Success
+  [HTTP_STATUS.OK]: 'OK',
+  [HTTP_STATUS.CREATED]: 'Created',
+  [HTTP_STATUS.ACCEPTED]: 'Accepted',
+  [HTTP_STATUS.NO_CONTENT]: 'No Content',
 
-  // Error Messages
-  BAD_REQUEST: 'Bad request',
-  UNAUTHORIZED: 'Unauthorized',
-  FORBIDDEN: 'Forbidden',
-  NOT_FOUND: 'Resource not found',
-  INTERNAL_ERROR: 'Internal server error',
-  VALIDATION_ERROR: 'Validation error',
-  RATE_LIMIT_EXCEEDED: 'Rate limit exceeded',
+  // Client Errors
+  [HTTP_STATUS.BAD_REQUEST]: 'Bad Request',
+  [HTTP_STATUS.UNAUTHORIZED]: 'Unauthorized',
+  [HTTP_STATUS.FORBIDDEN]: 'Forbidden',
+  [HTTP_STATUS.NOT_FOUND]: 'Not Found',
+  [HTTP_STATUS.METHOD_NOT_ALLOWED]: 'Method Not Allowed',
+  [HTTP_STATUS.CONFLICT]: 'Conflict',
+  [HTTP_STATUS.UNPROCESSABLE_ENTITY]: 'Unprocessable Entity',
+  [HTTP_STATUS.TOO_MANY_REQUESTS]: 'Too Many Requests',
 
-  // Health Check Messages
-  HEALTH_OK: 'Service is healthy',
-  HEALTH_ERROR: 'Service is unhealthy',
+  // Server Errors
+  [HTTP_STATUS.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
+  [HTTP_STATUS.NOT_IMPLEMENTED]: 'Not Implemented',
+  [HTTP_STATUS.BAD_GATEWAY]: 'Bad Gateway',
+  [HTTP_STATUS.SERVICE_UNAVAILABLE]: 'Service Unavailable',
 } as const;
 
 /**
- * Constantes para el versionado de la API
- * Centraliza la configuración de versiones y rutas
+ * System Routes
+ * Core system endpoints
  */
-
-export const API_VERSIONS = {
-  V1: 'v1',
-  V2: 'v2', // Para futuras versiones
-} as const;
-
-export const API_PREFIXES = {
-  BASE: 'api',
-  V1: `api/${API_VERSIONS.V1}`,
-  V2: `api/${API_VERSIONS.V2}`,
-} as const;
-
 export const API_ROUTES = {
   HEALTH: 'health',
   HEALTH_DETAILED: 'health/detailed',
@@ -79,44 +71,54 @@ export const API_ROUTES = {
   SWAGGER: 'swagger',
 } as const;
 
+/**
+ * API Endpoints Configuration
+ * Centralized endpoint definitions
+ */
 export const API_ENDPOINTS = {
-  // Health endpoints (sin versionado)
+  // System endpoints
   HEALTH: `/${API_ROUTES.HEALTH}`,
   HEALTH_DETAILED: `/${API_ROUTES.HEALTH_DETAILED}`,
-
-  // Documentation endpoints (sin versionado)
   DOCS: `/${API_ROUTES.DOCS}`,
   SWAGGER: `/${API_ROUTES.SWAGGER}`,
-
-  // Versioned endpoints
-  V1_BASE: `/${API_PREFIXES.V1}`,
-  V2_BASE: `/${API_PREFIXES.V2}`,
 } as const;
 
-// Tipos para TypeScript
-export type ApiVersion = (typeof API_VERSIONS)[keyof typeof API_VERSIONS];
-export type ApiPrefix = (typeof API_PREFIXES)[keyof typeof API_PREFIXES];
-export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];
-export type ApiEndpoint = (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS];
+/**
+ * Helper Functions for API
+ */
 
-// Función helper para construir rutas versionadas
-export const buildVersionedRoute = (
-  version: ApiVersion,
-  route: string,
-): string => {
-  return `/${API_PREFIXES.BASE}/${version}/${route}`;
-};
-
-// Función helper para verificar si una ruta está excluida del versionado
-export const isExcludedFromVersioning = (route: string): boolean => {
-  const excludedRoutes = [
+/**
+ * Check if route is a system route
+ * @param route - Route path to check
+ * @returns True if it's a system route
+ */
+export const isSystemRoute = (route: string): boolean => {
+  const systemRoutes = [
     API_ROUTES.HEALTH,
     API_ROUTES.HEALTH_DETAILED,
     API_ROUTES.DOCS,
     API_ROUTES.SWAGGER,
   ];
+  return systemRoutes.some(systemRoute => route.startsWith(`/${systemRoute}`));
+};
 
-  return excludedRoutes.some(excluded => route.startsWith(`/${excluded}`));
+/**
+ * Get API base URL for different environments
+ * @param environment - Environment name
+ * @param port - Port number
+ * @returns Base URL for the API
+ */
+export const getApiBaseUrl = (environment: string, port: number): string => {
+  switch (environment) {
+    case 'development':
+      return `http://localhost:${port}`;
+    case 'production':
+      return 'https://km0-market.onrender.com';
+    case 'test':
+      return `http://localhost:${port}`;
+    default:
+      return `http://localhost:${port}`;
+  }
 };
 
 /**

@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ENV_VALUES, ENV_KEYS } from './shared/constants/environment';
 import { CONFIG_KEYS } from './shared/constants/environment.schema';
-import { API_PREFIXES, API_ROUTES } from './shared/constants/api';
 
 async function bootstrap() {
   try {
@@ -21,11 +20,6 @@ async function bootstrap() {
       credentials: true,
     });
 
-    // Configurar prefijo global con versionado
-    app.setGlobalPrefix(API_PREFIXES.V1, {
-      exclude: [`/${API_ROUTES.HEALTH}`, `/${API_ROUTES.DOCS}`],
-    });
-
     // Configurar Swagger
     const config = new DocumentBuilder()
       .setTitle('KM0 Market API')
@@ -38,9 +32,8 @@ async function bootstrap() {
     SwaggerModule.setup('docs', app, document);
 
     // Obtener puerto y host
-    const port = configService.get<number>(CONFIG_KEYS.ENV_PORT) ?? 4000;
-    const host = configService.get<string>(CONFIG_KEYS.ENV_HOST) ?? 'localhost';
-
+    const port = configService.get<number>(ENV_KEYS.PORT) ?? 4000;
+    const host = configService.get<string>(ENV_KEYS.HOST) ?? 'localhost';
     // Iniciar servidor
     await app.listen(port, host);
 
@@ -60,25 +53,20 @@ async function bootstrap() {
     console.log(`💻 Platform: ${process.platform} (${process.arch})`);
     console.log(`========================================`);
 
+    // Log específico para desarrollo
     if (environment === ENV_VALUES.NODE_ENV.DEVELOPMENT) {
       console.log(`🔧 DEVELOPMENT MODE`);
       console.log(`   • Hot reload enabled`);
       console.log(`   • Verbose logging`);
       console.log(`   • Debug mode active`);
       console.log(`   • Source maps enabled`);
-    } else if (environment === ENV_VALUES.NODE_ENV.PRODUCTION) {
-      console.log(`🚀 PRODUCTION MODE`);
-      console.log(`   • Optimized for performance`);
-      console.log(`   • Minimal logging`);
-      console.log(`   • Security hardened`);
     }
   } catch (error) {
     console.error('❌ ========================================');
     console.error('💥 APPLICATION STARTUP FAILED');
     console.error('========================================');
-    console.error(
-      `🌍 Environment: ${process.env[ENV_KEYS.NODE_ENV] ?? ENV_VALUES.NODE_ENV.DEVELOPMENT}`,
-    );
+    const environment = process.env.NODE_ENV ?? ENV_VALUES.NODE_ENV.DEVELOPMENT;
+    console.error(`🌍 Environment: ${environment}`);
     console.error(`📅 Timestamp: ${new Date().toISOString()}`);
     console.error(
       `❌ Error: ${error instanceof Error ? error.message : String(error)}`,
@@ -90,5 +78,4 @@ async function bootstrap() {
     process.exit(1);
   }
 }
-
 void bootstrap();

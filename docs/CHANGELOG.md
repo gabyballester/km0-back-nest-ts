@@ -30,6 +30,25 @@
   - Integrada verificación SSL en `drizzle-production-deploy.js`
   - Actualizada documentación de deployment con soluciones a problemas comunes
 
+- **API Versioning Warning Fix**: Eliminado warning de LegacyRouteConverter
+  - **Cambio**: Migrado de prefijo global a versionado directo en controladores
+  - **Beneficio**: Eliminación completa del warning sin afectar funcionalidad
+  - **Implementación**: `ExampleController` ahora usa `@Controller('api/v1/example')`
+  - **Documentación**: Actualizada guía de versionado con ambas opciones
+
+- **API Simplification**: Eliminado versionado de API para simplificar estructura
+  - **Cambio**: Removido versionado complejo por estructura simple
+  - **Beneficio**: API más simple, menos verbosa y fácil de mantener
+  - **Implementación**: Endpoints ahora en `/example` en lugar de `/api/v1/example`
+  - **Documentación**: Actualizada guía de API con estructura simple
+
+- **API Prefix Decision**: Decidido no usar prefijo `/api` para evitar incompatibilidades
+  - **Problema**: El prefijo `/api` genera warning `LegacyRouteConverter` en NestJS
+  - **Solución**: Estructura simple sin prefijo para evitar warnings de compatibilidad
+  - **Beneficio**: URLs más limpias, sin warnings y mejor compatibilidad
+  - **Implementación**: Controladores usan rutas directas (`/example`, `/users`, etc.)
+  - **Documentación**: Actualizada guía de API para reflejar decisión final
+
 ### 📚 Documentation
 
 - **DEPLOYMENT.md**: Actualizada documentación con:
@@ -37,6 +56,19 @@
   - Soluciones a problemas comunes (SSL/TLS, rutas legacy, vulnerabilidades)
   - Guía de monitoreo y recuperación
   - Mejores prácticas de deployment
+
+- **TROUBLESHOOTING.md**: Creado guía completa de troubleshooting
+  - Análisis del warning `LegacyRouteConverter` y su impacto
+  - **NUEVA**: Solución implementada para eliminar el warning usando versionado directo en controladores
+  - Soluciones a errores comunes de conexión SSL y dependencias
+  - Comandos de diagnóstico y verificación rápida
+  - Estados de salud del sistema y soluciones rápidas
+
+- **API_VERSIONING.md**: Actualizada para reflejar decisión final
+  - **NUEVA**: Documentación de estructura simple sin prefijo `/api`
+  - **NUEVA**: Explicación de por qué no usar prefijo (warnings de compatibilidad)
+  - **NUEVA**: Guía de mejores prácticas para estructura simple
+  - **NUEVA**: Ejemplos de controladores sin versionado ni prefijo
 
 ### 🛡️ Security
 
@@ -54,15 +86,28 @@
 
 ### ⚠️ Known Issues
 
-- **SSL Warning**: DATABASE_URL no tiene SSL explícito configurado
-  - Recomendación: Agregar `?sslmode=require` al final de la URL
-  - No afecta funcionalidad actual pero mejora seguridad
+- **LegacyRouteConverter Warning**: Resuelto al no usar prefijo `/api`
+  - **Estado**: ✅ SOLUCIONADO
+  - **Causa**: Prefijo global `/api` genera warning en NestJS
+  - **Solución**: Estructura simple sin prefijo global
+  - **Impacto**: URLs más limpias y sin warnings
 
-- **Vulnerabilities**: 2 vulnerabilidades moderadas restantes en `esbuild`
-  - Dependencia de `drizzle-kit`
-  - No críticas para funcionalidad de producción
-  - Monitorear actualizaciones futuras
+- **SSL Configuration**: Requerida para producción
+  - **Estado**: ✅ SOLUCIONADO
+  - **Causa**: Render.com requiere SSL para conexiones de base de datos
+  - **Solución**: Configuración SSL forzada en producción
+  - **Impacto**: Conexiones seguras en producción
 
-## [Previous Versions]
+- **Dependencies**: 4 vulnerabilidades moderadas
+  - **Estado**: 🔄 EN PROGRESO
+  - **Causa**: Dependencias desactualizadas
+  - **Solución**: Actualización gradual de dependencias
+  - **Impacto**: Seguridad mejorada
 
-- Documentación de versiones anteriores...
+### 🎯 Next Steps
+
+1. **Implementar funcionalidades core del ecommerce**
+2. **Completar sistema de autenticación**
+3. **Implementar gestión de usuarios**
+4. **Desarrollar módulo de productos**
+5. **Crear sistema de pedidos**

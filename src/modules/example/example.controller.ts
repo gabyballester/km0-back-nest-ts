@@ -3,28 +3,26 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { API_ENDPOINTS } from '../../shared/constants/api';
 
 /**
- * Controlador de ejemplo para demostrar el versionado de la API
+ * Controlador de ejemplo
  *
  * Endpoints disponibles:
- * - GET /api/v1/example - Endpoint versionado
- * - GET /health - Health check (sin versionar)
- * - GET /docs - Documentación (sin versionar)
+ * - GET /example - Endpoint de ejemplo
+ * - GET /example/info - Información de la API
+ * - GET /health - Health check
+ * - GET /docs - Documentación
  */
 @ApiTags('example')
 @Controller('example')
 export class ExampleController {
   /**
-   * Endpoint de ejemplo versionado
+   * Endpoint de ejemplo
    *
-   * URL completa: GET /api/v1/example
-   *
-   * Este endpoint está versionado y seguirá las reglas de la v1 de la API.
-   * Para futuras versiones, se puede crear un nuevo controlador con v2.
+   * URL completa: GET /example
    */
   @Get()
   @ApiOperation({
     summary: 'Endpoint de ejemplo',
-    description: 'Endpoint de ejemplo que demuestra el versionado de la API',
+    description: 'Endpoint de ejemplo simple',
   })
   @ApiResponse({
     status: 200,
@@ -32,56 +30,46 @@ export class ExampleController {
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Hello from API v1!' },
-        version: { type: 'string', example: 'v1' },
+        message: { type: 'string', example: 'Hello from API!' },
         timestamp: { type: 'string', example: '2024-01-15T10:30:00.000Z' },
-        endpoint: { type: 'string', example: '/api/v1/example' },
+        endpoint: { type: 'string', example: '/example' },
       },
     },
   })
   getExample(): {
     message: string;
-    version: string;
     timestamp: string;
     endpoint: string;
   } {
     return {
-      message: 'Hello from API v1!',
-      version: 'v1',
+      message: 'Hello from API!',
       timestamp: new Date().toISOString(),
-      endpoint: `${API_ENDPOINTS.V1_BASE}/example`,
+      endpoint: '/example',
     };
   }
 
   /**
-   * Endpoint de ejemplo con información sobre el versionado
+   * Endpoint de ejemplo con información
    *
-   * URL completa: GET /api/v1/example/info
+   * URL completa: GET /example/info
    */
   @Get('info')
   @ApiOperation({
-    summary: 'Información del versionado',
-    description:
-      'Proporciona información sobre la estructura de versionado de la API',
+    summary: 'Información de la API',
+    description: 'Proporciona información sobre la estructura de la API',
   })
   @ApiResponse({
     status: 200,
-    description: 'Información del versionado',
+    description: 'Información de la API',
     schema: {
       type: 'object',
       properties: {
-        currentVersion: { type: 'string', example: 'v1' },
-        availableVersions: {
+        endpoints: {
           type: 'array',
           items: { type: 'string' },
-          example: ['v1'],
+          example: ['/example', '/example/info'],
         },
-        versionedEndpoints: {
-          type: 'array',
-          items: { type: 'string' },
-          example: ['/api/v1/example', '/api/v1/example/info'],
-        },
-        nonVersionedEndpoints: {
+        systemEndpoints: {
           type: 'array',
           items: { type: 'string' },
           example: ['/health', '/health/detailed', '/docs'],
@@ -90,21 +78,14 @@ export class ExampleController {
       },
     },
   })
-  getVersioningInfo(): {
-    currentVersion: string;
-    availableVersions: string[];
-    versionedEndpoints: string[];
-    nonVersionedEndpoints: string[];
+  getApiInfo(): {
+    endpoints: string[];
+    systemEndpoints: string[];
     documentation: string;
   } {
     return {
-      currentVersion: 'v1',
-      availableVersions: ['v1'],
-      versionedEndpoints: [
-        `${API_ENDPOINTS.V1_BASE}/example`,
-        `${API_ENDPOINTS.V1_BASE}/example/info`,
-      ],
-      nonVersionedEndpoints: [
+      endpoints: ['/example', '/example/info'],
+      systemEndpoints: [
         API_ENDPOINTS.HEALTH,
         API_ENDPOINTS.HEALTH_DETAILED,
         API_ENDPOINTS.DOCS,
