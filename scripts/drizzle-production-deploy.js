@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Script de deployment para producción usando Drizzle ORM
+ * Script de deployment de producción para Drizzle ORM
+ * Versión: 2.0 - Usa migraciones en lugar de push cuando existen
+ * Última actualización: $(date)
  */
 
 const { execSync } = require('child_process');
