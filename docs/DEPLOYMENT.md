@@ -1,305 +1,226 @@
-# Deployment Guide - KM0 Market Backend
+# Deployment Guide
 
-## 🚀 **PLATAFORMAS GRATUITAS RECOMENDADAS**
+## Configuración de Producción
 
-### **🥇 RENDER (RECOMENDACIÓN PRINCIPAL - GRATUITO)**
-
-**Ventajas:**
-
-- ✅ **750 horas/mes GRATIS** (suficiente para desarrollo)
-- ✅ Deployment automático desde GitHub
-- ✅ Base de datos PostgreSQL incluida
-- ✅ Variables de entorno fáciles de configurar
-- ✅ SSL automático y dominio personalizado
-- ✅ Muy estable y confiable
-- ✅ Excelente para NestJS
-- ✅ Se despierta automáticamente después de inactividad
-
-**Configuración Actualizada:**
-
-```yaml
-# render.yaml
-services:
-  - type: web
-    name: km0-market-backend
-    runtime: node
-    plan: free
-    buildCommand: npm install && npm run db:generate && npm run build
-    startCommand: npm run start:prod
-    healthCheckPath: /health
-```
-
-**Variables de Entorno Configuradas:**
-
-- `NODE_ENV=production`
-- `PORT=4000`
-- `HOST=0.0.0.0`
-- `JWT_SECRET` (generado automáticamente)
-- `COOKIE_SECRET` (generado automáticamente)
-- `DATABASE_URL` (configurado en Render)
-- Variables individuales de base de datos
-
-**Precios:**
-
-- **Gratis**: 750 horas/mes (sleep después de 15 min inactivo)
-- **Pro**: $7/mes (siempre activo)
-
-**🔗 [render.com](https://render.com)**
-
----
-
-### **🥉 VERCEL (PARA APIS SIMPLES)**
-
-**Ventajas:**
-
-- ✅ Deployment ultra-rápido
-- ✅ Edge functions disponibles
-- ✅ Excelente performance
-- ✅ Integración perfecta con frontend
-
-**Limitaciones:**
-
-- ⚠️ Serverless functions (no ideal para NestJS completo)
-- ⚠️ Timeout de 10 segundos en plan gratuito
-- ⚠️ Mejor para APIs simples
-
-**🔗 [vercel.com](https://vercel.com)**
-
----
-
-## 🌐 **CONFIGURACIÓN DE PUERTOS**
-
-### **Desarrollo Local**
+### Variables de Entorno Requeridas
 
 ```bash
-# Frontend (React/Vue/Angular)
-http://localhost:3000
-
-# Backend (NestJS)
-http://localhost:4000
-```
-
-### **Producción (Render)**
-
-```bash
-# Render asigna automáticamente
-PORT=4000
-HOST=0.0.0.0
-```
-
-## 🔧 **VARIABLES DE ENTORNO**
-
-### **Desarrollo (.env)**
-
-```bash
-NODE_ENV=development
-PORT=4000
-HOST=localhost
-CORS_ORIGIN=http://localhost:3000
-```
-
-### **Producción (Render)**
-
-```bash
+# Entorno
 NODE_ENV=production
-PORT=4000
+
+# Base de datos
+DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
+DATABASE_ORM=drizzle
+
+# Servidor
+PORT=8000
 HOST=0.0.0.0
-CORS_ORIGIN=https://tu-dominio.com
+
+# CORS
+CORS_ORIGIN=https://your-frontend-domain.com
 ```
 
-## 🛡️ **SEGURIDAD CRÍTICA DE BASE DE DATOS**
+### Configuración de Puertos y Host
 
-### **⚠️ ADVERTENCIA IMPORTANTE**
+**Configuración por Entorno:**
 
-**NUNCA uses estos comandos en producción:**
+- **Development**: `PORT=4000`, `HOST=localhost`
+- **Test**: `PORT=6000`, `HOST=localhost`
+- **Production**: `PORT=8000`, `HOST=0.0.0.0`
+
+**Importante**: En producción, el servidor debe escuchar en `0.0.0.0` para ser accesible desde el exterior.
+
+### Configuración SSL para Base de Datos
+
+En producción, es **obligatorio** configurar SSL para la conexión a la base de datos:
+
+1. **Render.com**: Agregar `?sslmode=require` al final de la DATABASE_URL
+2. **Heroku**: SSL se configura automáticamente
+3. **AWS RDS**: Usar certificados SSL apropiados
+
+### Verificación de Configuración
 
 ```bash
-# ❌ PELIGROSO - Puede destruir datos
-prisma migrate dev
-prisma migrate reset
-prisma db push --force-reset
-```
+# Verificar configuración SSL
+npm run db:check:ssl
 
-**✅ SIEMPRE usa estos comandos en producción:**
+# Verificar configuración de puertos
+npm run check:ports
 
-```bash
-# ✅ SEGURO - Solo aplica migraciones existentes
-prisma migrate deploy
-
-# ✅ SEGURO - Sincroniza esquema sin destruir datos
-prisma db push
-
-# ✅ SEGURO - Script de producción con validaciones
+# Deployment completo
 npm run db:prod
-```
-
-### **🛡️ Script de Producción Seguro**
-
-Nuestro script `scripts/production-deploy.js` incluye:
-
-- ✅ **Validaciones de seguridad** automáticas
-- ✅ **Detección de comandos peligrosos**
-- ✅ **Manejo inteligente** de diferentes escenarios
-- ✅ **Baseline automático** para bases de datos existentes
-
-### **🚨 Variables de Seguridad**
-
-```bash
-# Para operaciones críticas en producción
-SAFE_DEPLOYMENT_MODE=true npm run db:prod
-```
-
----
-
-## 🚀 **DEPLOYMENT EN RENDER**
-
-### **Paso 1: Preparar el Proyecto**
-
-```bash
-# Verificar que todo funcione localmente
-npm run validate:full  # Validación completa
-npm run build
+npm run build:prod
 npm run start:prod
 ```
 
-### **Paso 2: Conectar con Render**
+## Dependencias Críticas para Producción
 
-1. **Ir a [render.com](https://render.com)**
-2. **Conectar cuenta de GitHub**
-3. **Seleccionar el repositorio**
-4. **Render detectará automáticamente el archivo `render.yaml`**
+### ✅ Dependencias de Producción (dependencies)
 
-### **Paso 3: Configurar Variables de Entorno**
-
-En Render Dashboard → Environment Variables:
-
-```bash
-# REQUERIDAS (configuradas automáticamente desde render.yaml)
-NODE_ENV=production
-PORT=4000
-HOST=0.0.0.0
-JWT_SECRET=<generado-automáticamente>
-COOKIE_SECRET=<generado-automáticamente>
-DATABASE_URL=<configurado-en-render>
-
-# OPCIONALES (con valores por defecto)
-JWT_EXPIRES_IN=1d
-THROTTLE_TTL=60
-THROTTLE_LIMIT=100
-CORS_ORIGIN=https://tu-frontend.com
-LOG_LEVEL=info
+```json
+{
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/throttler": "^6.4.0",
+    "@prisma/client": "^6.12.0",
+    "drizzle-orm": "^0.44.3",
+    "drizzle-kit": "^0.31.4", // ✅ CRÍTICO: Para migraciones en producción
+    "postgres": "^3.4.7",
+    "zod": "^4.0.8"
+  }
+}
 ```
 
-### **Paso 4: Configurar Base de Datos**
+### 🔧 Dependencias de Desarrollo (devDependencies)
 
-1. **En Render Dashboard → New → PostgreSQL**
-2. **Render generará automáticamente DATABASE_URL**
-3. **La variable se configurará automáticamente**
-
-### **Paso 5: Deployment Automático**
-
-- **Render detectará cambios en GitHub automáticamente**
-- **Deployment se ejecutará automáticamente desde `render.yaml`**
-- **Health check en `/health` verificará que todo funcione**
-
-## 📊 **MONITOREO**
-
-### **Health Checks**
-
-```bash
-GET /health          # Health básico
-GET /health/detailed # Health detallado con métricas
+```json
+{
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.7", // ✅ Solo para desarrollo
+    "@swc/cli": "^0.6.0", // ✅ Solo para desarrollo
+    "prisma": "^6.12.0", // ✅ Solo para desarrollo
+    "typescript": "^5.1.3",
+    "jest": "^29.5.0"
+  }
+}
 ```
 
-### **Logs en Render**
+### ⚠️ Dependencias Críticas Verificadas
 
-- **Dashboard → Logs**: Ver logs en tiempo real
-- **Logs estructurados**: Fácil debugging
-- **Métricas de performance**: CPU, memoria, requests
+- **`drizzle-kit`**: ✅ Movido a `dependencies` para funcionar en producción
+- **`@nestjs/cli`**: ✅ Movido a `devDependencies` (solo desarrollo)
+- **`@swc/cli`**: ✅ Movido a `devDependencies` (solo desarrollo)
+- **`prisma`**: ✅ Movido a `devDependencies` (solo desarrollo)
 
-### **Dominio Personalizado**
+## Problemas Comunes y Soluciones
 
-1. **Render Dashboard → Settings → Domains**
-2. **Agregar dominio personalizado**
-3. **Configurar DNS según instrucciones**
-4. **SSL automático incluido**
+### Error de Puerto no Detectado en Render
 
-## 🔒 **SEGURIDAD**
+**Síntoma:**
 
-### **Headers de Seguridad**
-
-- ✅ Helmet (CSP, HSTS, XSS Protection)
-- ✅ CORS configurado
-- ✅ Rate limiting
-- ✅ JWT con cookies seguras
-
-### **Variables Sensibles**
-
-- ❌ Nunca committear `.env` o `env.mirror`
-- ✅ Usar variables de entorno de Render
-- ✅ Rotar secrets regularmente
-- ✅ Render encripta automáticamente las variables
-
-## 🚨 **SOLUCIÓN DE PROBLEMAS**
-
-### **Deployment Falla**
-
-```bash
-# Verificar logs en Render Dashboard
-# Verificar variables de entorno
-# Verificar que el build funcione localmente
-npm run build
+```
+Port scan timeout reached, failed to detect open port 8000
 ```
 
-### **Health Check Falla**
+**Solución:**
 
-```bash
-# Verificar que /health responda localmente
-curl http://localhost:4000/health
+1. Verificar que `HOST=0.0.0.0` esté configurado en producción
+2. Ejecutar `npm run check:ports` para validar configuración
+3. Asegurar que el servidor escuche en el host correcto
 
-# Verificar variables de entorno requeridas
-NODE_ENV, JWT_SECRET, COOKIE_SECRET, DATABASE_URL
+### Error SSL/TLS Required
+
+**Síntoma:**
+
+```
+PostgresError: SSL/TLS required
 ```
 
-### **Base de Datos No Conecta**
+**Solución:**
 
-```bash
-# Verificar DATABASE_URL en Render
-# Verificar que la base de datos esté activa
-# Verificar credenciales
+1. Verificar que DATABASE_URL incluya `?sslmode=require`
+2. Ejecutar `npm run db:check:ssl` para validar configuración
+3. Asegurar que NODE_ENV=production esté configurado
+
+### Error: drizzle-kit not found
+
+**Síntoma:**
+
+```
+Error: Cannot find module 'drizzle-kit'
 ```
 
-## 📈 **ESCALADO**
+**Solución:**
 
-### **Render Auto-Scaling**
+1. Verificar que `drizzle-kit` esté en `dependencies` (no en `devDependencies`)
+2. Ejecutar `npm install` para reinstalar dependencias
+3. Verificar que el build incluya `drizzle-kit`
 
-- **Automático**: Según tráfico
-- **Manual**: Configurar en Dashboard
-- **Métricas**: CPU, memoria, requests/segundo
+### Advertencia de Rutas Legacy
 
-### **Monitoreo**
+**Síntoma:**
 
-- **Render Dashboard**: Métricas en tiempo real
-- **Logs**: Estructurados y buscables
-- **Alertas**: Configurables por métricas
+```
+[LegacyRouteConverter] Unsupported route path: "/api/*"
+```
 
----
+**Solución:**
 
-## 🎯 **RESUMEN DE DEPLOYMENT**
+- Las rutas están configuradas correctamente en `main.ts`
+- Esta advertencia es informativa y no afecta la funcionalidad
 
-### **Render (Recomendado Principal)**
+### Vulnerabilidades de Seguridad
 
-1. ✅ **Conectar GitHub** → Deployment automático desde `render.yaml`
-2. ✅ **Configurar variables** → Seguridad con variables individuales
-3. ✅ **Agregar base de datos** → PostgreSQL incluido
-4. ✅ **Configurar dominio** → SSL automático
-5. ✅ **Monitorear** → Logs y métricas completas
+**Síntoma:**
 
-### **Ventajas Finales**
+```
+4 moderate severity vulnerabilities
+```
 
-- 🚀 **Deployment en 5 minutos**
-- 🔒 **Seguridad automática**
-- 📊 **Monitoreo completo**
-- 💰 **Gratis para empezar**
-- 🔧 **Fácil mantenimiento**
-- 📋 **Configuración declarativa** (render.yaml)
+**Solución:**
+
+1. Ejecutar `npm audit` para ver detalles
+2. Actualizar dependencias: `npm update`
+3. Para vulnerabilidades críticas: `npm audit fix --force`
+
+## Monitoreo de Producción
+
+### Health Checks
+
+- **Endpoint**: `GET /health`
+- **Endpoint detallado**: `GET /health/detailed`
+- **Documentación**: `GET /docs`
+- **API v1**: `GET /api/v1/example`
+- **Info versionado**: `GET /api/v1/example/info`
+
+### Logs Importantes
+
+```bash
+# Inicio exitoso
+🚀 NESTJS APPLICATION STARTUP
+✅ Base de datos conectada correctamente con DRIZZLE
+
+# Error de conexión
+❌ Error al conectar con Drizzle: SSL/TLS required
+
+# Error de dependencias
+❌ Error: Cannot find module 'drizzle-kit'
+```
+
+## Rollback y Recuperación
+
+### Rollback Rápido
+
+1. Revertir al commit anterior
+2. Reconstruir: `npm run build:prod`
+3. Reiniciar servicio
+
+### Recuperación de Base de Datos
+
+1. Verificar migraciones: `npx drizzle-kit check`
+2. Aplicar migraciones: `npx drizzle-kit migrate`
+3. Verificar estado: `npm run db:check:ssl`
+
+### Verificación de Dependencias
+
+```bash
+# Verificar que drizzle-kit esté disponible en producción
+npm list drizzle-kit
+
+# Verificar dependencias críticas
+npm list --depth=0 | grep -E "(drizzle|@nestjs|postgres)"
+```
+
+## Mejores Prácticas
+
+1. **Siempre probar en staging antes de producción**
+2. **Mantener backups de base de datos**
+3. **Monitorear logs de aplicación**
+4. **Configurar alertas de salud**
+5. **Documentar cambios de configuración**
+6. **Verificar dependencias críticas antes del deployment**
+7. **Usar `npm run db:check:ssl` antes de cada deployment**

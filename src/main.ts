@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ENV_VALUES, ENV_KEYS } from './shared/constants/environment';
 import { CONFIG_KEYS } from './shared/constants/environment.schema';
+import { API_PREFIXES, API_ROUTES } from './shared/constants/api';
 
 async function bootstrap() {
   try {
@@ -20,8 +21,10 @@ async function bootstrap() {
       credentials: true,
     });
 
-    // Configurar prefijo global
-    app.setGlobalPrefix('api');
+    // Configurar prefijo global con versionado
+    app.setGlobalPrefix(API_PREFIXES.V1, {
+      exclude: [`/${API_ROUTES.HEALTH}`, `/${API_ROUTES.DOCS}`],
+    });
 
     // Configurar Swagger
     const config = new DocumentBuilder()
@@ -34,11 +37,12 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('docs', app, document);
 
-    // Obtener puerto
+    // Obtener puerto y host
     const port = configService.get<number>(CONFIG_KEYS.ENV_PORT) ?? 4000;
+    const host = configService.get<string>(CONFIG_KEYS.ENV_HOST) ?? 'localhost';
 
     // Iniciar servidor
-    await app.listen(port);
+    await app.listen(port, host);
 
     // Log de inicio exitoso
     console.log(`🎯 ========================================`);
@@ -48,6 +52,8 @@ async function bootstrap() {
       configService.get<string>(ENV_KEYS.NODE_ENV) ??
       ENV_VALUES.NODE_ENV.DEVELOPMENT;
     console.log(`🌍 Environment: ${environment}`);
+    console.log(`🔧 Port: ${port}`);
+    console.log(`🏠 Host: ${host}`);
     console.log(`📅 Timestamp: ${new Date().toISOString()}`);
     console.log(`🔄 Process ID: ${process.pid}`);
     console.log(`📦 Node Version: ${process.version}`);

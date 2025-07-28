@@ -57,6 +57,7 @@ export const validateEnv = () => {
     console.log(`🚀 ========================================`);
     console.log(`🌍 Environment: ${env.NODE_ENV.toUpperCase()}`);
     console.log(`🔧 Port: ${env.PORT}`);
+    console.log(`🏠 Host: ${env.HOST}`);
     console.log(`📅 Started at: ${new Date().toISOString()}`);
     console.log(`========================================`);
 

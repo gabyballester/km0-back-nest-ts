@@ -17,6 +17,7 @@
 - Scripts esenciales de desarrollo, testing y producción
 - Scripts de validación y calidad de código
 - Scripts de base de datos
+- Scripts de verificación de configuración
 
 ---
 
@@ -212,6 +213,9 @@ npm run db:migrate:reset   # Reset migraciones
 npm run db:drizzle:generate  # Genera migraciones Drizzle
 npm run db:drizzle:migrate   # Ejecuta migraciones Drizzle
 npm run db:drizzle:push      # Push schema a BD
+npm run db:check:ssl         # Verificar configuración SSL
+npm run check:dependencies   # Verificar organización de dependencias
+npm run fix:dependencies     # Corregir organización de dependencias
 ```
 
 ### **Entornos Específicos**
@@ -230,6 +234,33 @@ npm run db:studio:dev  # Studio para desarrollo
 npm run db:studio:test # Studio para testing
 npm run db:studio:prod # Studio para producción
 ```
+
+---
+
+## 🔍 **SCRIPTS DE VERIFICACIÓN**
+
+### **Verificación de Configuración**
+
+```bash
+npm run check:ports     # Verificar configuración de puertos por entorno
+npm run db:check:ssl    # Verificar configuración SSL de base de datos
+npm run check:dependencies  # Verificar organización de dependencias
+npm run fix:dependencies    # Corregir organización de dependencias
+```
+
+### **Verificación de Puertos**
+
+```bash
+npm run check:ports
+```
+
+- **Descripción**: Verifica la configuración correcta de puertos y hosts por entorno
+- **Verifica**:
+  - `env.example` (production): PORT=8000, HOST=0.0.0.0
+  - `env.development.example`: PORT=4000, HOST=localhost
+  - `env.test.example`: PORT=6000, HOST=localhost
+  - `render.yaml`: Configuración de producción
+- **Uso**: Antes de despliegue para validar configuración
 
 ---
 

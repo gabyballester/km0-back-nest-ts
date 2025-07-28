@@ -57,33 +57,67 @@ export const API_MESSAGES = {
 } as const;
 
 /**
- * API Endpoints
- * Centralized endpoint paths for consistency
+ * Constantes para el versionado de la API
+ * Centraliza la configuración de versiones y rutas
  */
-export const API_ENDPOINTS = {
-  // Health
-  HEALTH: '/health',
-  HEALTH_DETAILED: '/health/detailed',
 
-  // Auth (future)
-  AUTH: '/auth',
-  LOGIN: '/auth/login',
-  REGISTER: '/auth/register',
-  REFRESH: '/auth/refresh',
-  LOGOUT: '/auth/logout',
-
-  // Users (future)
-  USERS: '/users',
-  USERS_PROFILE: '/users/profile',
-
-  // Products (future)
-  PRODUCTS: '/products',
-  PRODUCTS_CATEGORIES: '/products/categories',
-
-  // Orders (future)
-  ORDERS: '/orders',
-  ORDERS_HISTORY: '/orders/history',
+export const API_VERSIONS = {
+  V1: 'v1',
+  V2: 'v2', // Para futuras versiones
 } as const;
+
+export const API_PREFIXES = {
+  BASE: 'api',
+  V1: `api/${API_VERSIONS.V1}`,
+  V2: `api/${API_VERSIONS.V2}`,
+} as const;
+
+export const API_ROUTES = {
+  HEALTH: 'health',
+  HEALTH_DETAILED: 'health/detailed',
+  DOCS: 'docs',
+  SWAGGER: 'swagger',
+} as const;
+
+export const API_ENDPOINTS = {
+  // Health endpoints (sin versionado)
+  HEALTH: `/${API_ROUTES.HEALTH}`,
+  HEALTH_DETAILED: `/${API_ROUTES.HEALTH_DETAILED}`,
+
+  // Documentation endpoints (sin versionado)
+  DOCS: `/${API_ROUTES.DOCS}`,
+  SWAGGER: `/${API_ROUTES.SWAGGER}`,
+
+  // Versioned endpoints
+  V1_BASE: `/${API_PREFIXES.V1}`,
+  V2_BASE: `/${API_PREFIXES.V2}`,
+} as const;
+
+// Tipos para TypeScript
+export type ApiVersion = (typeof API_VERSIONS)[keyof typeof API_VERSIONS];
+export type ApiPrefix = (typeof API_PREFIXES)[keyof typeof API_PREFIXES];
+export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];
+export type ApiEndpoint = (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS];
+
+// Función helper para construir rutas versionadas
+export const buildVersionedRoute = (
+  version: ApiVersion,
+  route: string,
+): string => {
+  return `/${API_PREFIXES.BASE}/${version}/${route}`;
+};
+
+// Función helper para verificar si una ruta está excluida del versionado
+export const isExcludedFromVersioning = (route: string): boolean => {
+  const excludedRoutes = [
+    API_ROUTES.HEALTH,
+    API_ROUTES.HEALTH_DETAILED,
+    API_ROUTES.DOCS,
+    API_ROUTES.SWAGGER,
+  ];
+
+  return excludedRoutes.some(excluded => route.startsWith(`/${excluded}`));
+};
 
 /**
  * API Headers

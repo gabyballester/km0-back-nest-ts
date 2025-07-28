@@ -75,14 +75,20 @@ src/
 
 ### Prerrequisitos
 
-- Node.js 18+
+- Node.js 22+
 - npm o yarn
 - PostgreSQL (para producción)
 
+### Configuración de Puertos
+
+- **Development**: `http://localhost:4000`
+- **Test**: `http://localhost:6000`
+- **Production**: `https://km0-market.onrender.com`
+
 ### Documentación de API
 
-- **Swagger UI**: `http://localhost:4000/api` (desarrollo)
-- **Swagger UI**: `https://km0-market.onrender.com/api` (producción)
+- **Swagger UI**: `http://localhost:4000/docs` (desarrollo)
+- **Swagger UI**: `https://km0-market.onrender.com/docs` (producción)
 
 ### Instalación
 

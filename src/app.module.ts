@@ -6,6 +6,7 @@ import { SecurityModule } from './modules/security/security.module';
 import { SecurityMiddleware } from './modules/security/security.middleware';
 import { HealthController } from './health/health.controller';
 import { DatabaseModule } from './infrastructure/database/database.module';
+import { ExampleModule } from './modules/example/example.module';
 import { envConfig } from './config/env.config';
 
 /**
@@ -31,6 +32,8 @@ import { envConfig } from './config/env.config';
     SecurityModule,
     // Database module with ORM abstraction
     DatabaseModule,
+    // Example module for API versioning demonstration
+    ExampleModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

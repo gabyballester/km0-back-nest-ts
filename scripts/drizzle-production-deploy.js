@@ -95,7 +95,15 @@ function deployProduction() {
       }
     }
 
-    // 2. Verificar esquema
+    // 2. Verificar configuración SSL
+    console.log('🔒 Verificando configuración SSL...');
+    try {
+      require('./check-ssl-config.js');
+    } catch (error) {
+      console.warn('⚠️  No se pudo verificar la configuración SSL:', error.message);
+    }
+
+    // 3. Verificar esquema
     if (!safeExec('npx drizzle-kit check', 'Verificando esquema de Drizzle')) {
       throw new Error('Esquema de Drizzle inválido');
     }
