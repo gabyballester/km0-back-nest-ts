@@ -40,10 +40,24 @@ function safeExec(command, description) {
 function checkDatabaseExists() {
   try {
     console.log('🔍 Verificando estado de la base de datos...');
+
+    // En producción, forzar SSL en la URL si no está presente
+    let databaseUrl = process.env.DATABASE_URL;
+    if (
+      process.env.NODE_ENV === 'production' &&
+      databaseUrl &&
+      !databaseUrl.includes('sslmode=')
+    ) {
+      databaseUrl +=
+        (databaseUrl.includes('?') ? '&' : '?') + 'sslmode=require';
+      process.env.DATABASE_URL = databaseUrl;
+    }
+
     const result = execSync(
       'npx drizzle-kit introspect --url "$DATABASE_URL"',
       {
         encoding: 'utf8',
+        env: { ...process.env, DATABASE_URL: databaseUrl },
       },
     );
 
@@ -51,6 +65,7 @@ function checkDatabaseExists() {
     return true;
   } catch (error) {
     console.log('⚠️  No se pudo verificar el estado de la base de datos');
+    console.log(`   Error: ${error.message}`);
     return false;
   }
 }
@@ -100,7 +115,10 @@ function deployProduction() {
     try {
       require('./check-ssl-config.js');
     } catch (error) {
-      console.warn('⚠️  No se pudo verificar la configuración SSL:', error.message);
+      console.warn(
+        '⚠️  No se pudo verificar la configuración SSL:',
+        error.message,
+      );
     }
 
     // 3. Verificar esquema
@@ -137,8 +155,37 @@ function deployProduction() {
       console.log(
         '🆕 Caso 2: Base de datos nueva o sin migraciones - Sincronizando esquema...',
       );
+
+      // Asegurar que la URL tenga SSL en producción
+      let databaseUrl = process.env.DATABASE_URL;
+      if (
+        process.env.NODE_ENV === 'production' &&
+        databaseUrl &&
+        !databaseUrl.includes('sslmode=')
+      ) {
+        databaseUrl +=
+          (databaseUrl.includes('?') ? '&' : '?') + 'sslmode=require';
+        process.env.DATABASE_URL = databaseUrl;
+      }
+
       if (!safeExec('npx drizzle-kit push', 'Sincronizando esquema')) {
-        throw new Error('No se pudo sincronizar el esquema');
+        console.log('⚠️  Fallback: Intentando con migraciones manuales...');
+        // Fallback: generar y aplicar migraciones
+        if (
+          safeExec(
+            'npx drizzle-kit generate',
+            'Generando migraciones de fallback',
+          )
+        ) {
+          safeExec(
+            'npx drizzle-kit migrate',
+            'Aplicando migraciones de fallback',
+          );
+        } else {
+          throw new Error(
+            'No se pudo sincronizar el esquema ni generar migraciones',
+          );
+        }
       }
     }
 
