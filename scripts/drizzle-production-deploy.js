@@ -36,6 +36,36 @@ function safeExec(command, description) {
   }
 }
 
+// Función para aplicar migraciones de forma segura
+function applyMigrations() {
+  try {
+    console.log('🔄 Aplicando migraciones existentes...');
+
+    // Asegurar que la URL tenga SSL en producción
+    let databaseUrl = process.env.DATABASE_URL;
+    if (
+      process.env.NODE_ENV === 'production' &&
+      databaseUrl &&
+      !databaseUrl.includes('sslmode=')
+    ) {
+      databaseUrl +=
+        (databaseUrl.includes('?') ? '&' : '?') + 'sslmode=require';
+      process.env.DATABASE_URL = databaseUrl;
+    }
+
+    execSync('npx drizzle-kit migrate', {
+      stdio: 'inherit',
+      env: { ...process.env, DATABASE_URL: databaseUrl },
+    });
+
+    console.log('✅ Migraciones aplicadas exitosamente');
+    return true;
+  } catch (error) {
+    console.log('❌ Error aplicando migraciones:', error.message);
+    return false;
+  }
+}
+
 // Función para verificar si la base de datos existe y tiene tablas
 function checkDatabaseExists() {
   try {
@@ -137,24 +167,15 @@ function deployProduction() {
     );
 
     // 4. Estrategia según el estado
-    if (databaseExists && hasProjectMigrations) {
-      // Caso 1: Base de datos existe y hay migraciones - Aplicar migraciones
-      console.log(
-        '📦 Caso 1: Base de datos existente con migraciones - Aplicando migraciones...',
-      );
-      if (
-        !safeExec(
-          'npx drizzle-kit migrate',
-          'Aplicando migraciones de producción',
-        )
-      ) {
+    if (hasProjectMigrations) {
+      // Siempre usar migraciones si existen
+      console.log('📦 Aplicando migraciones existentes...');
+      if (!applyMigrations()) {
         throw new Error('No se pudieron aplicar las migraciones');
       }
-    } else if (!databaseExists || !hasProjectMigrations) {
-      // Caso 2: Base de datos nueva o sin migraciones - Usar push
-      console.log(
-        '🆕 Caso 2: Base de datos nueva o sin migraciones - Sincronizando esquema...',
-      );
+    } else {
+      // Solo usar push si no hay migraciones
+      console.log('🆕 Sin migraciones - Sincronizando esquema...');
 
       // Asegurar que la URL tenga SSL en producción
       let databaseUrl = process.env.DATABASE_URL;
@@ -177,10 +198,7 @@ function deployProduction() {
             'Generando migraciones de fallback',
           )
         ) {
-          safeExec(
-            'npx drizzle-kit migrate',
-            'Aplicando migraciones de fallback',
-          );
+          applyMigrations();
         } else {
           throw new Error(
             'No se pudo sincronizar el esquema ni generar migraciones',
