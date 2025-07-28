@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '@/app.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ENV_VALUES, ENV_KEYS } from './shared/constants/environment';
-import { CONFIG_KEYS } from './shared/constants/environment.schema';
+import { ENV_VALUES, ENV_KEYS } from '@/shared/constants/environment';
+import { CONFIG_KEYS } from '@/shared/constants/environment.schema';
 
 async function bootstrap() {
   try {

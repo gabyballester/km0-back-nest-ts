@@ -4,16 +4,16 @@
  */
 
 // Environment constants
-export * from './environment';
+export * from '@/shared/constants/environment';
 
 // API constants
-export * from './api';
+export * from '@/shared/constants/api';
 
 // Validation constants
-export * from './validation';
+export * from '@/shared/constants/validation';
 
 // Security constants
-export * from './security';
+export * from '@/shared/constants/security';
 
 // Business constants
-export * from './business';
+export * from '@/shared/constants/business';

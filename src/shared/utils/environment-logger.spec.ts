@@ -1,4 +1,4 @@
-import { EnvironmentLogger } from './environment-logger';
+import { EnvironmentLogger } from '@/shared/utils/environment-logger';
 
 describe('EnvironmentLogger', () => {
   let logger: EnvironmentLogger;

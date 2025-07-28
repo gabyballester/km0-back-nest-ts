@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { ENV_VALUES } from '../constants/environment';
+import { ENV_VALUES } from '@/shared/constants/environment';
 
 /**
  * Custom logger for environment-specific information

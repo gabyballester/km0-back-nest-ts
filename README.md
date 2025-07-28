@@ -75,6 +75,35 @@ src/
 
 **📖 API Guide:** [docs/API_VERSIONING.md](./docs/API_VERSIONING.md)
 
+**📖 Alias de Importación:** [docs/ALIASES.md](./docs/ALIASES.md)
+**📖 Solución Dist Folders:** [docs/DIST_FOLDERS_SOLUTION.md](./docs/DIST_FOLDERS_SOLUTION.md)
+
+## 📁 Alias de Importación
+
+El proyecto utiliza alias de importación para evitar rutas relativas y mejorar la legibilidad del código.
+
+### Ejemplo de Uso
+
+```typescript
+// ❌ Antes (Rutas relativas)
+import { UserService } from '../../application/services/user.service';
+import { ENV_VALUES } from '../../../shared/constants/environment';
+
+// ✅ Después (Con alias)
+import { UserService } from '@/modules/users/application/services/user.service';
+import { ENV_VALUES } from '@/shared/constants/environment';
+```
+
+### Scripts Disponibles
+
+```bash
+npm run update:imports    # Actualizar imports automáticamente
+npm run type-check        # Verificar configuración de alias
+npm run clean:dist        # Limpiar carpetas dist anidadas
+```
+
+**📖 Ver documentación completa:** [docs/ALIASES.md](./docs/ALIASES.md)
+
 ## 🚀 Inicio Rápido
 
 ### Prerrequisitos

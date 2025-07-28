@@ -5,7 +5,7 @@ import {
   IDatabaseAdapter,
   DatabaseStatus,
   DatabaseAdapterConfig,
-} from '../interfaces';
+} from '@/infrastructure/database/interfaces';
 
 /**
  * Prisma ORM adapter implementation

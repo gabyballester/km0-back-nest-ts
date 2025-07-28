@@ -8,7 +8,7 @@ import {
   NOTIFICATION_TYPES,
   BUSINESS_RULES,
   ERROR_CODES,
-} from './business';
+} from '@/shared/constants/business';
 
 describe('Business Constants', () => {
   describe('USER_ROLES', () => {

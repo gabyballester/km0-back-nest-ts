@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseService } from './database.service';
-import { DatabaseFactory } from './factory/database.factory';
-import { PrismaAdapter } from './adapters/prisma.adapter';
-import { DrizzleAdapter } from './adapters/drizzle.adapter';
+import { DatabaseService } from '@/infrastructure/database/database.service';
+import { DatabaseFactory } from '@/infrastructure/database/factory/database.factory';
+import { PrismaAdapter } from '@/infrastructure/database/adapters/prisma.adapter';
+import { DrizzleAdapter } from '@/infrastructure/database/adapters/drizzle.adapter';
 
 /**
  * Database module configuration

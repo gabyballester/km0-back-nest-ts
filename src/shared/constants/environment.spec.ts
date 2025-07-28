@@ -6,7 +6,7 @@ import {
   isProduction,
   isTest,
   isValidNodeEnv,
-} from './environment';
+} from '@/shared/constants/environment';
 
 describe('Environment Constants', () => {
   describe('ENV_KEYS', () => {

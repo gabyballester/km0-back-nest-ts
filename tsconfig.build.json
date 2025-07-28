@@ -11,6 +11,18 @@
   "compilerOptions": {
     "declaration": true,
     "sourceMap": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/config/*": ["src/config/*"],
+      "@/shared/*": ["src/shared/*"],
+      "@/modules/*": ["src/modules/*"],
+      "@/infrastructure/*": ["src/infrastructure/*"],
+      "@/health/*": ["src/health/*"],
+      "@/test/*": ["test/*"],
+      "@/docs/*": ["docs/*"],
+      "@/scripts/*": ["scripts/*"]
+    }
   }
 }

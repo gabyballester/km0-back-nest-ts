@@ -1,1 +1,1 @@
-export * from './user.schema';
+export * from '@/infrastructure/database/schemas/user.schema';

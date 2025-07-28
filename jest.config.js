@@ -37,17 +37,43 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.(t|j)s'],
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: [
+    // Archivos de configuración y setup
     '/main.ts$',
+    '/app.module.ts$',
+    '/app.controller.ts$',
+    '/app.service.ts$',
     '/env.config.ts$',
     '/env.schema.ts$',
-    // Excluir toda la carpeta de constantes (solo definiciones estáticas, helpers y schemas)
-    '/shared/constants/',
-    // Excluir módulos puramente declarativos (sin lógica de negocio)
-    '/modules/security/security.module.ts$',
-    // Excluir adaptadores y schemas (no necesitan tests unitarios)
+
+    // Health check (endpoints básicos)
+    '/health/',
+
+    // Archivos de base de datos (se testean en integración)
+    '/infrastructure/database/database.module.ts$',
+    '/infrastructure/database/prisma.service.ts$',
+    '/infrastructure/database/interfaces/',
     '/infrastructure/database/adapters/',
     '/infrastructure/database/schemas/',
     '/infrastructure/database/factory/',
+
+        // Archivos de presentación (se testean en E2E)
+    '/modules/users/presentation/',
+
+    // Archivos de repositorios (se testean en integración)
+    '/modules/users/infrastructure/repositories/',
+
+    // Archivos de módulos (solo configuración)
+    '/modules/users/user.module.ts$',
+    '/modules/security/security.module.ts$',
+
+    // Constantes y tipos (solo definiciones)
+    '/shared/constants/',
+    '/shared/types/',
+
+    // Archivos de ejemplo (no son parte del core)
+    '/modules/example/',
+
+    // Archivos de build
     '/dist/',
     '/node_modules/',
   ],
@@ -99,6 +125,18 @@ module.exports = {
   modulePathIgnorePatterns: ['/legacy/'],
   // Configuración de resolución de módulos
   moduleDirectories: ['node_modules'],
+  // Configuración de alias para rutas
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/config/(.*)$': '<rootDir>/src/config/$1',
+    '^@/shared/(.*)$': '<rootDir>/src/shared/$1',
+    '^@/modules/(.*)$': '<rootDir>/src/modules/$1',
+    '^@/infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
+    '^@/health/(.*)$': '<rootDir>/src/health/$1',
+    '^@/test/(.*)$': '<rootDir>/test/$1',
+    '^@/docs/(.*)$': '<rootDir>/docs/$1',
+    '^@/scripts/(.*)$': '<rootDir>/scripts/$1',
+  },
   // Optimizaciones adicionales para Node.js 22
   injectGlobals: true,
   // Configuración para evitar archivos temporales

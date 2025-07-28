@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ENV_KEYS } from '../../shared/constants/environment';
+import { ENV_KEYS } from '@/shared/constants/environment';
 
 /**
  * Security module that provides:

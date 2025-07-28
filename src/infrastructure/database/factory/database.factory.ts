@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IDatabaseAdapter } from '../interfaces';
-import { PrismaAdapter } from '../adapters/prisma.adapter';
-import { DrizzleAdapter } from '../adapters/drizzle.adapter';
+import { IDatabaseAdapter } from '@/infrastructure/database/interfaces';
+import { PrismaAdapter } from '@/infrastructure/database/adapters/prisma.adapter';
+import { DrizzleAdapter } from '@/infrastructure/database/adapters/drizzle.adapter';
 
 /**
  * Supported ORM types

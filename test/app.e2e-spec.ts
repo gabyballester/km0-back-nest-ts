@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '@/app.module';
 import { ConfigModule } from '@nestjs/config';
-import { ENV_KEYS, ENV_VALUES } from '../src/shared/constants/environment';
-import { DatabaseService } from '../src/infrastructure/database/database.service';
+import { ENV_KEYS, ENV_VALUES } from '@/shared/constants/environment';
+import { DatabaseService } from '@/infrastructure/database/database.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

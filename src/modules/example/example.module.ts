@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ExampleController } from './example.controller';
+import { ExampleController } from '@/modules/example/example.controller';
 
 /**
  * Módulo de ejemplo para demostrar el versionado de la API

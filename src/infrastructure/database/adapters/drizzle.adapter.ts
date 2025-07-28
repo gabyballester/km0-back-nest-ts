@@ -6,7 +6,7 @@ import {
   IDatabaseAdapter,
   DatabaseStatus,
   DatabaseAdapterConfig,
-} from '../interfaces';
+} from '@/infrastructure/database/interfaces';
 
 /**
  * Drizzle ORM adapter implementation

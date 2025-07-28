@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
+import { ENV_KEYS, ENV_VALUES } from '@/shared/constants/environment';
 
 /**
  * Environment variables validation schema using Zod

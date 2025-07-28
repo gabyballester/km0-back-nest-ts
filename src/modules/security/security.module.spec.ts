@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { SecurityModule } from './security.module';
-import { ENV_KEYS } from '../../shared/constants/environment';
+import { SecurityModule } from '@/modules/security/security.module';
+import { ENV_KEYS } from '@/shared/constants/environment';
 
 describe('SecurityModule', () => {
   let module: TestingModule;

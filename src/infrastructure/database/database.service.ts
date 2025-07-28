@@ -1,7 +1,10 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IDatabaseAdapter, DatabaseStatus } from './interfaces';
-import { DatabaseFactory } from './factory/database.factory';
+import {
+  IDatabaseAdapter,
+  DatabaseStatus,
+} from '@/infrastructure/database/interfaces';
+import { DatabaseFactory } from '@/infrastructure/database/factory/database.factory';
 
 // Exportar la interfaz para uso en otros módulos
 export interface DatabaseInfo {

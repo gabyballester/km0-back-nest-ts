@@ -6,8 +6,8 @@ import {
   ApiResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
-import { DatabaseService } from '../infrastructure/database/database.service';
-import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
+import { DatabaseService } from '@/infrastructure/database/database.service';
+import { ENV_KEYS, ENV_VALUES } from '@/shared/constants/environment';
 import * as os from 'os';
 
 // Definir la interfaz localmente para evitar problemas de importación

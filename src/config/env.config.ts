@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { z } from 'zod';
-import { ENV_KEYS, ENV_VALUES } from '../shared/constants/environment';
+import { ENV_KEYS, ENV_VALUES } from '@/shared/constants/environment';
 
 // Schema de validación para variables de entorno
 const envSchema = z.object({

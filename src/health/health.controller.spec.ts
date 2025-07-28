@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { HealthController } from './health.controller';
-import { DatabaseService } from '../infrastructure/database/database.service';
-import { ENV_VALUES } from '../shared/constants/environment';
+import { HealthController } from '@/health/health.controller';
+import { DatabaseService } from '@/infrastructure/database/database.service';
+import { ENV_VALUES } from '@/shared/constants/environment';
 
 // Definir la interfaz localmente para evitar problemas de importación
 interface DatabaseInfo {

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService } from './database.service';
-import { DatabaseFactory } from './factory/database.factory';
-import { IDatabaseAdapter } from './interfaces';
+import { DatabaseService } from '@/infrastructure/database/database.service';
+import { DatabaseFactory } from '@/infrastructure/database/factory/database.factory';
+import { IDatabaseAdapter } from '@/infrastructure/database/interfaces';
 
 describe('DatabaseService', () => {
   let service: DatabaseService;

@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MiddlewareConsumer } from '@nestjs/common';
-import { AppModule } from './app.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { HealthController } from './health/health.controller';
+import { AppModule } from '@/app.module';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
+import { HealthController } from '@/health/health.controller';
 import { ConfigModule } from '@nestjs/config';
-import { ENV_KEYS, ENV_VALUES } from './shared/constants/environment';
+import { ENV_KEYS, ENV_VALUES } from '@/shared/constants/environment';
 
 describe('AppModule', () => {
   let module: TestingModule;

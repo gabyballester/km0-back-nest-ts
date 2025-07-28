@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { SecurityMiddleware } from './security.middleware';
+import { SecurityMiddleware } from '@/modules/security/security.middleware';
 
 describe('SecurityMiddleware', () => {
   let middleware: SecurityMiddleware;
