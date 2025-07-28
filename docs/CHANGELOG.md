@@ -4,6 +4,13 @@
 
 ### 🔧 Fixed
 
+- **Deployment Script Enhancement**: Mejorado script de deployment para usar migraciones en lugar de push
+  - **Problema**: Script usaba `drizzle-kit push` generando prompts interactivos sobre columnas
+  - **Solución**: Script detecta migraciones existentes y usa `drizzle-kit migrate` automáticamente
+  - **Beneficio**: Deployment completamente automatizado sin preguntas interactivas
+  - **Implementación**: Lógica condicional que prioriza migraciones sobre push
+  - **Impacto**: Eliminación de prompts como "Is created_at column created or renamed?"
+
 - **Dependencies Organization**: Corregida organización crítica de dependencias
   - **`drizzle-kit`**: Movido de `devDependencies` a `dependencies` para funcionar en producción
   - **`@nestjs/cli`**: Movido de `dependencies` a `devDependencies` (solo desarrollo)
