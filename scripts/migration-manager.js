@@ -65,13 +65,17 @@ function hasPendingMigrations() {
       process.env.DATABASE_URL = databaseUrl;
     }
 
-    const result = execSync('npx drizzle-kit migrate --dry-run', {
+    // Usar drizzle-kit check para verificar diferencias en lugar de --dry-run
+    const result = execSync('npx drizzle-kit check', {
       encoding: 'utf8',
       env: { ...process.env, DATABASE_URL: databaseUrl },
     });
 
+    // Si hay diferencias, hay migraciones pendientes
     const hasPending =
-      result.includes('pending') || result.includes('migration');
+      result.includes('❌') ||
+      result.includes('error') ||
+      result.includes('diff');
     console.log(`📋 Migraciones pendientes: ${hasPending ? 'SÍ' : 'NO'}`);
     return hasPending;
   } catch (error) {
