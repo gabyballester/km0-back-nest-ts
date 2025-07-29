@@ -23,6 +23,7 @@ const PRODUCTION_DEPS = [
   'rxjs',
   'reflect-metadata',
   'swagger-ui-express',
+  'tsconfig-paths', // ✅ CRÍTICO: Necesario para start:prod en producción
 ];
 
 // Dependencias que DEBEN estar en devDependencies (desarrollo)
