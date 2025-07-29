@@ -23,6 +23,7 @@ const PRODUCTION_DEPS = [
   'rxjs',
   'reflect-metadata',
   'swagger-ui-express',
+  '@types/express', // ✅ CRÍTICO: Necesario para TypeScript en producción
 ];
 
 // Dependencias que DEBEN estar en devDependencies (desarrollo)
