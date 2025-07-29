@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '@/modules/users/domain/entities/user.entity';
 
 /**
@@ -51,6 +51,12 @@ export class UserResponseDto {
     example: true,
   })
   isActive: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Número de teléfono del usuario',
+    example: '+34612345678',
+  })
+  phone?: string;
 
   @ApiProperty({
     description: 'Rol del usuario',

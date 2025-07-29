@@ -37,7 +37,7 @@ function findDistFolders(dir, excludeDirs = []) {
 
         if (stat.isDirectory()) {
           // Verificar si es una carpeta dist
-          if (item === 'dist') {
+          if (item === 'dist' || item.startsWith('dist-')) {
             // Verificar si está en directorios excluidos
             const isExcluded = excludeDirs.some(excludeDir =>
               fullPath.includes(excludeDir),

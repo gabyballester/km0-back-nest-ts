@@ -12,6 +12,9 @@ NODE_ENV=production
 DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
 DATABASE_ORM=drizzle
 
+# Sistema de Seguridad de Base de Datos (CRÍTICO)
+DATABASE_SAFETY_LEVEL=strict
+
 # Servidor
 PORT=8000
 HOST=0.0.0.0

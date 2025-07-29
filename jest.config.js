@@ -10,7 +10,7 @@ module.exports = {
 
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': [
+    '^.+\\.ts$': [
       '@swc/jest',
       {
         jsc: {
@@ -33,8 +33,20 @@ module.exports = {
   // Configuración alternativa con esbuild (más rápido)
   transformIgnorePatterns: process.env.JEST_USE_ESBUILD
     ? ['node_modules/(?!(.*\\.mjs$))']
-    : ['/node_modules/', '/dist/', '/legacy/'],
-  collectCoverageFrom: ['src/**/*.(t|j)s'],
+    : ['/node_modules/', '/dist/', '/legacy/', '/scripts/'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.spec.ts',
+    '!src/**/*.test.ts',
+    '!src/**/*.d.ts',
+    '!src/**/*.module.ts',
+    '!src/**/index.ts',
+    '!scripts/**/*',
+    '!test/**/*',
+    '!**/node_modules/**',
+    '!**/dist/**',
+    '!**/coverage/**',
+  ],
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: [
     // Archivos de configuración y setup
@@ -56,7 +68,7 @@ module.exports = {
     '/infrastructure/database/schemas/',
     '/infrastructure/database/factory/',
 
-        // Archivos de presentación (se testean en E2E)
+    // Archivos de presentación (se testean en E2E)
     '/modules/users/presentation/',
 
     // Archivos de repositorios (se testean en integración)
@@ -100,7 +112,7 @@ module.exports = {
   testTimeout: 2000,
   setupFilesAfterEnv: [],
   // Excluir archivos innecesarios
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/legacy/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/legacy/', '/scripts/'],
   // Configuración para SWC
   extensionsToTreatAsEsm: [],
   globals: {},
@@ -135,7 +147,7 @@ module.exports = {
     '^@/health/(.*)$': '<rootDir>/src/health/$1',
     '^@/test/(.*)$': '<rootDir>/test/$1',
     '^@/docs/(.*)$': '<rootDir>/docs/$1',
-    '^@/scripts/(.*)$': '<rootDir>/scripts/$1',
+    // Removido mapeo de scripts para evitar compilación
   },
   // Optimizaciones adicionales para Node.js 22
   injectGlobals: true,
@@ -147,6 +159,13 @@ module.exports = {
   cacheDirectory: '.jest-cache',
   // Configuración para evitar archivos de salida
   setupFilesAfterEnv: [],
+  // Excluir scripts de transformación
+  transformIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/legacy/',
+    '/scripts/',
+  ],
   // Configuración específica para evitar compilación
   globals: {
     'ts-jest': {

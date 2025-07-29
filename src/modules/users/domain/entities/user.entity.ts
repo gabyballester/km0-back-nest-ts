@@ -14,6 +14,7 @@ export class User {
   public lastName: string;
   public isActive: boolean;
   public role: UserRole;
+  public phone?: string;
   public readonly createdAt: Date;
   public updatedAt: Date;
 
@@ -25,6 +26,7 @@ export class User {
     lastName: string;
     isActive?: boolean;
     role?: UserRole;
+    phone?: string;
     createdAt?: Date;
     updatedAt?: Date;
   }) {
@@ -35,6 +37,7 @@ export class User {
     this.lastName = params.lastName;
     this.isActive = params.isActive ?? true;
     this.role = params.role ?? UserRole.USER;
+    this.phone = params.phone;
     this.createdAt = params.createdAt ?? new Date();
     this.updatedAt = params.updatedAt ?? new Date();
   }
@@ -90,6 +93,7 @@ export class User {
     firstName?: string;
     lastName?: string;
     email?: string;
+    phone?: string;
   }): void {
     if (params.firstName) {
       this.firstName = params.firstName;
@@ -99,6 +103,9 @@ export class User {
     }
     if (params.email) {
       this.email = params.email;
+    }
+    if (params.phone) {
+      this.phone = params.phone;
     }
     this.updatedAt = new Date();
   }
@@ -122,7 +129,7 @@ export class User {
   /**
    * Convierte la entidad a un objeto plano para persistencia
    */
-  toJSON(): Record<string, string | boolean | Date> {
+  toJSON(): Record<string, string | boolean | Date | undefined> {
     return {
       id: this.id,
       email: this.email,
@@ -131,6 +138,7 @@ export class User {
       lastName: this.lastName,
       isActive: this.isActive,
       role: this.role,
+      phone: this.phone,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -147,6 +155,7 @@ export class User {
     lastName: string;
     isActive: boolean;
     role: string;
+    phone?: string;
     createdAt: string | Date;
     updatedAt: string | Date;
   }): User {
@@ -158,6 +167,7 @@ export class User {
       lastName: data.lastName,
       isActive: data.isActive,
       role: data.role as UserRole,
+      phone: data.phone,
       createdAt: new Date(data.createdAt),
       updatedAt: new Date(data.updatedAt),
     });

@@ -81,4 +81,14 @@ export class CreateUserDto {
   })
   @IsOptional()
   isActive?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Número de teléfono del usuario',
+    example: '+34612345678',
+    maxLength: 20,
+  })
+  @IsOptional()
+  @IsString({ message: 'El teléfono debe ser una cadena de texto' })
+  @MaxLength(20, { message: 'El teléfono no puede exceder 20 caracteres' })
+  phone?: string;
 }

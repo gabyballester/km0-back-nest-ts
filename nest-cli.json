@@ -7,6 +7,7 @@
     "typeCheck": false,
     "assets": [],
     "watchAssets": false,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "builder": "tsc"
   }
 }

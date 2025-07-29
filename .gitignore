@@ -163,6 +163,9 @@ generated/
 legacy/
 
 # Nested dist folders
+dist-try/
+dist-*/
+scripts/dist/
 
 # Database
 drizzle/
