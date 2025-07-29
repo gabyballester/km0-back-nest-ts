@@ -24,6 +24,7 @@ const PRODUCTION_DEPS = [
   'reflect-metadata',
   'swagger-ui-express',
   'tsconfig-paths', // ✅ CRÍTICO: Necesario para start:prod en producción
+  '@types/express', // ✅ CRÍTICO: Necesario para build en producción
 ];
 
 // Dependencias que DEBEN estar en devDependencies (desarrollo)
@@ -39,7 +40,6 @@ const DEVELOPMENT_DEPS = [
   'lint-staged',
   '@types/node',
   '@types/jest',
-  '@types/express', // ✅ CORRECTO: Tipos solo necesarios en desarrollo/build
   'ts-node',
   'ts-loader',
 ];
