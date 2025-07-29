@@ -1,94 +1,3 @@
-import {
-  IsOptional,
-  IsString,
-  IsUrl,
-  IsBoolean,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-
-/**
- * Social links configuration
- */
-export class SocialLinks {
-  @IsOptional()
-  @IsUrl()
-  twitter?: string;
-
-  @IsOptional()
-  @IsUrl()
-  linkedin?: string;
-
-  @IsOptional()
-  @IsUrl()
-  github?: string;
-
-  @IsOptional()
-  @IsUrl()
-  instagram?: string;
-
-  @IsOptional()
-  @IsUrl()
-  facebook?: string;
-}
-
-/**
- * Notification preferences
- */
-export class NotificationPreferences {
-  @IsOptional()
-  @IsBoolean()
-  email?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  push?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  sms?: boolean;
-}
-
-/**
- * Privacy settings
- */
-export class PrivacySettings {
-  @IsOptional()
-  @IsString()
-  profileVisibility?: 'public' | 'private' | 'friends';
-
-  @IsOptional()
-  @IsBoolean()
-  showEmail?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  showPhone?: boolean;
-}
-
-/**
- * User preferences
- */
-export class UserPreferences {
-  @IsOptional()
-  @IsString()
-  theme?: 'light' | 'dark' | 'auto';
-
-  @IsOptional()
-  @IsString()
-  language?: string;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => NotificationPreferences)
-  notifications?: NotificationPreferences;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => PrivacySettings)
-  privacy?: PrivacySettings;
-}
-
 /**
  * Profile entity representing user profile information
  * Follows Domain-Driven Design principles
@@ -96,43 +5,37 @@ export class UserPreferences {
 export class Profile {
   private readonly _id: string;
   private readonly _userId: string;
-  private _avatar?: string; // todo: quitar esta propiedad
-  private _bio?: string; // todo: quitar esta propiedad
-  private _dateOfBirth?: Date;
-  private _location?: string; // todo: quitar esta propiedad
-  private _website?: string; // todo: quitar esta propiedad
-  private _socialLinks?: SocialLinks; // todo: quitar esta propiedad
-  private _preferences?: UserPreferences; // todo: quitar esta propiedad
-  private _isPublic: boolean;
+  private _firstName: string;
+  private _lastName: string;
+  private _phone?: string;
+  private _language: string;
+  private _city?: string;
+  private _postalCode?: string;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
   constructor(
     id: string,
     userId: string,
-    isPublic: boolean = true,
+    firstName: string,
+    lastName: string,
+    language: string = 'es',
     createdAt: Date = new Date(),
     updatedAt: Date = new Date(),
-    avatar?: string,
-    bio?: string,
-    dateOfBirth?: Date,
-    location?: string,
-    website?: string,
-    socialLinks?: SocialLinks,
-    preferences?: UserPreferences,
+    phone?: string,
+    city?: string,
+    postalCode?: string,
   ) {
     this._id = id;
     this._userId = userId;
-    this._isPublic = isPublic;
+    this._firstName = firstName;
+    this._lastName = lastName;
+    this._language = language;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
-    this._avatar = avatar;
-    this._bio = bio;
-    this._dateOfBirth = dateOfBirth;
-    this._location = location;
-    this._website = website;
-    this._socialLinks = socialLinks;
-    this._preferences = preferences;
+    this._phone = phone;
+    this._city = city;
+    this._postalCode = postalCode;
   }
 
   // Getters
@@ -144,36 +47,28 @@ export class Profile {
     return this._userId;
   }
 
-  get avatar(): string | undefined {
-    return this._avatar;
+  get firstName(): string {
+    return this._firstName;
   }
 
-  get bio(): string | undefined {
-    return this._bio;
+  get lastName(): string {
+    return this._lastName;
   }
 
-  get dateOfBirth(): Date | undefined {
-    return this._dateOfBirth;
+  get phone(): string | undefined {
+    return this._phone;
   }
 
-  get location(): string | undefined {
-    return this._location;
+  get language(): string {
+    return this._language;
   }
 
-  get website(): string | undefined {
-    return this._website;
+  get city(): string | undefined {
+    return this._city;
   }
 
-  get socialLinks(): SocialLinks | undefined {
-    return this._socialLinks;
-  }
-
-  get preferences(): UserPreferences | undefined {
-    return this._preferences;
-  }
-
-  get isPublic(): boolean {
-    return this._isPublic;
+  get postalCode(): string | undefined {
+    return this._postalCode;
   }
 
   get createdAt(): Date {
@@ -186,112 +81,71 @@ export class Profile {
 
   // Business logic methods
   /**
-   * Update profile avatar
+   * Update first name
    */
-  updateAvatar(avatar: string): void {
-    this.validateAvatarUrl(avatar);
-    this._avatar = avatar;
+  updateFirstName(firstName: string): void {
+    this.validateFirstName(firstName);
+    this._firstName = firstName;
     this._updatedAt = new Date();
   }
 
   /**
-   * Update profile bio
+   * Update last name
    */
-  updateBio(bio: string): void {
-    this.validateBio(bio);
-    this._bio = bio;
+  updateLastName(lastName: string): void {
+    this.validateLastName(lastName);
+    this._lastName = lastName;
     this._updatedAt = new Date();
   }
 
   /**
-   * Update date of birth
+   * Update phone
    */
-  updateDateOfBirth(dateOfBirth: Date): void {
-    this.validateDateOfBirth(dateOfBirth);
-    this._dateOfBirth = dateOfBirth;
+  updatePhone(phone: string): void {
+    this.validatePhone(phone);
+    this._phone = phone;
     this._updatedAt = new Date();
   }
 
   /**
-   * Update location
+   * Update language
    */
-  updateLocation(location: string): void {
-    this.validateLocation(location);
-    this._location = location;
+  updateLanguage(language: string): void {
+    this.validateLanguage(language);
+    this._language = language;
     this._updatedAt = new Date();
   }
 
   /**
-   * Update website
+   * Update city
    */
-  updateWebsite(website: string): void {
-    this.validateWebsite(website);
-    this._website = website;
+  updateCity(city: string): void {
+    this.validateCity(city);
+    this._city = city;
     this._updatedAt = new Date();
   }
 
   /**
-   * Update social links
+   * Update postal code
    */
-  updateSocialLinks(socialLinks: SocialLinks): void {
-    this.validateSocialLinks(socialLinks);
-    this._socialLinks = socialLinks;
+  updatePostalCode(postalCode: string): void {
+    this.validatePostalCode(postalCode);
+    this._postalCode = postalCode;
     this._updatedAt = new Date();
   }
 
   /**
-   * Update preferences
+   * Get full name
    */
-  updatePreferences(preferences: UserPreferences): void {
-    this.validatePreferences(preferences);
-    this._preferences = preferences;
-    this._updatedAt = new Date();
-  }
-
-  /**
-   * Toggle profile visibility
-   */
-  toggleVisibility(): void {
-    this._isPublic = !this._isPublic;
-    this._updatedAt = new Date();
-  }
-
-  /**
-   * Set profile visibility
-   */
-  setVisibility(isPublic: boolean): void {
-    this._isPublic = isPublic;
-    this._updatedAt = new Date();
-  }
-
-  /**
-   * Get user age based on date of birth
-   */
-  getAge(): number | null {
-    if (!this._dateOfBirth) {
-      return null;
-    }
-
-    const today = new Date();
-    const birthDate = new Date(this._dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
+  getFullName(): string {
+    return `${this._firstName} ${this._lastName}`.trim();
   }
 
   /**
    * Check if profile is complete (has basic information)
    */
   isComplete(): boolean {
-    return !!(this._bio && this._location && this._avatar);
+    return !!(this._firstName && this._lastName && this._city);
   }
 
   /**
@@ -299,109 +153,85 @@ export class Profile {
    */
   getCompletionPercentage(): number {
     const fields = [
-      this._avatar,
-      this._bio,
-      this._dateOfBirth,
-      this._location,
-      this._website,
-      this._socialLinks,
-      this._preferences,
+      this._firstName,
+      this._lastName,
+      this._phone,
+      this._city,
+      this._postalCode,
     ];
 
     const completedFields = fields.filter(
-      field => field !== undefined && field !== null,
+      field => field !== undefined && field !== null && field !== '',
     ).length;
     return Math.round((completedFields / fields.length) * 100);
   }
 
   // Validation methods
-  private validateAvatarUrl(avatar: string): void {
-    if (avatar && avatar.length > 500) {
-      throw new Error('Avatar URL cannot exceed 500 characters');
+  private validateFirstName(firstName: string): void {
+    if (!firstName || firstName.trim().length === 0) {
+      throw new Error('First name cannot be empty');
+    }
+    if (firstName.length > 50) {
+      throw new Error('First name cannot exceed 50 characters');
     }
   }
 
-  private validateBio(bio: string): void {
-    if (bio && bio.length > 1000) {
-      throw new Error('Bio cannot exceed 1000 characters');
+  private validateLastName(lastName: string): void {
+    if (!lastName || lastName.trim().length === 0) {
+      throw new Error('Last name cannot be empty');
+    }
+    if (lastName.length > 50) {
+      throw new Error('Last name cannot exceed 50 characters');
     }
   }
 
-  private validateDateOfBirth(dateOfBirth: Date): void {
-    const today = new Date();
-    if (dateOfBirth > today) {
-      throw new Error('Date of birth cannot be in the future');
-    }
-
-    const minAge = 13;
-    const maxAge = 120;
-    const age = this.calculateAge(dateOfBirth);
-
-    if (age < minAge || age > maxAge) {
-      throw new Error(`Age must be between ${minAge} and ${maxAge} years`);
+  private validatePhone(phone: string): void {
+    if (phone && phone.length > 20) {
+      throw new Error('Phone number cannot exceed 20 characters');
     }
   }
 
-  private validateLocation(location: string): void {
-    if (location && location.length > 100) {
-      throw new Error('Location cannot exceed 100 characters');
+  private validateLanguage(language: string): void {
+    const validLanguages = ['es', 'en', 'fr', 'de', 'it', 'pt'];
+    if (!validLanguages.includes(language)) {
+      throw new Error('Invalid language code');
     }
   }
 
-  private validateWebsite(website: string): void {
-    if (website && website.length > 255) {
-      throw new Error('Website URL cannot exceed 255 characters');
+  private validateCity(city: string): void {
+    if (city && city.length > 100) {
+      throw new Error('City name cannot exceed 100 characters');
     }
   }
 
-  private validateSocialLinks(_socialLinks: SocialLinks): void {
-    // Validation is handled by class-validator decorators
-  }
-
-  private validatePreferences(_preferences: UserPreferences): void {
-    // Validation is handled by class-validator decorators
-  }
-
-  private calculateAge(dateOfBirth: Date): number {
-    const today = new Date();
-    let age = today.getFullYear() - dateOfBirth.getFullYear();
-    const monthDiff = today.getMonth() - dateOfBirth.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < dateOfBirth.getDate())
-    ) {
-      age--;
+  private validatePostalCode(postalCode: string): void {
+    if (postalCode && postalCode.length > 10) {
+      throw new Error('Postal code cannot exceed 10 characters');
     }
-
-    return age;
   }
 
   // Factory method
   static create(
     userId: string,
-    avatar?: string,
-    bio?: string,
-    dateOfBirth?: Date,
-    location?: string,
-    website?: string,
-    socialLinks?: SocialLinks,
-    preferences?: UserPreferences,
+    firstName: string,
+    lastName: string,
+    language: string = 'es',
+    phone?: string,
+    city?: string,
+    postalCode?: string,
   ): Profile {
     const id = crypto.randomUUID();
     return new Profile(
       id,
       userId,
-      true,
+      firstName,
+      lastName,
+      language,
       new Date(),
       new Date(),
-      avatar,
-      bio,
-      dateOfBirth,
-      location,
-      website,
-      socialLinks,
-      preferences,
+      phone,
+      city,
+      postalCode,
     );
   }
 }

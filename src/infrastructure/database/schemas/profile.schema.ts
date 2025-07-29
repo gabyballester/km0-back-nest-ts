@@ -1,18 +1,10 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  varchar,
-  date,
-  jsonb,
-  boolean,
-} from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { users } from './user.schema';
 
 /**
  * Profile schema using Drizzle ORM
- * One-to-one relationship with users table
+ * Contains user profile information (1:1 relationship with users)
  */
 export const profiles = pgTable('profiles', {
   id: text('id')
@@ -26,39 +18,12 @@ export const profiles = pgTable('profiles', {
     .references(() => users.id, { onDelete: 'cascade' }),
 
   // Basic profile information
-  avatar: varchar('avatar', { length: 500 }),
-  bio: text('bio'),
-  dateOfBirth: date('date_of_birth'),
-  location: varchar('location', { length: 100 }),
-  website: varchar('website', { length: 255 }),
-
-  // Social media links (stored as JSON)
-  socialLinks: jsonb('social_links').$type<{
-    twitter?: string;
-    linkedin?: string;
-    github?: string;
-    instagram?: string;
-    facebook?: string;
-  }>(),
-
-  // User preferences (stored as JSON)
-  preferences: jsonb('preferences').$type<{
-    theme?: 'light' | 'dark' | 'auto';
-    language?: string;
-    notifications?: {
-      email?: boolean;
-      push?: boolean;
-      sms?: boolean;
-    };
-    privacy?: {
-      profileVisibility?: 'public' | 'private' | 'friends';
-      showEmail?: boolean;
-      showPhone?: boolean;
-    };
-  }>(),
-
-  // Profile status
-  isPublic: boolean('is_public').notNull().default(true),
+  firstName: varchar('first_name', { length: 50 }).notNull(),
+  lastName: varchar('last_name', { length: 50 }).notNull(),
+  phone: varchar('phone', { length: 20 }),
+  language: varchar('language', { length: 10 }).default('es'),
+  city: varchar('city', { length: 100 }),
+  postalCode: varchar('postal_code', { length: 10 }),
 
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),

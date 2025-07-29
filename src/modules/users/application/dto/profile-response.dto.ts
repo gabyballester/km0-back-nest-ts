@@ -1,77 +1,6 @@
 import { Expose, Transform } from 'class-transformer';
 
 /**
- * Social links response DTO
- */
-export class SocialLinksResponseDto {
-  @Expose()
-  twitter?: string;
-
-  @Expose()
-  linkedin?: string;
-
-  @Expose()
-  github?: string;
-
-  @Expose()
-  instagram?: string;
-
-  @Expose()
-  facebook?: string;
-}
-
-/**
- * Notification preferences response DTO
- */
-export class NotificationPreferencesResponseDto {
-  @Expose()
-  email?: boolean;
-
-  @Expose()
-  push?: boolean;
-
-  @Expose()
-  sms?: boolean;
-}
-
-/**
- * Privacy settings response DTO
- */
-export class PrivacySettingsResponseDto {
-  @Expose()
-  profileVisibility?: 'public' | 'private' | 'friends';
-
-  @Expose()
-  showEmail?: boolean;
-
-  @Expose()
-  showPhone?: boolean;
-}
-
-/**
- * User preferences response DTO
- */
-export class UserPreferencesResponseDto {
-  @Expose()
-  theme?: 'light' | 'dark' | 'auto';
-
-  @Expose()
-  language?: string;
-
-  @Expose()
-  @Transform(({ value }) =>
-    value ? new NotificationPreferencesResponseDto() : undefined,
-  )
-  notifications?: NotificationPreferencesResponseDto;
-
-  @Expose()
-  @Transform(({ value }) =>
-    value ? new PrivacySettingsResponseDto() : undefined,
-  )
-  privacy?: PrivacySettingsResponseDto;
-}
-
-/**
  * DTO for profile responses
  */
 export class ProfileResponseDto {
@@ -82,33 +11,22 @@ export class ProfileResponseDto {
   userId!: string;
 
   @Expose()
-  avatar?: string;
+  firstName!: string;
 
   @Expose()
-  bio?: string;
+  lastName!: string;
 
   @Expose()
-  @Transform(({ value }) => (value ? new Date(value).toISOString() : undefined))
-  dateOfBirth?: Date;
+  phone?: string;
 
   @Expose()
-  location?: string;
+  language!: string;
 
   @Expose()
-  website?: string;
+  city?: string;
 
   @Expose()
-  @Transform(({ value }) => (value ? new SocialLinksResponseDto() : undefined))
-  socialLinks?: SocialLinksResponseDto;
-
-  @Expose()
-  @Transform(({ value }) =>
-    value ? new UserPreferencesResponseDto() : undefined,
-  )
-  preferences?: UserPreferencesResponseDto;
-
-  @Expose()
-  isPublic!: boolean;
+  postalCode?: string;
 
   @Expose()
   @Transform(({ value }) => new Date(value).toISOString())
@@ -120,11 +38,24 @@ export class ProfileResponseDto {
 
   // Computed properties
   @Expose()
-  age?: number;
+  @Transform(({ obj }) => `${obj.firstName} ${obj.lastName}`.trim())
+  fullName!: string;
 
   @Expose()
+  @Transform(({ obj }) => {
+    const fields = [
+      obj.firstName,
+      obj.lastName,
+      obj.phone,
+      obj.city,
+      obj.postalCode,
+    ];
+    const completedFields = fields.filter(field => field !== undefined && field !== null && field !== '').length;
+    return Math.round((completedFields / fields.length) * 100);
+  })
   completionPercentage!: number;
 
   @Expose()
+  @Transform(({ obj }) => !!(obj.firstName && obj.lastName && obj.city))
   isComplete!: boolean;
 }

@@ -9,7 +9,7 @@ import { createId } from '@paralleldrive/cuid2';
 
 /**
  * User schema using Drizzle ORM
- * Compatible with existing Prisma User model and domain entity
+ * Contains only basic user authentication and authorization data
  */
 export const users = pgTable('users', {
   id: text('id')
@@ -17,11 +17,9 @@ export const users = pgTable('users', {
     .$defaultFn(() => createId()),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
-  firstName: varchar('first_name', { length: 50 }).notNull(),
-  lastName: varchar('last_name', { length: 50 }).notNull(),
   isActive: boolean('is_active').notNull().default(true),
+  isBlocked: boolean('is_blocked').notNull().default(false),
   role: text('role').notNull().default('user'),
-  phone: varchar('phone', { length: 20 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

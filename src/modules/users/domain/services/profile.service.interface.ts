@@ -1,8 +1,4 @@
-import {
-  Profile,
-  SocialLinks,
-  UserPreferences,
-} from '../entities/profile.entity';
+import { Profile } from '../entities/profile.entity';
 import { CreateProfileDto } from '../../application/dto/create-profile.dto';
 import { UpdateProfileDto } from '../../application/dto/update-profile.dto';
 
@@ -44,66 +40,12 @@ export interface IProfileService {
   }>;
 
   /**
-   * Get public profiles with pagination
-   */
-  getPublicProfiles(
-    page?: number,
-    limit?: number,
-  ): Promise<{
-    profiles: Profile[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }>;
-
-  /**
    * Update profile
    */
   updateProfile(
     id: string,
     updateProfileDto: UpdateProfileDto,
   ): Promise<Profile>;
-
-  /**
-   * Update profile avatar
-   */
-  updateAvatar(id: string, avatar: string): Promise<Profile>;
-
-  /**
-   * Update profile bio
-   */
-  updateBio(id: string, bio: string): Promise<Profile>;
-
-  /**
-   * Update profile location
-   */
-  updateLocation(id: string, location: string): Promise<Profile>;
-
-  /**
-   * Update profile website
-   */
-  updateWebsite(id: string, website: string): Promise<Profile>;
-
-  /**
-   * Update profile social links
-   */
-  updateSocialLinks(id: string, socialLinks: SocialLinks): Promise<Profile>;
-
-  /**
-   * Update profile preferences
-   */
-  updatePreferences(id: string, preferences: UserPreferences): Promise<Profile>;
-
-  /**
-   * Toggle profile visibility
-   */
-  toggleProfileVisibility(id: string): Promise<Profile>;
-
-  /**
-   * Set profile visibility
-   */
-  setProfileVisibility(id: string, isPublic: boolean): Promise<Profile>;
 
   /**
    * Delete profile
@@ -121,42 +63,7 @@ export interface IProfileService {
   getProfileCompletionPercentage(id: string): Promise<number>;
 
   /**
-   * Get profiles by location
+   * Count total profiles
    */
-  getProfilesByLocation(
-    location: string,
-    page?: number,
-    limit?: number,
-  ): Promise<{
-    profiles: Profile[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }>;
-
-  /**
-   * Get incomplete profiles
-   */
-  getIncompleteProfiles(
-    page?: number,
-    limit?: number,
-  ): Promise<{
-    profiles: Profile[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }>;
-
-  /**
-   * Get profile statistics
-   */
-  getProfileStatistics(): Promise<{
-    total: number;
-    public: number;
-    private: number;
-    complete: number;
-    incomplete: number;
-  }>;
+  count(): Promise<number>;
 }

@@ -35,20 +35,6 @@ export interface IProfileRepository {
   }>;
 
   /**
-   * Find public profiles with pagination
-   */
-  findPublicProfiles(
-    page?: number,
-    limit?: number,
-  ): Promise<{
-    profiles: Profile[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }>;
-
-  /**
    * Update profile
    */
   update(id: string, profile: Partial<Profile>): Promise<Profile>;
@@ -67,38 +53,4 @@ export interface IProfileRepository {
    * Count total profiles
    */
   count(): Promise<number>;
-
-  /**
-   * Count public profiles
-   */
-  countPublic(): Promise<number>;
-
-  /**
-   * Find profiles by location
-   */
-  findByLocation(
-    location: string,
-    page?: number,
-    limit?: number,
-  ): Promise<{
-    profiles: Profile[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }>;
-
-  /**
-   * Find profiles with incomplete information
-   */
-  findIncompleteProfiles(
-    page?: number,
-    limit?: number,
-  ): Promise<{
-    profiles: Profile[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }>;
 }
