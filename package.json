@@ -31,6 +31,7 @@
     "db:studio": "prisma studio",
     "db:dev": "dotenv -e .env.development -- prisma db push --accept-data-loss",
     "db:dev:safe": "dotenv -e .env.development -- node scripts/drizzle-development-deploy.js",
+    "db:dev:reset": "dotenv -e .env.development -- node scripts/drizzle-development-reset.js",
     "db:test": "dotenv -e .env.test -- prisma db push --accept-data-loss",
     "db:prod": "node scripts/drizzle-production-deploy.js",
     "db:studio:dev": "dotenv -e .env.development -- prisma studio",
