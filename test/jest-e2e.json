@@ -37,5 +37,18 @@
   "testTimeout": 10000,
   "setupFilesAfterEnv": [],
   "forceExit": true,
-  "detectOpenHandles": false
+  "detectOpenHandles": false,
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/dist/",
+    "/legacy/",
+    "/scripts/"
+  ],
+  "modulePathIgnorePatterns": ["/legacy/"],
+  "transformIgnorePatterns": [
+    "/node_modules/",
+    "/dist/",
+    "/legacy/",
+    "/scripts/"
+  ]
 }
