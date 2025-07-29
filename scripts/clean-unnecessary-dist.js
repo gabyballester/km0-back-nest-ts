@@ -57,6 +57,87 @@ function removeDirectory(dirPath) {
 }
 
 /**
+ * Elimina archivos de scripts que no deberían estar en dist
+ */
+function removeScriptFilesFromDist() {
+  const distPath = path.join(process.cwd(), 'dist');
+
+  if (!fs.existsSync(distPath)) {
+    return 0;
+  }
+
+  const scriptFiles = [
+    // Scripts de migración
+    'drizzle-development-deploy.js',
+    'drizzle-development-reset.js',
+    'drizzle-production-deploy.js',
+    'drizzle-development-reset.dev.js', // Por si acaso hay duplicados
+    'drizzle-development-deploy.dev.js',
+
+    // Scripts de utilidades
+    'check-dependencies.js',
+    'check-deployment.js',
+    'check-dist-folders.js',
+    'check-port-config.js',
+    'check-process-env.js',
+    'check-ssl-config.js',
+    'clean-test-files.js',
+    'clean-unnecessary-dist.js',
+    'constants.js',
+    'database-safety-guard.js',
+    'db-backup.js',
+    'db-health.js',
+    'db-manager.js',
+    'db-validate.js',
+    'migrate-data.js',
+    'migration-manager.js',
+    'migration-workflow.js',
+    'prepare.js',
+    'script-audit.js',
+    'seed.js',
+    'setup-db.js',
+    'update-imports.js',
+  ];
+
+  let removedCount = 0;
+
+  function scanAndRemove(dir) {
+    try {
+      const items = fs.readdirSync(dir);
+
+      for (const item of items) {
+        const fullPath = path.join(dir, item);
+        const stat = fs.statSync(fullPath);
+
+        if (stat.isDirectory()) {
+          scanAndRemove(fullPath);
+        } else if (stat.isFile()) {
+          // Verificar si es un archivo de script que no debería estar ahí
+          if (scriptFiles.includes(item)) {
+            try {
+              fs.unlinkSync(fullPath);
+              console.log(
+                `  ${colors.yellow}🗑️${colors.reset} Eliminado archivo de script: ${path.relative(process.cwd(), fullPath)}`,
+              );
+              removedCount++;
+            } catch (error) {
+              console.error(
+                `${colors.red}❌ Error eliminando ${fullPath}:${colors.reset} ${error.message}`,
+              );
+            }
+          }
+        }
+      }
+    } catch (error) {
+      // Ignorar errores de permisos
+    }
+  }
+
+  scanAndRemove(distPath);
+  return removedCount;
+}
+
+/**
  * Función principal
  */
 function main() {
@@ -113,6 +194,16 @@ function main() {
     console.log('');
   }
 
+  // Eliminar archivos de scripts que no deberían estar en dist
+  const removedScriptFiles = removeScriptFilesFromDist();
+  console.log(
+    `${colors.yellow}🗑️  Eliminando archivos de scripts innecesarios en dist:${colors.reset}`,
+  );
+  console.log(
+    `  ${colors.yellow}•${colors.reset} Eliminados ${removedScriptFiles} archivos de scripts.`,
+  );
+  console.log('');
+
   // Mostrar carpetas necesarias (no se eliminan)
   if (analysis.necessary.length > 0) {
     console.log(
@@ -134,6 +225,7 @@ function main() {
   console.log(
     `  • Carpetas necesarias preservadas: ${analysis.necessary.length}`,
   );
+  console.log(`  • Archivos de scripts eliminados: ${removedScriptFiles}`);
 
   if (cleanedCount > 0) {
     console.log(
