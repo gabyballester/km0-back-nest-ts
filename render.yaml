@@ -9,34 +9,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 8000
-      - key: HOST
-        value: 0.0.0.0
       - key: DATABASE_ORM
         value: drizzle
-      - key: SEED_ENABLED
-        value: 'false'
-      - key: JWT_SECRET
-        generateValue: true
-      - key: COOKIE_SECRET
-        generateValue: true
-      - key: JWT_EXPIRES_IN
-        value: 1d
-      - key: THROTTLE_TTL
-        value: 60
-      - key: THROTTLE_LIMIT
-        value: 100
-      - key: CORS_ORIGIN
-        value: '*'
-      - key: LOG_LEVEL
-        value: info
-      - key: SEED_DATA_PATH
-        value: ./data/seed.json
     autoDeploy: true
-
-databases:
-  - name: km0-db
-    databaseName: km0_db
-    user: km0_user
-    plan: free
