@@ -23,7 +23,6 @@ const PRODUCTION_DEPS = [
   'rxjs',
   'reflect-metadata',
   'swagger-ui-express',
-  '@types/express', // ✅ CRÍTICO: Necesario para TypeScript en producción
 ];
 
 // Dependencias que DEBEN estar en devDependencies (desarrollo)
@@ -39,6 +38,7 @@ const DEVELOPMENT_DEPS = [
   'lint-staged',
   '@types/node',
   '@types/jest',
+  '@types/express', // ✅ CORRECTO: Tipos solo necesarios en desarrollo/build
   'ts-node',
   'ts-loader',
 ];
