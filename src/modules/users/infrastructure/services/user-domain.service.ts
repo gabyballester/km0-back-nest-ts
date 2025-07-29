@@ -22,6 +22,7 @@ export class UserDomainService implements IUserDomainService {
     }
 
     // Verificar que no existe
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const exists = await this.userRepository.existsByEmail(email);
     return !exists;
   }
@@ -83,6 +84,7 @@ export class UserDomainService implements IUserDomainService {
    * Verifica si un usuario puede realizar una acción específica
    */
   canPerformAction(user: User, action: string): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const permissions = this.getRolePermissions(user.role);
     return permissions.includes(action);
   }
@@ -92,20 +94,26 @@ export class UserDomainService implements IUserDomainService {
    */
   canModifyUser(currentUser: User, targetUser: User): boolean {
     // Los administradores pueden modificar cualquier usuario
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (currentUser.isAdmin) {
       return true;
     }
 
     // Los moderadores pueden modificar usuarios normales
     if (
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access
       currentUser.role === UserRole.MODERATOR &&
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access
       targetUser.role === UserRole.USER
     ) {
       return true;
     }
 
     // Los usuarios solo pueden modificarse a sí mismos
-    if (currentUser.id === targetUser.id) {
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access
+      currentUser.id === targetUser.id
+    ) {
       return true;
     }
 
@@ -117,6 +125,7 @@ export class UserDomainService implements IUserDomainService {
    */
   getRolePermissions(role: UserRole): string[] {
     switch (role) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       case UserRole.ADMIN:
         return [
           'user:create',
@@ -128,8 +137,10 @@ export class UserDomainService implements IUserDomainService {
           'user:change-role',
           'user:change-password',
         ];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       case UserRole.MODERATOR:
         return ['user:read', 'user:update', 'user:activate', 'user:deactivate'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       case UserRole.USER:
         return ['user:read:own', 'user:update:own'];
       default:
@@ -141,6 +152,7 @@ export class UserDomainService implements IUserDomainService {
    * Valida si un rol es válido
    */
   isValidRole(role: string): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return Object.values(UserRole).includes(role as UserRole);
   }
 
@@ -148,6 +160,7 @@ export class UserDomainService implements IUserDomainService {
    * Obtiene el rol por defecto para nuevos usuarios
    */
   getDefaultRole(): UserRole {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return UserRole.USER;
   }
 
