@@ -45,7 +45,9 @@
     "fix:dependencies": "node scripts/check-dependencies.js fix",
     "check:ports": "node scripts/check-port-config.js",
     "update:imports": "node scripts/update-imports.js",
-    "clean:dist": "node scripts/clean-dist.js"
+    "clean:dist": "node scripts/clean-dist.js",
+    "check:dist": "node scripts/check-dist-folders.js",
+    "clean:unnecessary-dist": "node scripts/clean-unnecessary-dist.js"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.7",
