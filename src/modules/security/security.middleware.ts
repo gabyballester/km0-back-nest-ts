@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import { ConfigService } from '@nestjs/config';
 import { ENV_KEYS } from '@/shared/constants/environment';
+import { IncomingMessage, ServerResponse } from 'http';
 
 /**
  * Security middleware that applies:
@@ -78,7 +79,7 @@ export class SecurityMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction): void {
     // Apply Helmet security headers
-    this.helmetMiddleware(req, res, () => {
+    this.helmetMiddleware(req as IncomingMessage, res as ServerResponse, () => {
       // Set CORS headers
       res.header('Access-Control-Allow-Origin', this.corsOrigin);
       res.header(
