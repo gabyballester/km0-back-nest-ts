@@ -1,4 +1,7 @@
 module.exports = {
+  // Verificación de seguridad para todos los archivos
+  '*': ['node scripts/security-check.js'],
+
   // Solo procesar archivos TypeScript que NO sean archivos de configuración
   '*.ts': filenames => {
     // Filtrar archivos de configuración
