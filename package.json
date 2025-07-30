@@ -32,7 +32,7 @@
     "db:dev": "dotenv -e .env.development -- prisma db push",
     "db:dev:reset": "dotenv -e .env.development -- prisma migrate reset",
     "db:test": "dotenv -e .env.test -- prisma db push",
-    "db:prod": "dotenv -e .env -- prisma migrate deploy",
+    "db:prod": "dotenv -e .env -- prisma db push",
     "db:studio:dev": "dotenv -e .env.development -- prisma studio",
     "db:studio:test": "dotenv -e .env.test -- prisma studio",
     "db:studio:prod": "dotenv -e .env -- prisma studio",
@@ -75,7 +75,8 @@
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",
     "tsconfig-paths": "^4.2.0",
-    "zod": "^4.0.8"
+    "zod": "^4.0.8",
+    "dotenv-cli": "^9.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -94,7 +95,6 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "cross-env": "^7.0.3",
-    "dotenv-cli": "^9.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
