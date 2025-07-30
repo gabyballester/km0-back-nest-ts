@@ -40,7 +40,7 @@ API_KEY=your-api-key-here
 
 ```bash
 # .env (NO COMMITEAR)
-DATABASE_URL=postgresql://gabi:realpassword@realhost.com/realdb
+DATABASE_URL=postgresql://user:realpassword@realhost.com/realdb
 JWT_SECRET=8f7d3b2a1e9c6f5d4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0
 ```
 
