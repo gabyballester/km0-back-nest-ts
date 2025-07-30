@@ -408,6 +408,7 @@ describe('Profile', () => {
         mockUserId,
         mockFirstName,
         mockLastName1,
+        mockLastName2, // lastName2
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
@@ -517,6 +518,7 @@ describe('Profile', () => {
         mockUserId,
         mockFirstName,
         mockLastName1,
+        undefined, // lastName2
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,

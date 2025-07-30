@@ -153,7 +153,12 @@ describe('UserPersistenceAdapter', () => {
   describe('round-trip conversion', () => {
     it('should maintain data integrity through create conversion', () => {
       const prismaData = UserPersistenceAdapter.toPrismaCreate(mockUser);
-      const convertedBack = UserPersistenceAdapter.fromPrisma(prismaData);
+      const convertedBack = UserPersistenceAdapter.fromPrisma({
+        ...prismaData,
+        id: mockUser.id, // Ensure id is defined
+        createdAt: mockUser.createdAt, // Ensure createdAt is defined
+        updatedAt: mockUser.updatedAt, // Ensure updatedAt is defined
+      });
 
       expect(convertedBack.id).toBe(mockUser.id);
       expect(convertedBack.email).toBe(mockUser.email);

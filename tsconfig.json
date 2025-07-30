@@ -42,5 +42,5 @@
     "noUnusedParameters": false
   },
   "include": ["src/**/*", "test/**/*"],
-  "exclude": ["node_modules", "dist", "legacy", "scripts"]
+  "exclude": ["node_modules", "dist", "legacy", "scripts", "*.config.js", "*.config.mjs", ".lintstagedrc.js"]
 }
