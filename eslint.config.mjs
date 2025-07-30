@@ -16,6 +16,7 @@ export default tseslint.config(
 
       'commitlint.config.js',
       'jest.config.js',
+      '.lintstagedrc.js',
       '.jest-cache/**/*',
     ],
   },
