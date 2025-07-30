@@ -114,7 +114,7 @@ api_key.*=.*[a-zA-Z0-9]{8,}
 
 ```markdown
 # Configuración de Base de Datos
-DATABASE_URL=postgresql://gabi:JrqKcqtJtm8KgeMJ0xzVDCn5FIv3rDWA@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db
+DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
 ```
 
 ### **✅ CORRECTO:**
