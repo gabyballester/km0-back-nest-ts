@@ -531,7 +531,7 @@ describe('Profile', () => {
       const percentage = profileWithEmptyFields.getCompletionPercentage();
 
       // Assert
-      expect(percentage).toBe(50); // Only firstName, lastName1, and lastName2 count
+      expect(percentage).toBe(33); // Only firstName and lastName1 count (2 out of 6 fields)
     });
   });
 
