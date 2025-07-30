@@ -1,244 +1,206 @@
-import { User, UserRole } from './user.entity';
-// UserFactory import removed as it's not being used in this test file
+import { User } from './user.entity';
 
 describe('User Entity', () => {
   const mockUserData = {
     email: 'test@example.com',
-    password: 'hashedPassword123',
-    firstName: 'John',
-    lastName: 'Doe',
+    password: 'Password123',
   };
 
-  describe('Constructor', () => {
-    it('should create a user with default values', () => {
+  describe('constructor', () => {
+    it('should create a user with provided data', () => {
       const user = new User(mockUserData);
 
-      expect(user.id).toBeDefined();
       expect(user.email).toBe(mockUserData.email);
       expect(user.password).toBe(mockUserData.password);
-      expect(user.firstName).toBe(mockUserData.firstName);
-      expect(user.lastName).toBe(mockUserData.lastName);
-      expect(user.isActive).toBe(true);
-      expect(user.role).toBe(UserRole.USER);
+      expect(user.id).toBeDefined();
       expect(user.createdAt).toBeInstanceOf(Date);
       expect(user.updatedAt).toBeInstanceOf(Date);
     });
 
-    it('should create a user with custom values', () => {
+    it('should create a user with custom data', () => {
       const customData = {
-        ...mockUserData,
         id: 'custom-id',
-        isActive: false,
-        role: UserRole.ADMIN,
-        createdAt: new Date('2023-01-01'),
-        updatedAt: new Date('2023-01-02'),
+        email: 'custom@example.com',
+        password: 'CustomPass123',
+        createdAt: new Date('2024-01-01T10:00:00Z'),
+        updatedAt: new Date('2024-01-02T15:30:00Z'),
       };
 
       const user = new User(customData);
 
       expect(user.id).toBe(customData.id);
-      expect(user.isActive).toBe(customData.isActive);
-      expect(user.role).toBe(customData.role);
-      expect(user.createdAt).toEqual(customData.createdAt);
-      expect(user.updatedAt).toEqual(customData.updatedAt);
+      expect(user.email).toBe(customData.email);
+      expect(user.password).toBe(customData.password);
+      expect(user.createdAt).toBe(customData.createdAt);
+      expect(user.updatedAt).toBe(customData.updatedAt);
+    });
+
+    it('should generate unique ID when not provided', () => {
+      const user1 = new User(mockUserData);
+      const user2 = new User(mockUserData);
+
+      expect(user1.id).not.toBe(user2.id);
+      expect(user1.id).toMatch(/^user_\d+_[a-z0-9]+$/);
+      expect(user2.id).toMatch(/^user_\d+_[a-z0-9]+$/);
+    });
+
+    it('should set default timestamps when not provided', () => {
+      const beforeCreation = new Date();
+      const user = new User(mockUserData);
+      const afterCreation = new Date();
+
+      expect(user.createdAt.getTime()).toBeGreaterThanOrEqual(
+        beforeCreation.getTime(),
+      );
+      expect(user.createdAt.getTime()).toBeLessThanOrEqual(
+        afterCreation.getTime(),
+      );
+      expect(user.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        beforeCreation.getTime(),
+      );
+      expect(user.updatedAt.getTime()).toBeLessThanOrEqual(
+        afterCreation.getTime(),
+      );
     });
   });
 
-  describe('Getters', () => {
-    let user: User;
-
-    beforeEach(() => {
-      user = new User(mockUserData);
+  describe('email validation', () => {
+    it('should validate correct email format', () => {
+      const user = new User(mockUserData);
+      expect(user.isValidEmail()).toBe(true);
     });
 
-    it('should return full name', () => {
-      expect(user.fullName).toBe('John Doe');
-    });
-
-    it('should return full name with single name', () => {
-      const singleNameUser = new User({
+    it('should reject invalid email format', () => {
+      const user = new User({
         ...mockUserData,
-        firstName: 'John',
-        lastName: '',
+        email: 'invalid-email',
       });
-      expect(singleNameUser.fullName).toBe('John');
+      expect(user.isValidEmail()).toBe(false);
     });
 
-    it('should check if user is admin', () => {
-      expect(user.isAdmin).toBe(false);
-
-      const adminUser = new User({
+    it('should reject empty email', () => {
+      const user = new User({
         ...mockUserData,
-        role: UserRole.ADMIN,
+        email: '',
       });
-      expect(adminUser.isAdmin).toBe(true);
+      expect(user.isValidEmail()).toBe(false);
     });
 
-    it('should check if user is active', () => {
-      expect(user.isUserActive).toBe(true);
-
-      const inactiveUser = new User({
+    it('should accept email with special characters', () => {
+      const user = new User({
         ...mockUserData,
-        isActive: false,
+        email: 'test+tag@example.com',
       });
-      expect(inactiveUser.isUserActive).toBe(false);
-    });
-  });
-
-  describe('Role Management', () => {
-    let user: User;
-
-    beforeEach(() => {
-      user = new User(mockUserData);
+      expect(user.isValidEmail()).toBe(true);
     });
 
-    it('should check if user has specific role', () => {
-      expect(user.hasRole(UserRole.USER)).toBe(true);
-      expect(user.hasRole(UserRole.ADMIN)).toBe(false);
-    });
-
-    it('should change user role', () => {
-      user.changeRole(UserRole.ADMIN);
-
-      expect(user.role).toBe(UserRole.ADMIN);
-      expect(user.updatedAt).toBeInstanceOf(Date);
-    });
-  });
-
-  describe('Status Management', () => {
-    let user: User;
-
-    beforeEach(() => {
-      user = new User(mockUserData);
-    });
-
-    it('should activate user', () => {
-      user.isActive = false;
-
-      user.activate();
-
-      expect(user.isActive).toBe(true);
-      expect(user.updatedAt).toBeInstanceOf(Date);
-    });
-
-    it('should deactivate user', () => {
-      user.deactivate();
-
-      expect(user.isActive).toBe(false);
-      expect(user.updatedAt).toBeInstanceOf(Date);
-    });
-  });
-
-  describe('Information Updates', () => {
-    let user: User;
-
-    beforeEach(() => {
-      user = new User(mockUserData);
-    });
-
-    it('should update user information', () => {
-      user.updateInfo({
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane@example.com',
+    it('should accept email with subdomains', () => {
+      const user = new User({
+        ...mockUserData,
+        email: 'user@subdomain.example.com',
       });
+      expect(user.isValidEmail()).toBe(true);
+    });
+  });
 
-      expect(user.firstName).toBe('Jane');
-      expect(user.lastName).toBe('Smith');
-      expect(user.email).toBe('jane@example.com');
-      expect(user.updatedAt).toBeInstanceOf(Date);
+  describe('password validation', () => {
+    it('should validate correct password length', () => {
+      const user = new User(mockUserData);
+      expect(user.isValidPassword()).toBe(true);
     });
 
-    it('should update partial information', () => {
-      user.updateInfo({
-        firstName: 'Jane',
+    it('should reject short password', () => {
+      const user = new User({
+        ...mockUserData,
+        password: 'short',
       });
+      expect(user.isValidPassword()).toBe(false);
+    });
 
-      expect(user.firstName).toBe('Jane');
-      expect(user.lastName).toBe('Doe'); // Unchanged
-      expect(user.email).toBe('test@example.com'); // Unchanged
-      expect(user.updatedAt).toBeInstanceOf(Date);
+    it('should accept minimum valid password length', () => {
+      const user = new User({
+        ...mockUserData,
+        password: 'Pass123!',
+      });
+      expect(user.isValidPassword()).toBe(true);
+    });
+
+    it('should accept long password', () => {
+      const user = new User({
+        ...mockUserData,
+        password: 'A'.repeat(100),
+      });
+      expect(user.isValidPassword()).toBe(true);
     });
   });
 
-  describe('Password Management', () => {
-    let user: User;
+  describe('updateEmail', () => {
+    it('should update email and updatedAt', () => {
+      const user = new User(mockUserData);
+      const originalUpdatedAt = user.updatedAt;
+      const newEmail = 'new@example.com';
 
-    beforeEach(() => {
-      user = new User(mockUserData);
-    });
+      // Wait a bit to ensure timestamp difference
+      setTimeout(() => {
+        user.updateEmail(newEmail);
 
-    it('should change password', () => {
-      const newPassword = 'newHashedPassword456';
-
-      user.changePassword(newPassword);
-
-      expect(user.password).toBe(newPassword);
-      expect(user.updatedAt).toBeInstanceOf(Date);
+        expect(user.email).toBe(newEmail);
+        expect(user.updatedAt.getTime()).toBeGreaterThan(
+          originalUpdatedAt.getTime(),
+        );
+      }, 1);
     });
   });
 
-  describe('Serialization', () => {
-    let user: User;
+  describe('changePassword', () => {
+    it('should update password and updatedAt', () => {
+      const user = new User(mockUserData);
+      const originalUpdatedAt = user.updatedAt;
+      const newPassword = 'NewPassword123';
 
-    beforeEach(() => {
-      user = new User(mockUserData);
+      // Wait a bit to ensure timestamp difference
+      setTimeout(() => {
+        user.changePassword(newPassword);
+
+        expect(user.password).toBe(newPassword);
+        expect(user.updatedAt.getTime()).toBeGreaterThan(
+          originalUpdatedAt.getTime(),
+        );
+      }, 1);
     });
+  });
 
-    it('should convert to JSON', () => {
+  describe('toJSON', () => {
+    it('should return correct JSON representation', () => {
+      const customData = {
+        id: 'test-id',
+        email: 'test@example.com',
+        password: 'Password123',
+        createdAt: new Date('2024-01-01T10:00:00Z'),
+        updatedAt: new Date('2024-01-02T15:30:00Z'),
+      };
+
+      const user = new User(customData);
       const json = user.toJSON();
 
       expect(json).toEqual({
-        id: user.id,
-        email: user.email,
-        password: user.password,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isActive: user.isActive,
-        role: user.role,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
+        id: customData.id,
+        email: customData.email,
+        password: customData.password,
+        createdAt: customData.createdAt,
+        updatedAt: customData.updatedAt,
       });
     });
+  });
 
-    it('should create from JSON', () => {
-      const json = user.toJSON();
-      const newUser = User.fromJSON(
-        json as {
-          id: string;
-          email: string;
-          password: string;
-          firstName: string;
-          lastName: string;
-          isActive: boolean;
-          role: string;
-          createdAt: string | Date;
-          updatedAt: string | Date;
-        },
-      );
-
-      expect(newUser.id).toBe(user.id);
-      expect(newUser.email).toBe(user.email);
-      expect(newUser.password).toBe(user.password);
-      expect(newUser.firstName).toBe(user.firstName);
-      expect(newUser.lastName).toBe(user.lastName);
-      expect(newUser.isActive).toBe(user.isActive);
-      expect(newUser.role).toBe(user.role);
-      expect(newUser.createdAt).toEqual(user.createdAt);
-      expect(newUser.updatedAt).toEqual(user.updatedAt);
-    });
-
-    it('should handle date strings in fromJSON', () => {
+  describe('fromJSON', () => {
+    it('should create user from JSON data', () => {
       const jsonData = {
         id: 'test-id',
         email: 'test@example.com',
-        password: 'password123',
-        firstName: 'John',
-        lastName: 'Doe',
-        isActive: true,
-        role: 'user',
-        createdAt: '2023-01-01T00:00:00.000Z',
-        updatedAt: '2023-01-02T00:00:00.000Z',
+        password: 'Password123',
+        createdAt: '2024-01-01T10:00:00.000Z',
+        updatedAt: '2024-01-02T15:30:00.000Z',
       };
 
       const user = User.fromJSON(jsonData);
@@ -246,25 +208,228 @@ describe('User Entity', () => {
       expect(user.id).toBe(jsonData.id);
       expect(user.email).toBe(jsonData.email);
       expect(user.password).toBe(jsonData.password);
-      expect(user.firstName).toBe(jsonData.firstName);
-      expect(user.lastName).toBe(jsonData.lastName);
-      expect(user.isActive).toBe(jsonData.isActive);
-      expect(user.role).toBe(UserRole.USER);
       expect(user.createdAt).toEqual(new Date(jsonData.createdAt));
       expect(user.updatedAt).toEqual(new Date(jsonData.updatedAt));
     });
-  });
 
-  describe('UserRole Enum', () => {
-    it('should have correct role values', () => {
-      expect(UserRole.USER).toBe('user');
-      expect(UserRole.ADMIN).toBe('admin');
-      expect(UserRole.MODERATOR).toBe('moderator');
+    it('should handle Date objects in JSON data', () => {
+      const jsonData = {
+        id: 'test-id',
+        email: 'test@example.com',
+        password: 'Password123',
+        createdAt: new Date('2024-01-01T10:00:00Z'),
+        updatedAt: new Date('2024-01-02T15:30:00Z'),
+      };
+
+      const user = User.fromJSON(jsonData);
+
+      expect(user.id).toBe(jsonData.id);
+      expect(user.email).toBe(jsonData.email);
+      expect(user.password).toBe(jsonData.password);
+      expect(user.createdAt).toEqual(jsonData.createdAt);
+      expect(user.updatedAt).toEqual(jsonData.updatedAt);
     });
 
-    it('should have correct role type', () => {
-      const role: UserRole = UserRole.ADMIN;
-      expect(role).toBe('admin');
+    it('should handle different date formats', () => {
+      const jsonData = {
+        id: 'test-id',
+        email: 'test@example.com',
+        password: 'Password123',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-02',
+      };
+
+      const user = User.fromJSON(jsonData);
+
+      expect(user.createdAt).toEqual(new Date('2024-01-01'));
+      expect(user.updatedAt).toEqual(new Date('2024-01-02'));
+    });
+
+    it('should preserve data types correctly', () => {
+      const jsonData = {
+        id: 'test-id',
+        email: 'test@example.com',
+        password: 'Password123',
+        createdAt: '2024-01-01T10:00:00.000Z',
+        updatedAt: '2024-01-02T15:30:00.000Z',
+      };
+
+      const user = User.fromJSON(jsonData);
+
+      expect(typeof user.id).toBe('string');
+      expect(typeof user.email).toBe('string');
+      expect(typeof user.password).toBe('string');
+      expect(user.createdAt).toBeInstanceOf(Date);
+      expect(user.updatedAt).toBeInstanceOf(Date);
+    });
+  });
+
+  describe('email validation edge cases', () => {
+    it('should reject email without @', () => {
+      const user = new User({
+        ...mockUserData,
+        email: 'testexample.com',
+      });
+      expect(user.isValidEmail()).toBe(false);
+    });
+
+    it('should reject email without domain', () => {
+      const user = new User({
+        ...mockUserData,
+        email: 'test@',
+      });
+      expect(user.isValidEmail()).toBe(false);
+    });
+
+    it('should reject email with spaces', () => {
+      const user = new User({
+        ...mockUserData,
+        email: 'test @example.com',
+      });
+      expect(user.isValidEmail()).toBe(false);
+    });
+
+    it('should accept complex valid emails', () => {
+      const validEmails = [
+        'test+tag@example.com',
+        'test.name@example.co.uk',
+        'test123@example-domain.com',
+        'test@example.com',
+        'user@subdomain.example.com',
+      ];
+
+      validEmails.forEach(email => {
+        const user = new User({
+          ...mockUserData,
+          email,
+        });
+        expect(user.isValidEmail()).toBe(true);
+      });
+    });
+  });
+
+  describe('password validation edge cases', () => {
+    it('should reject password with exactly 7 characters', () => {
+      const user = new User({
+        ...mockUserData,
+        password: 'Pass12!',
+      });
+      expect(user.isValidPassword()).toBe(false);
+    });
+
+    it('should accept password with exactly 8 characters', () => {
+      const user = new User({
+        ...mockUserData,
+        password: 'Pass123!',
+      });
+      expect(user.isValidPassword()).toBe(true);
+    });
+
+    it('should reject empty password', () => {
+      const user = new User({
+        ...mockUserData,
+        password: '',
+      });
+      expect(user.isValidPassword()).toBe(false);
+    });
+  });
+
+  describe('updateEmail edge cases', () => {
+    it('should update email multiple times', () => {
+      const user = new User(mockUserData);
+
+      user.updateEmail('second@example.com');
+      expect(user.email).toBe('second@example.com');
+
+      user.updateEmail('third@example.com');
+      expect(user.email).toBe('third@example.com');
+    });
+
+    it('should preserve other properties when updating email', () => {
+      const user = new User(mockUserData);
+
+      const originalId = user.id;
+      const originalPassword = user.password;
+      const originalCreatedAt = user.createdAt;
+
+      user.updateEmail('new@example.com');
+
+      expect(user.id).toBe(originalId);
+      expect(user.password).toBe(originalPassword);
+      expect(user.createdAt).toBe(originalCreatedAt);
+    });
+  });
+
+  describe('changePassword edge cases', () => {
+    it('should update password multiple times', () => {
+      const user = new User(mockUserData);
+
+      user.changePassword('SecondPass123!');
+      expect(user.password).toBe('SecondPass123!');
+
+      user.changePassword('ThirdPass123!');
+      expect(user.password).toBe('ThirdPass123!');
+    });
+
+    it('should preserve other properties when changing password', () => {
+      const user = new User(mockUserData);
+
+      const originalId = user.id;
+      const originalEmail = user.email;
+      const originalCreatedAt = user.createdAt;
+
+      user.changePassword('NewPass123!');
+
+      expect(user.id).toBe(originalId);
+      expect(user.email).toBe(originalEmail);
+      expect(user.createdAt).toBe(originalCreatedAt);
+    });
+  });
+
+  describe('toJSON edge cases', () => {
+    it('should return correct data types', () => {
+      const user = new User(mockUserData);
+      const json = user.toJSON();
+
+      expect(typeof json.id).toBe('string');
+      expect(typeof json.email).toBe('string');
+      expect(typeof json.password).toBe('string');
+      expect(json.createdAt).toBeInstanceOf(Date);
+      expect(json.updatedAt).toBeInstanceOf(Date);
+    });
+
+    it('should return immutable data', () => {
+      const user = new User(mockUserData);
+      const json = user.toJSON();
+      const originalId = json.id;
+      const originalEmail = json.email;
+
+      // Modify the returned object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+      (json as any).id = 'modified';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+      (json as any).email = 'modified@example.com';
+
+      // Original user should remain unchanged
+      expect(user.id).toBe(originalId);
+      expect(user.email).toBe(originalEmail);
+    });
+  });
+
+  describe('immutability', () => {
+    it('should have readonly id and createdAt', () => {
+      const user = new User(mockUserData);
+
+      // En JavaScript, las propiedades readonly no son realmente inmutables en runtime
+      // Solo TypeScript las previene en tiempo de compilación
+      // Este test verifica que las propiedades están marcadas como readonly en TypeScript
+      expect(typeof user.id).toBe('string');
+      expect(user.createdAt).toBeInstanceOf(Date);
+
+      // Verificamos que las propiedades existen y tienen valores válidos
+      expect(user.id).toBeDefined();
+      expect(user.createdAt).toBeDefined();
+      expect(user.id).toMatch(/^user_\d+_[a-z0-9]+$/);
     });
   });
 });

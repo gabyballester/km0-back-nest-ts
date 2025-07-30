@@ -1,6 +1,12 @@
 import { Profile } from '../entities/profile.entity';
 
 /**
+ * Injection token for ProfileRepository
+ * Used for dependency injection in NestJS
+ */
+export const PROFILE_REPOSITORY = 'PROFILE_REPOSITORY';
+
+/**
  * Interface for profile repository operations
  * Follows Repository pattern for domain-driven design
  */
@@ -53,4 +59,19 @@ export interface IProfileRepository {
    * Count total profiles
    */
   count(): Promise<number>;
+
+  /**
+   * Find profiles by city
+   */
+  findByCity(city: string): Promise<Profile[]>;
+
+  /**
+   * Find profiles by language
+   */
+  findByLanguage(language: string): Promise<Profile[]>;
+
+  /**
+   * Find complete profiles (with basic information)
+   */
+  findCompleteProfiles(): Promise<Profile[]>;
 }

@@ -6,7 +6,7 @@
  * Sistema de seguridad robusto para prevenir la destrucción accidental
  * de la base de datos, especialmente en producción.
  *
- * Basado en mejores prácticas de NestJS, Drizzle ORM y la comunidad.
+ * Basado en mejores prácticas de NestJS, Prisma ORM y la comunidad.
  */
 
 const { execSync } = require('child_process');
@@ -35,7 +35,7 @@ const ENVIRONMENTS = {
 
 const DANGEROUS_OPERATIONS = {
   RESET: ['reset', 'drop', 'delete', 'truncate'],
-  DESTRUCTIVE: ['migrate reset', 'db push --force-reset', 'drizzle-kit drop'],
+  DESTRUCTIVE: ['migrate reset', 'db push --force-reset'],
   PRODUCTION_UNSAFE: ['migrate dev', 'db push --accept-data-loss'],
 };
 
@@ -208,6 +208,58 @@ function requestManualConfirmation(operation, reason) {
 }
 
 /**
+ * Database naming convention constants
+ * Ensures environment-specific database names for safety
+ */
+const DATABASE_NAMES = {
+  development: 'km0_db_dev',
+  production: 'km0_db',
+  test: 'km0_db_test',
+};
+
+/**
+ * Validates database name matches environment-specific naming convention
+ */
+function validateDatabaseName() {
+  const databaseUrl = process.env.DATABASE_URL;
+  const environment = getCurrentEnvironment();
+
+  if (!databaseUrl) {
+    logError('DATABASE_URL no está configurada');
+    return false;
+  }
+
+  try {
+    const dbUrl = new URL(databaseUrl);
+    const dbName = dbUrl.pathname.slice(1); // Remove leading '/'
+    const expectedName = DATABASE_NAMES[environment];
+
+    if (!expectedName) {
+      logError(`Entorno no reconocido: ${environment}`);
+      return false;
+    }
+
+    if (dbName !== expectedName) {
+      logError('❌ Error de validación de nombre de base de datos!');
+      logError(`   Entorno: ${environment}`);
+      logError(`   Esperado: ${expectedName}`);
+      logError(`   Encontrado: ${dbName}`);
+      logError('   Esto previene la pérdida accidental de datos');
+      logError(
+        '   asegurando que cada entorno use su base de datos designada.',
+      );
+      return false;
+    }
+
+    logSuccess(`✅ Nombre de base de datos válido: ${dbName}`);
+    return true;
+  } catch (error) {
+    logError(`Error validando DATABASE_URL: ${error.message}`);
+    return false;
+  }
+}
+
+/**
  * Verifica la configuración de seguridad
  */
 function validateSafetyConfiguration() {
@@ -226,6 +278,11 @@ function validateSafetyConfiguration() {
     logError(
       `Variables de entorno críticas faltantes: ${missingVars.join(', ')}`,
     );
+    return false;
+  }
+
+  // Verificar nombre de base de datos por entorno
+  if (!validateDatabaseName()) {
     return false;
   }
 

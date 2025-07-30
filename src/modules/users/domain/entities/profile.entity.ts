@@ -138,7 +138,7 @@ export class Profile {
    * Get full name
    */
   getFullName(): string {
-    return `${this._firstName} ${this._lastName}`.trim();
+    return `${this._firstName} ${this._lastName}`.replace(/\s+/g, ' ').trim();
   }
 
   /**
@@ -232,6 +232,33 @@ export class Profile {
       phone,
       city,
       postalCode,
+    );
+  }
+
+  // Factory method to create from JSON data
+  static fromJSON(data: {
+    id: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    language: string;
+    city?: string;
+    postalCode?: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+  }): Profile {
+    return new Profile(
+      data.id,
+      data.userId,
+      data.firstName,
+      data.lastName,
+      data.language,
+      new Date(data.createdAt),
+      new Date(data.updatedAt),
+      data.phone,
+      data.city,
+      data.postalCode,
     );
   }
 }

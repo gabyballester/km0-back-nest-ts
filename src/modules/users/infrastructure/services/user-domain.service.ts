@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User, UserRole } from '@/modules/users/domain/entities/user.entity';
+import { User } from '@/modules/users/domain/entities/user.entity';
 import { IUserDomainService } from '@/modules/users/domain/services/user.service.interface';
 import { UserRepository } from '@/modules/users/infrastructure/repositories/user.repository';
 
@@ -82,86 +82,49 @@ export class UserDomainService implements IUserDomainService {
 
   /**
    * Verifica si un usuario puede realizar una acción específica
+   * Por ahora, todos los usuarios pueden realizar todas las acciones
+   * TODO: Implementar sistema de roles cuando se añada a la entidad User
    */
-  canPerformAction(user: User, action: string): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const permissions = this.getRolePermissions(user.role);
-    return permissions.includes(action);
+  canPerformAction(_user: User, _action: string): boolean {
+    // TODO: Implementar lógica de permisos cuando se añadan roles a User
+    return true;
   }
 
   /**
    * Verifica si un usuario puede modificar a otro usuario
+   * Por ahora, todos los usuarios pueden modificar a otros
+   * TODO: Implementar sistema de roles cuando se añada a la entidad User
    */
-  canModifyUser(currentUser: User, targetUser: User): boolean {
-    // Los administradores pueden modificar cualquier usuario
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (currentUser.isAdmin) {
-      return true;
-    }
-
-    // Los moderadores pueden modificar usuarios normales
-    if (
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access
-      currentUser.role === UserRole.MODERATOR &&
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access
-      targetUser.role === UserRole.USER
-    ) {
-      return true;
-    }
-
-    // Los usuarios solo pueden modificarse a sí mismos
-    if (
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access
-      currentUser.id === targetUser.id
-    ) {
-      return true;
-    }
-
-    return false;
+  canModifyUser(_currentUser: User, _targetUser: User): boolean {
+    // TODO: Implementar lógica de permisos cuando se añadan roles a User
+    return true;
   }
 
   /**
    * Obtiene los permisos de un rol específico
+   * TODO: Implementar cuando se añadan roles a la entidad User
    */
-  getRolePermissions(role: UserRole): string[] {
-    switch (role) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      case UserRole.ADMIN:
-        return [
-          'user:create',
-          'user:read',
-          'user:update',
-          'user:delete',
-          'user:activate',
-          'user:deactivate',
-          'user:change-role',
-          'user:change-password',
-        ];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      case UserRole.MODERATOR:
-        return ['user:read', 'user:update', 'user:activate', 'user:deactivate'];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      case UserRole.USER:
-        return ['user:read:own', 'user:update:own'];
-      default:
-        return [];
-    }
+  getRolePermissions(_role: string): string[] {
+    // TODO: Implementar cuando se añadan roles a la entidad User
+    return ['user:read', 'user:write'];
   }
 
   /**
    * Valida si un rol es válido
+   * TODO: Implementar cuando se añadan roles a la entidad User
    */
   isValidRole(role: string): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return Object.values(UserRole).includes(role as UserRole);
+    // TODO: Implementar cuando se añadan roles a la entidad User
+    return ['user', 'admin', 'moderator'].includes(role);
   }
 
   /**
    * Obtiene el rol por defecto para nuevos usuarios
+   * TODO: Implementar cuando se añadan roles a la entidad User
    */
-  getDefaultRole(): UserRole {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return UserRole.USER;
+  getDefaultRole(): string {
+    // TODO: Implementar cuando se añadan roles a la entidad User
+    return 'user';
   }
 
   /**

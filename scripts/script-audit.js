@@ -178,14 +178,6 @@ const SCRIPT_ANALYSIS = {
     essential: true,
     notes: 'Script importante para gestión de migraciones',
   },
-  'drizzle-production-deploy.js': {
-    category: SCRIPT_CATEGORIES.DEPLOYMENT,
-    status: 'ACTIVE',
-    purpose: 'Deployment de Drizzle en producción',
-    usage: 'npm run db:prod',
-    essential: true,
-    notes: 'Script crítico para deployment',
-  },
 
   // === VALIDACIONES ===
   'validate-staged.js': {
@@ -312,7 +304,7 @@ const SCRIPT_ANALYSIS = {
     purpose: 'Deployment de producción',
     usage: 'node scripts/production-deploy.js',
     essential: false,
-    notes: 'Redundante con drizzle-production-deploy.js',
+    notes: 'Redundante con scripts de Prisma',
   },
   'production-deploy-utils.js': {
     category: SCRIPT_CATEGORIES.DEPLOYMENT,
@@ -320,7 +312,7 @@ const SCRIPT_ANALYSIS = {
     purpose: 'Utilidades de deployment',
     usage: 'require("./production-deploy-utils.js")',
     essential: false,
-    notes: 'Redundante con drizzle-production-deploy.js',
+    notes: 'Redundante con scripts de Prisma',
   },
   'monitor-deployment.js': {
     category: SCRIPT_CATEGORIES.DEPLOYMENT,

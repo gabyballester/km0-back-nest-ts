@@ -25,6 +25,9 @@ export class PrismaAdapter implements IDatabaseAdapter {
 
     this.config = {
       connectionString: databaseUrl,
+      maxConnections: 10,
+      idleTimeout: 30,
+      connectionTimeout: 10,
     };
   }
 
@@ -34,7 +37,7 @@ export class PrismaAdapter implements IDatabaseAdapter {
 
       // Create Prisma client
       this.prisma = new PrismaClient({
-        log: ['error'],
+        log: ['error', 'warn'],
         datasources: {
           db: {
             url: this.config.connectionString,
@@ -46,6 +49,7 @@ export class PrismaAdapter implements IDatabaseAdapter {
       await this.healthCheck();
 
       this.status = DatabaseStatus.CONNECTED;
+      console.log('✅ Prisma adapter conectado exitosamente');
     } catch (error) {
       this.status = DatabaseStatus.ERROR;
       console.error('❌ Error al conectar con Prisma:', error);
@@ -59,10 +63,10 @@ export class PrismaAdapter implements IDatabaseAdapter {
         await this.prisma.$disconnect();
         this.prisma = null;
       }
-
       this.status = DatabaseStatus.DISCONNECTED;
+      console.log('✅ Prisma adapter desconectado exitosamente');
     } catch (error) {
-      console.error('❌ Error al cerrar conexión Prisma:', error);
+      console.error('❌ Error al desconectar Prisma:', error);
       throw error;
     }
   }
@@ -70,21 +74,34 @@ export class PrismaAdapter implements IDatabaseAdapter {
   async healthCheck(): Promise<boolean> {
     try {
       if (!this.prisma) {
-        this.status = DatabaseStatus.ERROR;
         return false;
       }
 
-      // Execute simple query to check connection
-      await this.executeRawQuery('SELECT 1');
+      await this.prisma.$queryRaw`SELECT 1`;
       this.status = DatabaseStatus.CONNECTED;
       return true;
     } catch (error) {
-      console.error('❌ Health check Prisma falló:', error);
       this.status = DatabaseStatus.ERROR;
+      console.error('❌ Health check falló:', error);
       return false;
     }
   }
 
+  getStatus(): DatabaseStatus {
+    return this.status;
+  }
+
+  getConfig(): DatabaseAdapterConfig {
+    return this.config;
+  }
+
+  getOrmInstance(): PrismaClient | null {
+    return this.prisma;
+  }
+
+  /**
+   * Get database information
+   */
   async getDatabaseInfo(): Promise<{
     database_name: string;
     current_user: string;
@@ -95,46 +112,27 @@ export class PrismaAdapter implements IDatabaseAdapter {
         return null;
       }
 
-      const result = (await this.executeRawQuery(
-        'SELECT current_database() as database_name, current_user, version() as postgres_version',
-      )) as Array<{
-        database_name: string;
-        current_user: string;
-        postgres_version: string;
-      }>;
+      const result = await this.prisma.$queryRaw<
+        Array<{
+          current_database: string;
+          current_user: string;
+          version: string;
+        }>
+      >`SELECT current_database(), current_user, version()`;
 
       if (result && result.length > 0) {
         const info = result[0];
         return {
-          database_name: info.database_name ?? 'unknown',
+          database_name: info.current_database ?? 'unknown',
           current_user: info.current_user ?? 'unknown',
-          postgres_version: info.postgres_version ?? 'unknown',
+          postgres_version: info.version ?? 'unknown',
         };
       }
 
       return null;
     } catch (error) {
-      console.error(
-        '❌ Error al obtener información de la base de datos Prisma:',
-        error,
-      );
+      console.error('❌ Error al obtener información de la BD:', error);
       return null;
     }
-  }
-
-  async executeRawQuery(query: string): Promise<unknown> {
-    if (!this.prisma) {
-      throw new Error('Prisma client not initialized');
-    }
-
-    return await this.prisma.$queryRawUnsafe(query);
-  }
-
-  getOrmInstance(): PrismaClient | null {
-    return this.prisma;
-  }
-
-  getStatus(): DatabaseStatus {
-    return this.status;
   }
 }

@@ -2,19 +2,31 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 import { ENV_VALUES, ENV_KEYS } from '@/shared/constants/environment';
-import { CONFIG_KEYS } from '@/shared/constants/environment.schema';
 
 async function bootstrap() {
   try {
     // Crear aplicación
     const app = await NestFactory.create(AppModule);
 
+    // Configurar pipe de validación global
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+      }),
+    );
+
     // Obtener configuración
     const configService = app.get(ConfigService);
 
     // Configurar CORS
-    const corsOrigin = configService.get<string>(CONFIG_KEYS.CORS_ORIGIN);
+    const corsOrigin = configService.get<string>(ENV_KEYS.CORS_ORIGIN);
     app.enableCors({
       origin: corsOrigin,
       credentials: true,

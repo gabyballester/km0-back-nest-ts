@@ -1,337 +1,267 @@
-# KM0 Market Backend
+# 🚀 **KM0 Market Backend**
 
-## 🚀 **REGLAS OBLIGATORIAS DE DESARROLLO**
+Backend robusto para la plataforma KM0 Market construido con NestJS, Prisma ORM y PostgreSQL.
 
-### ⚡ **Scripts Rápidos - USO OBLIGATORIO**
+## 📋 **Características**
 
-**✅ SIEMPRE usar en desarrollo:**
+- ✅ **Arquitectura DDD** - Domain-Driven Design
+- ✅ **Prisma ORM** - Type-safe database access
+- ✅ **PostgreSQL** - Base de datos robusta
+- ✅ **100% Cobertura de Tests** - Tests unitarios, integración y E2E
+- ✅ **Validación Completa** - Class-validator y Zod
+- ✅ **Documentación API** - Swagger/OpenAPI
+- ✅ **Seguridad** - Helmet, CORS, Rate limiting
+- ✅ **Multi-entorno** - Development, Testing, Production
 
-```bash
-npm run test:quick   # Tests rápidos (~3.5s)
-npm run lint         # Linting rápido (~1s)
-npm run format       # Formatear (~0.5s)
-npm run start:dev    # Servidor desarrollo con hot reload
-```
+## 🏃‍♂️ **Inicio Rápido**
 
-**❌ NUNCA usar en desarrollo:**
-
-```bash
-npm run test:full    # Lento, solo para CI/CD
-npm run test:e2e:full # Lento, solo para CI/CD
-```
-
-### 🛡️ **Sistema de Validación Automática**
-
-**Pre-commit (Archivos Staged):**
-
-- ✅ Formato, Type-check, ESLint, Tests rápidos
-- ✅ Cobertura según umbrales configurados
-- ⏱️ Tiempo: ~5-6 segundos
-
-**Pre-push (Proyecto Completo):**
-
-- ✅ Validación completa + Tests E2E
-- ✅ Cobertura según umbrales configurados
-- ⏱️ Tiempo: ~8-10 segundos
-
-**📖 Ver documentación completa:** [docs/SCRIPTS.md](./docs/SCRIPTS.md)
-
-## 🏗️ Arquitectura Modular + Clean Architecture
-
-### 📁 Estructura del Proyecto
-
-```
-src/
-├── shared/                    # Recursos compartidos
-│   ├── constants/            # Constantes globales
-│   ├── decorators/           # Decoradores personalizados
-│   ├── filters/              # Filtros de excepción
-│   ├── guards/               # Guards globales
-│   ├── interceptors/         # Interceptores globales
-│   ├── pipes/                # Pipes de validación
-│   └── utils/                # Utilidades comunes
-│
-├── modules/                   # Módulos de negocio
-│   ├── auth/                 # Autenticación
-│   ├── users/                # Gestión de usuarios
-│   ├── products/             # Gestión de productos
-│   ├── orders/               # Gestión de pedidos
-│   └── security/             # Seguridad (rate limiting, etc.)
-│
-├── infrastructure/            # Capa de infraestructura
-│   ├── database/             # Configuración de BD
-│   ├── cache/                # Configuración de caché
-│   ├── external/             # APIs externas
-│   └── messaging/            # Mensajería
-│
-├── config/                   # Configuración
-├── health/                   # Health checks
-└── app.module.ts             # Módulo raíz
-```
-
-**📖 Ver documentación completa:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
-
-**🔧 Troubleshooting:** [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)
-
-**📖 API Guide:** [docs/API_VERSIONING.md](./docs/API_VERSIONING.md)
-
-**📖 Alias de Importación:** [docs/ALIASES.md](./docs/ALIASES.md)
-**📖 Solución Dist Folders:** [docs/DIST_FOLDERS_SOLUTION.md](./docs/DIST_FOLDERS_SOLUTION.md)
-
-## 📁 Alias de Importación
-
-El proyecto utiliza alias de importación para evitar rutas relativas y mejorar la legibilidad del código.
-
-### Ejemplo de Uso
-
-```typescript
-// ❌ Antes (Rutas relativas)
-import { UserService } from '../../application/services/user.service';
-import { ENV_VALUES } from '../../../shared/constants/environment';
-
-// ✅ Después (Con alias)
-import { UserService } from '@/modules/users/application/services/user.service';
-import { ENV_VALUES } from '@/shared/constants/environment';
-```
-
-### Scripts Disponibles
+### **1. Verificación Rápida**
 
 ```bash
-npm run update:imports    # Actualizar imports automáticamente
-npm run type-check        # Verificar configuración de alias
-npm run clean:dist        # Limpiar carpetas dist anidadas
+npm run quick-check
 ```
 
-**📖 Ver documentación completa:** [docs/ALIASES.md](./docs/ALIASES.md)
-
-## 🚀 Inicio Rápido
-
-### Prerrequisitos
-
-- Node.js 22+
-- npm o yarn
-- PostgreSQL (para producción)
-
-### Configuración de Puertos
-
-- **Development**: `http://localhost:4000`
-- **Test**: `http://localhost:6000`
-- **Production**: `https://km0-back-nest-ts-d4ah.onrender.com`
-
-### Documentación de API
-
-- **Swagger UI**: `http://localhost:4000/docs` (desarrollo)
-- **Swagger UI**: `https://km0-back-nest-ts-d4ah.onrender.com/docs` (producción)
-- **API Endpoints**: `http://localhost:4000/example/info` (información de endpoints)
-
-### Instalación
+### **2. Configurar Entorno**
 
 ```bash
-# Clonar repositorio
-git clone <repository-url>
-cd backend
+npm run setup:env
+```
 
-# Instalar dependencias
-npm install
+### **3. Configurar Base de Datos**
 
-# Configurar variables de entorno
-npm run env:setup
+```bash
+# Generar cliente Prisma
+npm run db:generate
 
-# Ejecutar tests rápidos (OBLIGATORIO)
-npm run test:quick
+# Aplicar schema a desarrollo
+npm run db:dev
+```
 
-# Iniciar servidor desarrollo con hot reload
+### **4. Ejecutar Desarrollo**
+
+```bash
 npm run start:dev
 ```
 
-### Variables de Entorno
+## 🏗️ **Arquitectura**
 
-```bash
-# Copiar configuración de ejemplo
-npm run env:example
-
-# O usar configuración de desarrollo
-npm run env:setup
+```
+src/
+├── modules/users/           # Módulo de usuarios
+│   ├── domain/             # Entidades y reglas de negocio
+│   ├── application/        # Casos de uso y DTOs
+│   ├── infrastructure/     # Repositorios y servicios externos
+│   └── presentation/       # Controladores y endpoints
+├── infrastructure/         # Servicios de infraestructura
+│   └── database/          # Configuración de base de datos
+├── shared/                # Utilidades compartidas
+└── health/                # Health checks
 ```
 
-## 🚀 Deployment Rápido
+## 🧪 **Testing**
 
-### Render (Recomendado - Gratuito)
+### **Tests Unitarios**
 
-**Deployment en 5 minutos:**
+```bash
+npm run test:full:ultra    # Tests completos con cobertura
+npm run test:watch         # Tests en modo watch
+```
 
-1. **Ir a [render.com](https://render.com)**
-2. **Conectar cuenta de GitHub**
-3. **Seleccionar este repositorio**
-4. **Render detectará automáticamente que es NestJS**
-5. **Configurar variables de entorno en el dashboard**
-6. **¡Listo! Deployment automático en cada push**
+### **Tests E2E**
 
-**Variables de entorno requeridas:**
+```bash
+npm run test:e2e:full      # Tests end-to-end
+```
+
+### **Cobertura**
+
+- ✅ **Statements**: 100%
+- ✅ **Branches**: 100%
+- ✅ **Functions**: 100%
+- ✅ **Lines**: 100%
+
+## 🚀 **Entornos**
+
+### **Desarrollo**
+
+```bash
+npm run start:dev          # Puerto 4000, hot reload
+npm run db:studio:dev      # Prisma Studio
+```
+
+### **Testing**
+
+```bash
+npm run test:full:ultra    # Tests con cobertura
+npm run db:studio:test     # Prisma Studio para testing
+```
+
+### **Producción**
+
+```bash
+npm run build              # Build optimizado
+npm run start:prod         # Servidor de producción
+```
+
+## 📊 **Endpoints**
+
+### **Health Checks**
+
+- `GET /health` - Estado general
+- `GET /health/database` - Estado de base de datos
+- `GET /health/environment` - Variables de entorno
+
+### **API Documentation**
+
+- `GET /api` - Swagger UI
+
+### **Users Module**
+
+- `GET /users` - Listar usuarios
+- `POST /users` - Crear usuario
+- `GET /users/:id` - Obtener usuario
+- `PUT /users/:id` - Actualizar usuario
+- `DELETE /users/:id` - Eliminar usuario
+
+### **Profiles Module**
+
+- `GET /profiles` - Listar perfiles
+- `POST /profiles` - Crear perfil
+- `GET /profiles/:id` - Obtener perfil
+- `PUT /profiles/:id` - Actualizar perfil
+- `DELETE /profiles/:id` - Eliminar perfil
+
+## 🔧 **Configuración**
+
+### **Variables de Entorno**
+
+#### **Desarrollo (.env.development)**
+
+```bash
+NODE_ENV=development
+PORT=4000
+DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_dev
+JWT_SECRET=dev-jwt-secret-key
+CORS_ORIGIN=http://localhost:3000
+LOG_LEVEL=debug
+```
+
+#### **Testing (.env.test)**
+
+```bash
+NODE_ENV=test
+PORT=4001
+DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_test
+JWT_SECRET=test-jwt-secret-key
+CORS_ORIGIN=http://localhost:3001
+LOG_LEVEL=error
+```
+
+#### **Producción (.env)**
 
 ```bash
 NODE_ENV=production
-JWT_SECRET=tu-super-secret-jwt-key-at-least-32-characters-long
-COOKIE_SECRET=tu-super-secret-cookie-key-at-least-32-characters-long
-DATABASE_URL=postgresql://username:password@host:port/database
+DATABASE_URL=postgresql://user:password@host:5432/km0_db?sslmode=require
+JWT_SECRET=your-super-secret-jwt-key
+CORS_ORIGIN=https://yourdomain.com
+LOG_LEVEL=info
 ```
 
-**📖 Ver guía completa:** [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)
+## 📚 **Comandos Útiles**
 
-### Alternativas
-
-- **Render**: [render.com](https://render.com) - Excelente alternativa
-- **Vercel**: [vercel.com](https://vercel.com) - Para APIs simples
-- **DigitalOcean**: [digitalocean.com](https://digitalocean.com) - Profesional
-
-## 📊 Métricas del Proyecto
-
-### ⚡ Performance
-
-- **Tests rápidos**: ~3.5s (204 tests)
-- **Linting**: ~1s (con cache)
-- **Build**: ~3s (SWC)
-- **Startup**: ~2s (desarrollo)
-
-### 🛡️ Calidad
-
-- **Cobertura real**: 100% statements, 100% branches, 100% functions, 100% lines
-- **Umbrales mínimos**: 80% branches, 90% functions/lines/statements
-- **Linting**: 0 warnings, 0 errors
-- **TypeScript**: Strict mode habilitado
-- **Prettier**: Formato consistente
-- **Validación automática**: Pre-commit y pre-push hooks
-
-### 🏗️ Arquitectura
-
-- **Módulos**: 2 módulos implementados (health, security)
-- **Tests**: 204 tests pasando
-- **Documentación**: Completa y actualizada con Swagger
-
-## 🎯 Scripts Disponibles
-
-### 🏃‍♂️ Scripts Rápidos (Desarrollo Diario)
+### **Desarrollo**
 
 ```bash
-npm run test:quick     # Tests unitarios sin cobertura (~3.5s)
-npm run test:e2e:quick # Tests e2e optimizados (~3s)
-npm run lint           # ESLint + Prettier con cache (~1s)
-npm run format         # Solo Prettier (~0.5s)
-npm run start:dev      # Servidor desarrollo con hot reload (recomendado)
+npm run start:dev          # Servidor de desarrollo
+npm run db:studio:dev      # Prisma Studio
+npm run test:watch         # Tests en modo watch
 ```
 
-### 🐌 Scripts Lentos (CI/CD)
+### **Testing**
 
 ```bash
-npm run test:full      # Tests con cobertura completa (~5.3s)
-npm run test:e2e:full  # Tests e2e completos (~2.6s)
-npm run build          # Build de producción
-npm run start:prod     # Servidor de producción
+npm run test:full:ultra    # Tests completos
+npm run test:e2e:full      # Tests E2E
+npm run type-check         # Verificar tipos TypeScript
+npm run lint:check         # Verificar linting
 ```
 
-### 🔧 Scripts de Utilidad
+### **Base de Datos**
 
 ```bash
-npm run env:setup      # Configurar .env desde env.mirror
-npm run env:example    # Configurar .env desde env.example
-npm run format:check   # Verificar formato sin cambiar
+npm run db:generate        # Generar cliente Prisma
+npm run db:dev             # Aplicar schema a desarrollo
+npm run db:test            # Aplicar schema a testing
+npm run db:prod            # Aplicar schema a producción
 ```
 
-## 🧪 Testing
+### **Utilidades**
 
-### Estrategia de Testing
-
-- **Tests unitarios**: Cada módulo tiene sus propios tests
-- **Tests de integración**: ConfigService, módulos
-- **Tests e2e**: End-to-end para flujos críticos
-- **Cobertura**: Umbrales realistas y alcanzables
-
-### Mejores Prácticas
-
-- **ConfigService**: Usar en lugar de `process.env`
-- **Factories**: Generar datos de prueba consistentes
-- **Mocks**: Solo cuando sea necesario
-- **Velocidad**: Priorizar tests rápidos
-
-**📖 Ver documentación completa:** [docs/TESTING.md](./docs/TESTING.md)
-
-## 🏆 Cobertura y Calidad
-
-### 📊 **Umbrales de Cobertura (Fuente de Verdad)**
-
-Los umbrales están configurados en `jest.config.js` y son la **fuente de verdad**:
-
-```javascript
-coverageThreshold: {
-  global: {
-    branches: 80,    // 80% de cobertura de ramas
-    functions: 90,   // 90% de cobertura de funciones
-    lines: 90,       // 90% de cobertura de líneas
-    statements: 90,  // 90% de cobertura de statements
-  },
-}
+```bash
+npm run setup:env          # Configurar archivos de entorno
+npm run quick-check        # Verificación rápida del proyecto
+npm run clean:unnecessary-dist  # Limpiar archivos innecesarios
 ```
 
-### 🎯 **Estado Actual**
+## 🔍 **Troubleshooting**
 
-- **Cobertura real:** 100% en todas las métricas
-- **Umbrales mínimos:** 80% branches, 90% functions/lines/statements
-- **Archivos excluidos:** Solo archivos declarativos/configuración
-- **Validación automática:** Pre-commit y pre-push hooks
+### **Problemas Comunes**
 
-### 📈 **Estrategia de Calidad**
+#### **1. Error de variables de entorno**
 
-- **Umbrales realistas:** Configurables según necesidades del proyecto
-- **Aspiración al 100%:** Script especial disponible (`npm run validate:coverage:100`)
-- **Validación automática:** Bloqueo de commits/push con errores
-- **Documentación alineada:** Siempre actualizada con el estado real
+```bash
+npm run setup:env
+```
+
+#### **2. Error de base de datos**
+
+```bash
+# Verificar PostgreSQL
+sudo systemctl status postgresql
+
+# Verificar conexión
+psql -U postgres -d km0_db_dev -c "SELECT 1;"
+```
+
+#### **3. Error de dependencias**
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### **4. Error de compilación**
+
+```bash
+npm run type-check
+rm -rf dist
+npm run build
+```
+
+## 📖 **Documentación**
+
+- [Guía de Configuración](docs/SETUP_AND_RUNNING.md)
+- [Estado de Testing](docs/TESTING_STATUS_FINAL.md)
+- [Migración a Prisma](docs/PRISMA_MIGRATION_COMPLETE.md)
+
+## 🛠️ **Tecnologías**
+
+- **Framework**: NestJS 11
+- **ORM**: Prisma 6
+- **Database**: PostgreSQL 15
+- **Testing**: Jest + Supertest
+- **Validation**: Class-validator + Zod
+- **Documentation**: Swagger/OpenAPI
+- **Security**: Helmet, CORS, Rate limiting
+
+## 📄 **Licencia**
+
+UNLICENSED - Propietario
 
 ---
 
-**Desarrollado con ❤️ usando NestJS, TypeScript y SWC**
+**Estado**: ✅ **LISTO PARA PRODUCCIÓN**
 
-## 📚 Documentación
+**Versión**: 0.0.1
 
-- **[Scripts Rápidos](./docs/SCRIPTS.md)**: Uso obligatorio de scripts optimizados
-- **[Flujo de Trabajo](./docs/WORKFLOW.md)**: Estrategia de ramas y desarrollo
-- **[Arquitectura](./docs/ARCHITECTURE.md)**: Estructura modular y principios
-- **[Testing](./docs/TESTING.md)**: Estrategia y mejores prácticas
-- **[Deployment](./docs/DEPLOYMENT.md)**: Configuración de producción
-- **[Swagger API](./docs/SWAGGER.md)**: Documentación de API y configuración
-
-## 🚨 Reglas Importantes
-
-### ⚡ Desarrollo Diario
-
-1. **SIEMPRE usar `npm run test:quick`** para verificar cambios
-2. **SIEMPRE usar `npm run lint`** antes de commits
-3. **NUNCA usar `npm run test:full`** en desarrollo
-4. **Mantener cobertura alta** pero realista
-
-### 🏗️ Arquitectura
-
-1. **Seguir estructura modular** para nuevos features
-2. **Usar ConfigService** en lugar de `process.env`
-3. **Documentar cambios** importantes
-4. **Mantener tests actualizados**
-
-### 🛡️ Calidad
-
-1. **TypeScript balanceado** - Seguridad con practicidad
-2. **ESLint con warnings permitidos** - Flexibilidad en desarrollo
-3. **Prettier** para formato consistente
-4. **Tests pasando** antes de commits
-
-## 🤝 Contribución
-
-1. **Fork** el repositorio
-2. **Crear branch** para feature (`git checkout -b feature/nueva-funcionalidad`)
-3. **Seguir reglas** de scripts rápidos
-4. **Ejecutar tests** rápidos antes de commits
-5. **Commit** cambios (`git commit -m 'feat: agregar nueva funcionalidad'`)
-6. **Push** al branch (`git push origin feature/nueva-funcionalidad`)
-7. **Crear Pull Request**
-
-## 📄 Licencia
-
-Este proyecto es privado y no está licenciado para uso público.
+**Última actualización**: $(date)

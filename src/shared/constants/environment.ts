@@ -1,76 +1,41 @@
 /**
- * Environment-related constants
- * Centralized constants for environment variables and values
+ * Environment constants for the application
+ * Centralized configuration values
  */
 
-/**
- * Environment variable keys
- * Centralized keys for environment variables to avoid typos and ensure consistency
- */
 export const ENV_KEYS = {
-  // Server Configuration
   NODE_ENV: 'NODE_ENV',
   PORT: 'PORT',
   HOST: 'HOST',
-
-  // Security
+  DATABASE_URL: 'DATABASE_URL',
+  DATABASE_ORM: 'DATABASE_ORM',
   JWT_SECRET: 'JWT_SECRET',
   JWT_EXPIRES_IN: 'JWT_EXPIRES_IN',
   COOKIE_SECRET: 'COOKIE_SECRET',
-
-  // Database
-  DATABASE_URL: 'DATABASE_URL',
-  DATABASE_ORM: 'DATABASE_ORM',
-
-  // Rate Limiting
+  RATE_LIMIT_TTL: 'RATE_LIMIT_TTL',
+  RATE_LIMIT_LIMIT: 'RATE_LIMIT_LIMIT',
   THROTTLE_TTL: 'THROTTLE_TTL',
   THROTTLE_LIMIT: 'THROTTLE_LIMIT',
-
-  // CORS
   CORS_ORIGIN: 'CORS_ORIGIN',
-
-  // Logging
   LOG_LEVEL: 'LOG_LEVEL',
+  SEED_ENABLED: 'SEED_ENABLED',
+  SEED_DATA_PATH: 'SEED_DATA_PATH',
 } as const;
 
-/**
- * Configuration keys for ConfigService
- * Centralized keys for ConfigService.get() calls to avoid typos
- */
-export const CONFIG_KEYS = {
-  // Environment configuration
-  ENV_NODE_ENV: 'env.nodeEnv',
-  ENV_PORT: 'env.port',
-  ENV_HOST: 'env.host',
-
-  // Database configuration
-  DATABASE_URL: 'database.url',
-  DATABASE_ORM: 'database.orm',
-
-  // Security configuration
-  JWT_SECRET: 'jwt.secret',
-  JWT_EXPIRES_IN: 'jwt.expiresIn',
-
-  // Rate limiting configuration
-  THROTTLE_TTL: 'throttle.ttl',
-  THROTTLE_LIMIT: 'throttle.limit',
-
-  // CORS configuration
-  CORS_ORIGIN: 'cors.origin',
-
-  // Logging configuration
-  LOG_LEVEL: 'log.level',
-} as const;
-
-/**
- * Environment values constants
- * Typed constants for environment values to ensure consistency
- */
 export const ENV_VALUES = {
   NODE_ENV: {
     DEVELOPMENT: 'development',
     PRODUCTION: 'production',
     TEST: 'test',
+  },
+  DATABASE_ORM: {
+    PRISMA: 'prisma',
+  },
+  DATABASE_SAFETY_LEVEL: {
+    PARANOID: 'paranoid',
+    STRICT: 'strict',
+    RELAXED: 'relaxed',
+    DISABLED: 'disabled',
   },
   LOG_LEVEL: {
     ERROR: 'error',
@@ -78,32 +43,35 @@ export const ENV_VALUES = {
     INFO: 'info',
     DEBUG: 'debug',
   },
-  DATABASE_ORM: {
-    PRISMA: 'prisma',
-    DRIZZLE: 'drizzle',
-  },
 } as const;
 
 /**
- * Type definitions for environment values
+ * Database naming convention constants
+ * Ensures environment-specific database names for safety
  */
-export type NodeEnv =
-  (typeof ENV_VALUES.NODE_ENV)[keyof typeof ENV_VALUES.NODE_ENV];
-export type LogLevel =
-  (typeof ENV_VALUES.LOG_LEVEL)[keyof typeof ENV_VALUES.LOG_LEVEL];
+export const DATABASE_NAMES = {
+  [ENV_VALUES.NODE_ENV.PRODUCTION]: 'km0_db',
+  [ENV_VALUES.NODE_ENV.DEVELOPMENT]: 'km0_db_dev',
+  [ENV_VALUES.NODE_ENV.TEST]: 'km0_db_test',
+} as const;
 
 /**
- * Default values for environment variables
+ * Default environment values
  */
-export const ENV_DEFAULTS = {
+export const DEFAULT_ENV_VALUES = {
   [ENV_KEYS.NODE_ENV]: ENV_VALUES.NODE_ENV.DEVELOPMENT,
   [ENV_KEYS.PORT]: 4000,
   [ENV_KEYS.HOST]: 'localhost',
-  [ENV_KEYS.JWT_EXPIRES_IN]: '1d',
+  [ENV_KEYS.DATABASE_ORM]: ENV_VALUES.DATABASE_ORM.PRISMA,
+  [ENV_KEYS.JWT_EXPIRES_IN]: 86400,
+  [ENV_KEYS.RATE_LIMIT_TTL]: 60,
+  [ENV_KEYS.RATE_LIMIT_LIMIT]: 100,
   [ENV_KEYS.THROTTLE_TTL]: 60,
   [ENV_KEYS.THROTTLE_LIMIT]: 100,
   [ENV_KEYS.CORS_ORIGIN]: 'http://localhost:3000',
   [ENV_KEYS.LOG_LEVEL]: ENV_VALUES.LOG_LEVEL.INFO,
+  [ENV_KEYS.SEED_ENABLED]: false,
+  [ENV_KEYS.SEED_DATA_PATH]: './data/seed-dev.json',
 } as const;
 
 /**
@@ -125,8 +93,20 @@ export const isTest = (env: string): env is typeof ENV_VALUES.NODE_ENV.TEST => {
   return env === ENV_VALUES.NODE_ENV.TEST;
 };
 
-export const isValidNodeEnv = (env: string): env is NodeEnv => {
-  return Object.values(ENV_VALUES.NODE_ENV).includes(env as NodeEnv);
+/**
+ * Checks if the provided environment is a valid NODE_ENV value.
+ * @param env - The environment string to validate.
+ * @returns true if env is a valid NODE_ENV, false otherwise.
+ */
+export const isValidNodeEnv = (
+  env: unknown,
+): env is (typeof ENV_VALUES.NODE_ENV)[keyof typeof ENV_VALUES.NODE_ENV] => {
+  return (
+    typeof env === 'string' &&
+    (env === ENV_VALUES.NODE_ENV.DEVELOPMENT ||
+      env === ENV_VALUES.NODE_ENV.PRODUCTION ||
+      env === ENV_VALUES.NODE_ENV.TEST)
+  );
 };
 
 // Los schemas se importan directamente desde environment.schema.ts

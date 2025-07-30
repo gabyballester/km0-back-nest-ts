@@ -1,28 +1,52 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsValidName,
+  IsValidPhone,
+  IsValidPostalCode,
+  IsValidCity,
+  IsValidLanguage,
+  ApiName,
+  ApiPhone,
+  ApiPostalCode,
+  ApiCity,
+  ApiLanguage,
+} from '@/shared/decorators/validation.decorators';
 
 /**
- * DTO for creating a user profile
+ * DTO para crear un nuevo perfil de usuario
  */
 export class CreateProfileDto {
-  @IsString()
-  firstName: string;
+  @ApiProperty({
+    description: 'ID del usuario al que pertenece el perfil',
+    example: 'user_1234567890',
+  })
+  @IsNotEmpty({ message: 'El userId es requerido' })
+  @IsString({ message: 'El userId debe ser una cadena de texto' })
+  @MinLength(1, { message: 'El userId no puede estar vacío' })
+  userId!: string;
 
-  @IsString()
-  lastName: string;
+  @ApiName(true, 'nombre')
+  @IsValidName(true)
+  firstName!: string;
 
-  @IsOptional()
-  @IsString()
+  @ApiName(true, 'apellido')
+  @IsValidName(true)
+  lastName!: string;
+
+  @ApiPhone()
+  @IsValidPhone()
   phone?: string;
 
-  @IsOptional()
-  @IsEnum(['es', 'en', 'fr', 'de', 'it', 'pt'])
-  language?: string;
+  @ApiLanguage()
+  @IsValidLanguage()
+  language?: string = 'es';
 
-  @IsOptional()
-  @IsString()
+  @ApiCity()
+  @IsValidCity()
   city?: string;
 
-  @IsOptional()
-  @IsString()
+  @ApiPostalCode()
+  @IsValidPostalCode()
   postalCode?: string;
 }

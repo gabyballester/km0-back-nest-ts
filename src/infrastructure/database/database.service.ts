@@ -1,10 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
 import { ConfigService } from '@nestjs/config';
-import {
-  IDatabaseAdapter,
-  DatabaseStatus,
-} from '@/infrastructure/database/interfaces';
-import { DatabaseFactory } from '@/infrastructure/database/factory/database.factory';
 
 // Exportar la interfaz para uso en otros módulos
 export interface DatabaseInfo {
@@ -15,59 +11,38 @@ export interface DatabaseInfo {
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
-  private adapter: IDatabaseAdapter | null = null;
-  private status: DatabaseStatus = DatabaseStatus.DISCONNECTED;
+  private isConnected = false;
 
   constructor(
+    private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-    private readonly databaseFactory: DatabaseFactory,
   ) {}
 
   async onModuleInit(): Promise<void> {
+    console.log('🗄️  Inicializando servicio de base de datos...');
+
     try {
-      // Create adapter based on configuration
-      this.adapter = this.databaseFactory.createAdapter();
-      const ormType = this.databaseFactory.getOrmType();
-      const databaseUrl = this.configService.get<string>('DATABASE_URL');
-
-      if (!databaseUrl) {
-        throw new Error('DATABASE_URL is not configured');
-      }
-
-      // Show connection info
-      const dbInfo = new URL(databaseUrl);
-      console.log(`🗄️  ORM: ${ormType.toUpperCase()}`);
-      console.log(
-        `🔗 Database: ${dbInfo.hostname}:${dbInfo.port}${dbInfo.pathname}`,
-      );
-
-      // Connect to database
-      await this.adapter.connect();
-
-      this.status = DatabaseStatus.CONNECTED;
-
-      // Verify database is working
+      // Verificar conexión usando Prisma
       const isHealthy = await this.healthCheck();
       if (!isHealthy) {
         throw new Error('Base de datos no está funcionando correctamente');
       }
 
-      console.log(
-        `✅ Base de datos conectada correctamente con ${ormType.toUpperCase()}`,
-      );
+      this.isConnected = true;
+      console.log('✅ Base de datos conectada correctamente');
+      console.log('📊 Base de datos funcionando correctamente');
     } catch (error) {
-      this.status = DatabaseStatus.ERROR;
       console.error('❌ Error al inicializar la base de datos:', error);
       throw error;
     }
   }
 
   async onModuleDestroy(): Promise<void> {
+    console.log('🔄 Cerrando conexión a la base de datos...');
     try {
-      if (this.adapter) {
-        await this.adapter.disconnect();
-      }
-      this.status = DatabaseStatus.DISCONNECTED;
+      await this.prisma.$disconnect();
+      this.isConnected = false;
+      console.log('✅ Conexión a la base de datos cerrada');
     } catch (error) {
       console.error('❌ Error al cerrar conexión:', error);
     }
@@ -75,25 +50,41 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   async healthCheck(): Promise<boolean> {
     try {
-      if (!this.adapter) {
-        return false;
-      }
-      return await this.adapter.healthCheck();
+      // Verificación real de conexión usando Prisma
+      await this.prisma.$queryRaw`SELECT 1`;
+      this.isConnected = true;
+      return true;
     } catch (error) {
       console.error('❌ Health check falló:', error);
+      this.isConnected = false;
       return false;
     }
   }
 
   async getDatabaseInfo(): Promise<DatabaseInfo | null> {
     try {
-      if (!this.adapter) {
-        return null;
+      // Obtener información real de PostgreSQL usando Prisma
+      const result = await this.prisma.$queryRaw<
+        Array<{
+          current_database: string;
+          current_user: string;
+          version: string;
+        }>
+      >`SELECT current_database(), current_user, version()`;
+
+      if (result && result.length > 0) {
+        const info = result[0];
+        return {
+          database_name: info.current_database ?? 'unknown',
+          current_user: info.current_user ?? 'unknown',
+          postgres_version: info.version ?? 'unknown',
+        };
       }
-      return await this.adapter.getDatabaseInfo();
+
+      return null;
     } catch (error) {
       console.error(
-        '❌ Error al obtener información de la base de datos:',
+        '❌ Error al obtener información real de la base de datos:',
         error,
       );
       return null;
@@ -101,37 +92,30 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Get current database adapter
+   * Get Prisma service instance
    */
-  getAdapter(): IDatabaseAdapter | null {
-    return this.adapter;
+  getPrismaService(): PrismaService {
+    return this.prisma;
   }
 
   /**
-   * Get current database status
+   * Check if database is connected
    */
-  getStatus(): DatabaseStatus {
-    return this.status;
+  isDatabaseConnected(): boolean {
+    return this.isConnected;
   }
 
   /**
-   * Get current ORM type
+   * Extract database name from URL (fallback method)
    */
-  getOrmType(): string {
-    return this.databaseFactory.getOrmType();
-  }
-
-  /**
-   * Check if using Drizzle ORM
-   */
-  isDrizzle(): boolean {
-    return this.databaseFactory.isDrizzle();
-  }
-
-  /**
-   * Check if using Prisma ORM
-   */
-  isPrisma(): boolean {
-    return this.databaseFactory.isPrisma();
+  private extractDatabaseName(databaseUrl: string): string {
+    try {
+      const url = new URL(databaseUrl);
+      const pathParts = url.pathname.split('/');
+      const lastPart = pathParts[pathParts.length - 1];
+      return lastPart || 'km0_db';
+    } catch {
+      return 'km0_db';
+    }
   }
 }

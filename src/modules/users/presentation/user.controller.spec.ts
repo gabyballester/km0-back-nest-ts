@@ -1,14 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from '@/modules/users/application/services/user.service';
-import { UserFactory } from '../../../../test/factories/user.factory';
+import { CreateUserDto } from '@/modules/users/application/dto/create-user.dto';
+import { UpdateUserDto } from '@/modules/users/application/dto/update-user.dto';
+import {
+  UserResponseDto,
+  UsersPaginatedResponseDto,
+} from '@/modules/users/application/dto/user-response.dto';
 
 describe('UserController', () => {
   let controller: UserController;
   let userService: jest.Mocked<UserService>;
 
-  const mockUser = UserFactory.createUser();
+  const mockUserResponse: UserResponseDto = {
+    id: 'test-id',
+    email: 'test@example.com',
+    createdAt: new Date('2024-01-01T10:00:00Z'),
+    updatedAt: new Date('2024-01-02T15:30:00Z'),
+  };
 
   const mockUserService = {
     createUser: jest.fn(),
@@ -17,13 +27,6 @@ describe('UserController', () => {
     getAllUsers: jest.fn(),
     updateUser: jest.fn(),
     deleteUser: jest.fn(),
-    activateUser: jest.fn(),
-    deactivateUser: jest.fn(),
-    changeUserRole: jest.fn(),
-    changeUserPassword: jest.fn(),
-    getUsersByRole: jest.fn(),
-    getActiveUsers: jest.fn(),
-    countUsers: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -38,25 +41,22 @@ describe('UserController', () => {
     }).compile();
 
     controller = module.get<UserController>(UserController);
-    userService = module.get(UserService); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-  });
+    userService = module.get(UserService);
 
-  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('Module Configuration', () => {
+  describe('constructor', () => {
     it('should be defined', () => {
       expect(controller).toBeDefined();
     });
 
-    it('should have UserService injected', () => {
-      expect(controller['userService']).toBeDefined();
-      expect(controller['userService']).toBe(userService);
+    it('should have userService injected', () => {
+      expect(userService).toBeDefined();
     });
   });
 
-  describe('Controller Methods', () => {
+  describe('methods', () => {
     it('should have createUser method', () => {
       expect(typeof controller.createUser).toBe('function');
     });
@@ -80,93 +80,113 @@ describe('UserController', () => {
     it('should have deleteUser method', () => {
       expect(typeof controller.deleteUser).toBe('function');
     });
-
-    it('should have activateUser method', () => {
-      expect(typeof controller.activateUser).toBe('function');
-    });
-
-    it('should have deactivateUser method', () => {
-      expect(typeof controller.deactivateUser).toBe('function');
-    });
-
-    it('should have changeUserRole method', () => {
-      expect(typeof controller.changeUserRole).toBe('function');
-    });
-
-    it('should have changeUserPassword method', () => {
-      expect(typeof controller.changeUserPassword).toBe('function');
-    });
-
-    it('should have getUsersByRole method', () => {
-      expect(typeof controller.getUsersByRole).toBe('function');
-    });
-
-    it('should have getActiveUsers method', () => {
-      expect(typeof controller.getActiveUsers).toBe('function');
-    });
-
-    it('should have countUsers method', () => {
-      expect(typeof controller.countUsers).toBe('function');
-    });
   });
 
-  describe('Route Configuration', () => {
-    it('should be configured with @Controller decorator', () => {
-      const controllerMetadata = Reflect.getMetadata('path', UserController);
-      expect(controllerMetadata).toBe('users');
-    });
-  });
+  describe('createUser', () => {
+    const createUserDto: CreateUserDto = {
+      email: 'test@example.com',
+      password: 'Password123',
+    };
 
-  describe('Basic Functionality', () => {
     it('should create a user successfully', async () => {
-      const createUserDto = UserFactory.createCreateUserDto();
-      userService.createUser.mockResolvedValue(mockUser);
+      userService.createUser.mockResolvedValue(mockUserResponse);
 
       const result = await controller.createUser(createUserDto);
 
-      expect(result).toBeDefined();
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(userService.createUser).toHaveBeenCalledWith(createUserDto);
+      expect(result).toBe(mockUserResponse);
     });
+  });
 
-    it('should get user by id', async () => {
-      userService.getUserById.mockResolvedValue(mockUser);
+  describe('getUserById', () => {
+    it('should return user by id', async () => {
+      userService.getUserById.mockResolvedValue(mockUserResponse);
 
       const result = await controller.getUserById('test-id');
 
-      expect(result).toBeDefined();
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(userService.getUserById).toHaveBeenCalledWith('test-id');
+      expect(result).toBe(mockUserResponse);
     });
+  });
 
-    it('should get all users', async () => {
-      const mockResult = {
-        users: [mockUser],
+  describe('getUserByEmail', () => {
+    it('should return user by email', async () => {
+      userService.getUserByEmail.mockResolvedValue(mockUserResponse);
+
+      const result = await controller.getUserByEmail('test@example.com');
+
+      expect(userService.getUserByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(result).toBe(mockUserResponse);
+    });
+  });
+
+  describe('getAllUsers', () => {
+    it('should return paginated users', async () => {
+      const mockPaginatedResponse: UsersPaginatedResponseDto = {
+        users: [mockUserResponse],
         total: 1,
         page: 1,
         limit: 10,
         totalPages: 1,
       };
-      userService.getAllUsers.mockResolvedValue(mockResult);
+
+      userService.getAllUsers.mockResolvedValue(mockPaginatedResponse);
 
       const result = await controller.getAllUsers(1, 10);
 
-      expect(result).toBeDefined();
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(userService.getAllUsers).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-      });
+      expect(userService.getAllUsers).toHaveBeenCalledWith(1, 10);
+      expect(result).toBe(mockPaginatedResponse);
     });
 
-    it('should count users', async () => {
-      userService.countUsers.mockResolvedValue(10);
+    it('should return paginated users with default parameters', async () => {
+      const mockPaginatedResponse: UsersPaginatedResponseDto = {
+        users: [mockUserResponse],
+        total: 1,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+      };
 
-      const result = await controller.countUsers();
+      userService.getAllUsers.mockResolvedValue(mockPaginatedResponse);
 
-      expect(result).toEqual({ count: 10 });
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(userService.countUsers).toHaveBeenCalled();
+      const result = await controller.getAllUsers();
+
+      expect(userService.getAllUsers).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+      );
+      expect(result).toBe(mockPaginatedResponse);
+    });
+  });
+
+  describe('updateUser', () => {
+    const updateUserDto: UpdateUserDto = {
+      email: 'updated@example.com',
+    };
+
+    it('should update user successfully', async () => {
+      userService.updateUser.mockResolvedValue(mockUserResponse);
+
+      const result = await controller.updateUser('test-id', updateUserDto);
+
+      expect(userService.updateUser).toHaveBeenCalledWith(
+        'test-id',
+        updateUserDto,
+      );
+      expect(result).toBe(mockUserResponse);
+    });
+  });
+
+  describe('deleteUser', () => {
+    it('should delete user successfully', async () => {
+      userService.deleteUser.mockResolvedValue();
+
+      const result = await controller.deleteUser('test-id');
+
+      expect(userService.deleteUser).toHaveBeenCalledWith('test-id');
+      expect(result).toBeUndefined();
     });
   });
 });

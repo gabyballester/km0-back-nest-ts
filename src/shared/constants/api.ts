@@ -99,7 +99,34 @@ export const isSystemRoute = (route: string): boolean => {
     API_ROUTES.DOCS,
     API_ROUTES.SWAGGER,
   ];
-  return systemRoutes.some(systemRoute => route.startsWith(`/${systemRoute}`));
+  return systemRoutes.some(
+    systemRoute => route === systemRoute || route.startsWith(`${systemRoute}/`),
+  );
+};
+
+/**
+ * Check if route is a health route
+ * @param route - Route path to check
+ * @returns True if it's a health route
+ */
+export const isHealthRoute = (route: string): boolean => {
+  return (
+    route === API_ROUTES.HEALTH || route.startsWith(`${API_ROUTES.HEALTH}/`)
+  );
+};
+
+/**
+ * Check if route is a documentation route
+ * @param route - Route path to check
+ * @returns True if it's a documentation route
+ */
+export const isDocumentationRoute = (route: string): boolean => {
+  return (
+    route === API_ROUTES.DOCS ||
+    route === API_ROUTES.SWAGGER ||
+    route.startsWith(`${API_ROUTES.DOCS}/`) ||
+    route.startsWith(`${API_ROUTES.SWAGGER}/`)
+  );
 };
 
 /**
@@ -113,11 +140,11 @@ export const getApiBaseUrl = (environment: string, port: number): string => {
     case 'development':
       return `http://localhost:${port}`;
     case 'production':
-      return 'https://km0-market.onrender.com';
+      return 'https://api.km0-market.com';
     case 'test':
       return `http://localhost:${port}`;
     default:
-      return `http://localhost:${port}`;
+      return 'https://api.km0-market.com';
   }
 };
 
@@ -166,3 +193,13 @@ export const API_RATE_LIMITING = {
   MAX_TTL: 3600, // 1 hour
   MAX_LIMIT: 10000, // maximum requests per window
 } as const;
+
+// Make constants truly readonly
+Object.freeze(HTTP_STATUS);
+Object.freeze(HTTP_MESSAGES);
+Object.freeze(API_ROUTES);
+Object.freeze(API_ENDPOINTS);
+Object.freeze(API_HEADERS);
+Object.freeze(CONTENT_TYPES);
+Object.freeze(PAGINATION);
+Object.freeze(API_RATE_LIMITING);

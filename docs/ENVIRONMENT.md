@@ -21,7 +21,7 @@ Según la documentación oficial de NestJS y la comunidad, la forma correcta de 
 NODE_ENV=production
 PORT=4000
 HOST=localhost
-DATABASE_URL=postgresql://user:password@host:port/database_name
+DATABASE_URL=postgresql://user:password@host:port/km0_db
 JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters-long
 COOKIE_SECRET=your-super-secret-cookie-key-at-least-32-characters-long
 JWT_EXPIRES_IN=1d
@@ -49,6 +49,20 @@ PORT=4001
 DATABASE_URL=postgresql://postgres:admin@localhost:5432/km0_db_test
 LOG_LEVEL=error
 ```
+
+---
+
+## 🛡️ **NOMENCLATURA OBLIGATORIA DE BASES DE DATOS**
+
+**CRÍTICO**: El sistema valida automáticamente que cada entorno use su base de datos designada para prevenir pérdida accidental de datos.
+
+| Entorno        | Base de Datos | Ejemplo                                                   |
+| -------------- | ------------- | --------------------------------------------------------- |
+| **Producción** | `km0_db`      | `postgresql://user:pass@host:5432/km0_db?sslmode=require` |
+| **Desarrollo** | `km0_db_dev`  | `postgresql://user:pass@localhost:5432/km0_db_dev`        |
+| **Test**       | `km0_db_test` | `postgresql://user:pass@localhost:5432/km0_db_test`       |
+
+**Validación Automática**: Si intentas usar una base de datos incorrecta para el entorno, el sistema abortará automáticamente con un error claro.
 
 ---
 

@@ -117,18 +117,17 @@ export const REGEX_PATTERNS = {
   // Email validation
   EMAIL: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
 
-  // Password validation (at least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)
-  PASSWORD:
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  // Password validation (at least 8 chars, 1 uppercase, 1 lowercase, 1 number)
+  PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
 
   // Username validation (3-50 chars, alphanumeric and underscore only)
   USERNAME: /^[a-zA-Z0-9_]{3,50}$/,
 
-  // Phone number validation (international format)
-  PHONE: /^\+?[1-9]\d{1,14}$/,
+  // Phone number validation (international format with common formats)
+  PHONE: /^(\+?[1-9]\d{9,14}|\(\d{3}\)\s?\d{3}-\d{4}|\d{3}-\d{3}-\d{4})$/,
 
   // URL validation
-  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
+  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$|^https?:\/\/localhost:\d+$/,
 
   // UUID validation
   UUID: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
@@ -144,6 +143,50 @@ export const REGEX_PATTERNS = {
 
   // Postal code validation (basic)
   POSTAL_CODE: /^[0-9]{5}(-[0-9]{4})?$/,
+} as const;
+
+/**
+ * Validation Patterns
+ * Common validation patterns for reuse
+ */
+export const VALIDATION_PATTERNS = {
+  EMAIL: REGEX_PATTERNS.EMAIL,
+  PASSWORD: REGEX_PATTERNS.PASSWORD,
+  USERNAME: REGEX_PATTERNS.USERNAME,
+  PHONE: REGEX_PATTERNS.PHONE,
+  URL: REGEX_PATTERNS.URL,
+  UUID: REGEX_PATTERNS.UUID,
+  DATE: REGEX_PATTERNS.DATE,
+  TIME: REGEX_PATTERNS.TIME,
+  CREDIT_CARD: REGEX_PATTERNS.CREDIT_CARD,
+  POSTAL_CODE: REGEX_PATTERNS.POSTAL_CODE,
+} as const;
+
+/**
+ * Validation Options
+ * Common validation options for reuse
+ */
+export const VALIDATION_OPTIONS = {
+  EMAIL: {
+    pattern: REGEX_PATTERNS.EMAIL,
+    message: VALIDATION_MESSAGES.INVALID_EMAIL,
+  },
+  PHONE: {
+    pattern: REGEX_PATTERNS.PHONE,
+    message: VALIDATION_MESSAGES.INVALID_PHONE,
+  },
+  URL: {
+    pattern: REGEX_PATTERNS.URL,
+    message: VALIDATION_MESSAGES.INVALID_URL,
+  },
+  UUID: {
+    pattern: REGEX_PATTERNS.UUID,
+    message: VALIDATION_MESSAGES.INVALID_UUID,
+  },
+  PASSWORD: {
+    pattern: REGEX_PATTERNS.PASSWORD,
+    message: VALIDATION_MESSAGES.PASSWORD_TOO_WEAK,
+  },
 } as const;
 
 /**
@@ -218,3 +261,9 @@ export const VALIDATION_SCHEMAS = {
     message: `Rating must be between ${VALIDATION_RULES.MIN_RATING} and ${VALIDATION_RULES.MAX_RATING}`,
   },
 } as const;
+
+// Make constants truly readonly
+Object.freeze(VALIDATION_MESSAGES);
+Object.freeze(VALIDATION_PATTERNS);
+Object.freeze(VALIDATION_OPTIONS);
+Object.freeze(VALIDATION_SCHEMAS);

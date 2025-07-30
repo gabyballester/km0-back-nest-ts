@@ -1,6 +1,8 @@
+import { PrismaClient } from '@prisma/client';
+
 /**
- * Database adapter interface for ORM abstraction
- * Allows switching between Prisma and Drizzle without changing business logic
+ * Database adapter interface for Prisma ORM
+ * Provides abstraction layer for database operations
  */
 export interface IDatabaseAdapter {
   /**
@@ -28,14 +30,19 @@ export interface IDatabaseAdapter {
   } | null>;
 
   /**
-   * Execute raw query for health checks
+   * Get the underlying Prisma instance for advanced operations
    */
-  executeRawQuery(query: string): Promise<unknown>;
+  getOrmInstance(): PrismaClient | null;
 
   /**
-   * Get the underlying ORM instance for advanced operations
+   * Get current connection status
    */
-  getOrmInstance(): unknown;
+  getStatus(): DatabaseStatus;
+
+  /**
+   * Get adapter configuration
+   */
+  getConfig(): DatabaseAdapterConfig;
 }
 
 /**

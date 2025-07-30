@@ -1,20 +1,21 @@
-import { createId } from '@paralleldrive/cuid2';
+/**
+ * Genera un ID único simple
+ */
+function createId(): string {
+  return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
 
 /**
  * Entidad User - Representa un usuario en el dominio de negocio
  *
  * Esta entidad encapsula la lógica de negocio relacionada con los usuarios
  * y es independiente de la infraestructura de persistencia.
+ * Los datos personales están en la entidad Profile relacionada.
  */
 export class User {
   public readonly id: string;
   public email: string;
   public password: string;
-  public firstName: string;
-  public lastName: string;
-  public isActive: boolean;
-  public role: UserRole;
-  public phone?: string;
   public readonly createdAt: Date;
   public updatedAt: Date;
 
@@ -22,99 +23,36 @@ export class User {
     id?: string;
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    isActive?: boolean;
-    role?: UserRole;
-    phone?: string;
     createdAt?: Date;
     updatedAt?: Date;
   }) {
     this.id = params.id ?? createId();
     this.email = params.email;
     this.password = params.password;
-    this.firstName = params.firstName;
-    this.lastName = params.lastName;
-    this.isActive = params.isActive ?? true;
-    this.role = params.role ?? UserRole.USER;
-    this.phone = params.phone;
     this.createdAt = params.createdAt ?? new Date();
     this.updatedAt = params.updatedAt ?? new Date();
   }
 
   /**
-   * Obtiene el nombre completo del usuario
+   * Verifica si el email es válido
    */
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`.trim();
+  isValidEmail(): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(this.email);
   }
 
   /**
-   * Verifica si el usuario tiene un rol específico
+   * Verifica si la contraseña cumple con los requisitos mínimos
    */
-  hasRole(role: UserRole): boolean {
-    return this.role === role;
+  isValidPassword(): boolean {
+    return this.password.length >= 8;
   }
 
   /**
-   * Verifica si el usuario es administrador
+   * Actualiza el email del usuario
    */
-  get isAdmin(): boolean {
-    return this.role === UserRole.ADMIN;
-  }
-
-  /**
-   * Verifica si el usuario está activo
-   */
-  get isUserActive(): boolean {
-    return this.isActive;
-  }
-
-  /**
-   * Desactiva el usuario
-   */
-  deactivate(): void {
-    this.isActive = false;
-    this.updatedAt = new Date();
-  }
-
-  /**
-   * Activa el usuario
-   */
-  activate(): void {
-    this.isActive = true;
-    this.updatedAt = new Date();
-  }
-
-  /**
-   * Actualiza la información básica del usuario
-   */
-  updateInfo(params: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-  }): void {
-    if (params.firstName) {
-      this.firstName = params.firstName;
-    }
-    if (params.lastName) {
-      this.lastName = params.lastName;
-    }
-    if (params.email) {
-      this.email = params.email;
-    }
-    if (params.phone) {
-      this.phone = params.phone;
-    }
-    this.updatedAt = new Date();
-  }
-
-  /**
-   * Cambia el rol del usuario
-   */
-  changeRole(newRole: UserRole): void {
-    this.role = newRole;
+  updateEmail(newEmail: string): void {
+    this.email = newEmail;
     this.updatedAt = new Date();
   }
 
@@ -129,16 +67,11 @@ export class User {
   /**
    * Convierte la entidad a un objeto plano para persistencia
    */
-  toJSON(): Record<string, string | boolean | Date | undefined> {
+  toJSON(): Record<string, string | Date> {
     return {
       id: this.id,
       email: this.email,
       password: this.password,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      isActive: this.isActive,
-      role: this.role,
-      phone: this.phone,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -151,11 +84,6 @@ export class User {
     id: string;
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    isActive: boolean;
-    role: string;
-    phone?: string;
     createdAt: string | Date;
     updatedAt: string | Date;
   }): User {
@@ -163,27 +91,8 @@ export class User {
       id: data.id,
       email: data.email,
       password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      isActive: data.isActive,
-      role: data.role as UserRole,
-      phone: data.phone,
       createdAt: new Date(data.createdAt),
       updatedAt: new Date(data.updatedAt),
     });
   }
 }
-
-/**
- * Roles de usuario disponibles
- */
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-  MODERATOR = 'moderator',
-}
-
-/**
- * Tipos de usuario para validación
- */
-export type UserRoleType = keyof typeof UserRole;

@@ -29,20 +29,26 @@ export class ProfileResponseDto {
   postalCode?: string;
 
   @Expose()
-  @Transform(({ value }) => new Date(value).toISOString())
+  @Transform(({ value }: { value: unknown }) =>
+    value ? new Date(value as string) : undefined,
+  )
   createdAt!: Date;
 
   @Expose()
-  @Transform(({ value }) => new Date(value).toISOString())
+  @Transform(({ value }: { value: unknown }) =>
+    value ? new Date(value as string) : undefined,
+  )
   updatedAt!: Date;
 
   // Computed properties
   @Expose()
-  @Transform(({ obj }) => `${obj.firstName} ${obj.lastName}`.trim())
+  @Transform(({ obj }: { obj: Record<string, unknown> }) =>
+    `${obj.firstName as string} ${obj.lastName as string}`.trim(),
+  )
   fullName!: string;
 
   @Expose()
-  @Transform(({ obj }) => {
+  @Transform(({ obj }: { obj: Record<string, unknown> }) => {
     const fields = [
       obj.firstName,
       obj.lastName,
@@ -50,12 +56,17 @@ export class ProfileResponseDto {
       obj.city,
       obj.postalCode,
     ];
-    const completedFields = fields.filter(field => field !== undefined && field !== null && field !== '').length;
+    const completedFields = fields.filter(
+      field => field !== undefined && field !== null && field !== '',
+    ).length;
     return Math.round((completedFields / fields.length) * 100);
   })
   completionPercentage!: number;
 
   @Expose()
-  @Transform(({ obj }) => !!(obj.firstName && obj.lastName && obj.city))
+  @Transform(
+    ({ obj }: { obj: Record<string, unknown> }) =>
+      !!(obj.firstName && obj.lastName && obj.city),
+  )
   isComplete!: boolean;
 }

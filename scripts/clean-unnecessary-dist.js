@@ -67,13 +67,6 @@ function removeScriptFilesFromDist() {
   }
 
   const scriptFiles = [
-    // Scripts de migración
-    'drizzle-development-deploy.js',
-    'drizzle-development-reset.js',
-    'drizzle-production-deploy.js',
-    'drizzle-development-reset.dev.js', // Por si acaso hay duplicados
-    'drizzle-development-deploy.dev.js',
-
     // Scripts de utilidades
     'check-dependencies.js',
     'check-deployment.js',
@@ -85,17 +78,11 @@ function removeScriptFilesFromDist() {
     'clean-unnecessary-dist.js',
     'constants.js',
     'database-safety-guard.js',
-    'db-backup.js',
     'db-health.js',
     'db-manager.js',
-    'db-validate.js',
-    'migrate-data.js',
-    'migration-manager.js',
-    'migration-workflow.js',
     'prepare.js',
     'script-audit.js',
     'seed.js',
-    'setup-db.js',
     'update-imports.js',
   ];
 

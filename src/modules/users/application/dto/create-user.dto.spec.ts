@@ -1,6 +1,5 @@
-import { validate } from 'class-validator';
 import { CreateUserDto } from './create-user.dto';
-import { UserRole } from '@/modules/users/domain/entities/user.entity';
+import { validate } from 'class-validator';
 
 describe('CreateUserDto', () => {
   let createUserDto: CreateUserDto;
@@ -9,23 +8,17 @@ describe('CreateUserDto', () => {
     createUserDto = new CreateUserDto();
   });
 
-  describe('Constructor', () => {
-    it('should create instance with default values', () => {
+  describe('constructor', () => {
+    it('should create a CreateUserDto with default values', () => {
       expect(createUserDto.email).toBe('');
       expect(createUserDto.password).toBe('');
-      expect(createUserDto.firstName).toBe('');
-      expect(createUserDto.lastName).toBe('');
     });
   });
 
-  describe('Validation', () => {
+  describe('validation', () => {
     it('should pass validation with valid data', async () => {
       createUserDto.email = 'test@example.com';
       createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
-      createUserDto.role = UserRole.USER;
-      createUserDto.isActive = true;
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(0);
@@ -34,49 +27,49 @@ describe('CreateUserDto', () => {
     it('should fail validation with invalid email', async () => {
       createUserDto.email = 'invalid-email';
       createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('email');
       expect(errors[0].constraints?.isEmail).toBe('El email debe ser válido');
     });
 
     it('should fail validation with empty email', async () => {
       createUserDto.email = '';
       createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('email');
+      expect(errors[0].constraints?.isEmail).toBe('El email debe ser válido');
     });
 
-    it('should fail validation with weak password', async () => {
+    it('should fail validation with password too short', async () => {
       createUserDto.email = 'test@example.com';
-      createUserDto.password = 'weak';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
+      createUserDto.password = 'short';
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('password');
       expect(errors[0].constraints?.minLength).toBe(
         'La contraseña debe tener al menos 8 caracteres',
+      );
+    });
+
+    it('should fail validation with password too long', async () => {
+      createUserDto.email = 'test@example.com';
+      createUserDto.password = 'A'.repeat(129);
+
+      const errors = await validate(createUserDto);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints?.maxLength).toBe(
+        'La contraseña no puede exceder 128 caracteres',
       );
     });
 
     it('should fail validation with password without uppercase', async () => {
       createUserDto.email = 'test@example.com';
       createUserDto.password = 'password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('password');
       expect(errors[0].constraints?.matches).toBe(
         'La contraseña debe incluir al menos una minúscula, una mayúscula y un número',
       );
@@ -85,12 +78,9 @@ describe('CreateUserDto', () => {
     it('should fail validation with password without lowercase', async () => {
       createUserDto.email = 'test@example.com';
       createUserDto.password = 'PASSWORD123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('password');
       expect(errors[0].constraints?.matches).toBe(
         'La contraseña debe incluir al menos una minúscula, una mayúscula y un número',
       );
@@ -99,146 +89,67 @@ describe('CreateUserDto', () => {
     it('should fail validation with password without number', async () => {
       createUserDto.email = 'test@example.com';
       createUserDto.password = 'PasswordABC';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('password');
       expect(errors[0].constraints?.matches).toBe(
         'La contraseña debe incluir al menos una minúscula, una mayúscula y un número',
       );
     });
 
-    it('should fail validation with password too long', async () => {
+    it('should fail validation with non-string password', async () => {
       createUserDto.email = 'test@example.com';
-      createUserDto.password = 'A'.repeat(129);
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
+      // Test with invalid password type
+      (createUserDto as unknown as Record<string, unknown>).password = 123;
 
       const errors = await validate(createUserDto);
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('password');
-      expect(errors[0].constraints?.maxLength).toBe(
-        'La contraseña no puede exceder 128 caracteres',
+      expect(errors[0].constraints?.isString).toBe(
+        'La contraseña debe ser una cadena de texto',
       );
-    });
-
-    it('should fail validation with short firstName', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'J';
-      createUserDto.lastName = 'Doe';
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('firstName');
-      expect(errors[0].constraints?.minLength).toBe(
-        'El nombre debe tener al menos 2 caracteres',
-      );
-    });
-
-    it('should fail validation with long firstName', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'A'.repeat(51);
-      createUserDto.lastName = 'Doe';
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('firstName');
-      expect(errors[0].constraints?.maxLength).toBe(
-        'El nombre no puede exceder 50 caracteres',
-      );
-    });
-
-    it('should fail validation with short lastName', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'D';
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
-      expect(errors[0].constraints?.minLength).toBe(
-        'El apellido debe tener al menos 2 caracteres',
-      );
-    });
-
-    it('should fail validation with long lastName', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'A'.repeat(51);
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
-      expect(errors[0].constraints?.maxLength).toBe(
-        'El apellido no puede exceder 50 caracteres',
-      );
-    });
-
-    it('should pass validation with valid role', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
-      createUserDto.role = UserRole.ADMIN;
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(0);
-    });
-
-    it('should pass validation with valid moderator role', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
-      createUserDto.role = UserRole.MODERATOR;
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(0);
-    });
-
-    it('should pass validation without optional fields', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(0);
-    });
-
-    it('should pass validation with boolean isActive', async () => {
-      createUserDto.email = 'test@example.com';
-      createUserDto.password = 'Password123';
-      createUserDto.firstName = 'John';
-      createUserDto.lastName = 'Doe';
-      createUserDto.isActive = false;
-
-      const errors = await validate(createUserDto);
-      expect(errors).toHaveLength(0);
     });
   });
 
-  describe('Multiple validation errors', () => {
-    it('should return multiple validation errors', async () => {
-      createUserDto.email = 'invalid-email';
-      createUserDto.password = 'weak';
-      createUserDto.firstName = 'J';
-      createUserDto.lastName = 'D';
+  describe('edge cases', () => {
+    it('should handle special characters in email', async () => {
+      createUserDto.email = 'test+tag@example.com';
+      createUserDto.password = 'Password123';
 
       const errors = await validate(createUserDto);
-      expect(errors.length).toBeGreaterThan(1);
+      expect(errors).toHaveLength(0);
+    });
 
-      const errorProperties = errors.map(error => error.property);
-      expect(errorProperties).toContain('email');
-      expect(errorProperties).toContain('password');
-      expect(errorProperties).toContain('firstName');
-      expect(errorProperties).toContain('lastName');
+    it('should handle long email addresses', async () => {
+      createUserDto.email =
+        'very.long.email.address.with.many.subdomains@example.com';
+      createUserDto.password = 'Password123';
+
+      const errors = await validate(createUserDto);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should handle complex passwords', async () => {
+      createUserDto.email = 'test@example.com';
+      createUserDto.password = 'P@ssw0rd!123';
+
+      const errors = await validate(createUserDto);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should handle minimum valid password length', async () => {
+      createUserDto.email = 'test@example.com';
+      createUserDto.password = 'Pass1234';
+
+      const errors = await validate(createUserDto);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should handle maximum valid password length', async () => {
+      createUserDto.email = 'test@example.com';
+      createUserDto.password = 'A'.repeat(128);
+
+      const errors = await validate(createUserDto);
+      expect(errors).toHaveLength(1); // Should fail because it doesn't match the regex pattern
     });
   });
 });

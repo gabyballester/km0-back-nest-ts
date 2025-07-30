@@ -49,7 +49,7 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: [
-    // Archivos de configuración y setup
+    // Archivos de configuración y setup (NO deberían testearse)
     '/main.ts$',
     '/app.module.ts$',
     '/app.controller.ts$',
@@ -57,7 +57,7 @@ module.exports = {
     '/env.config.ts$',
     '/env.schema.ts$',
 
-    // Health check (endpoints básicos)
+    // Health check (endpoints básicos - NO deberían testearse)
     '/health/',
 
     // Archivos de base de datos (se testean en integración)
@@ -74,11 +74,11 @@ module.exports = {
     // Archivos de repositorios (se testean en integración)
     '/modules/users/infrastructure/repositories/',
 
-    // Archivos de módulos (solo configuración)
+    // Archivos de módulos (solo configuración - NO deberían testearse)
     '/modules/users/user.module.ts$',
     '/modules/security/security.module.ts$',
 
-    // Constantes y tipos (solo definiciones)
+    // Constantes y tipos (solo definiciones - NO deberían testearse)
     '/shared/constants/',
     '/shared/types/',
 

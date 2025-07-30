@@ -13,7 +13,12 @@ describe('PrismaService', () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(),
+            get: jest.fn((key: string) => {
+              if (key === 'DATABASE_URL') {
+                return 'postgresql://test:test@localhost:5432/test_db';
+              }
+              return 'development';
+            }),
           },
         },
       ],
@@ -29,35 +34,58 @@ describe('PrismaService', () => {
 
   describe('constructor', () => {
     it('should configure PrismaClient with development logging', () => {
-      jest.spyOn(configService, 'get').mockReturnValue('development');
+      jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+        if (key === 'DATABASE_URL') {
+          return 'postgresql://test:test@localhost:5432/test_db';
+        }
+        return 'development';
+      });
 
       const newService = new PrismaService(configService);
       expect(newService).toBeDefined();
     });
 
     it('should configure PrismaClient with production logging', () => {
-      jest.spyOn(configService, 'get').mockReturnValue('production');
+      jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+        if (key === 'DATABASE_URL') {
+          return 'postgresql://test:test@localhost:5432/test_db';
+        }
+        return 'production';
+      });
 
       const newService = new PrismaService(configService);
       expect(newService).toBeDefined();
     });
 
     it('should configure PrismaClient with test logging', () => {
-      jest.spyOn(configService, 'get').mockReturnValue('test');
+      jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+        if (key === 'DATABASE_URL') {
+          return 'postgresql://test:test@localhost:5432/test_db';
+        }
+        return 'test';
+      });
 
       const newService = new PrismaService(configService);
       expect(newService).toBeDefined();
     });
 
     it('should use default development logging when NODE_ENV is invalid', () => {
-      jest.spyOn(configService, 'get').mockReturnValue('invalid');
+      jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+        if (key === 'DATABASE_URL') {
+          return 'postgresql://test:test@localhost:5432/test_db';
+        }
+        return 'invalid';
+      });
 
       const newService = new PrismaService(configService);
       expect(newService).toBeDefined();
     });
 
     it('should use default development logging when NODE_ENV throws error', () => {
-      jest.spyOn(configService, 'get').mockImplementation(() => {
+      jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+        if (key === 'DATABASE_URL') {
+          return 'postgresql://test:test@localhost:5432/test_db';
+        }
         throw new Error('Config error');
       });
 
@@ -67,26 +95,41 @@ describe('PrismaService', () => {
   });
 
   describe('onModuleInit', () => {
-    it('should log initialization message', () => {
+    it('should log initialization message', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const connectSpy = jest.spyOn(service, '$connect').mockResolvedValue();
+      const queryRawSpy = jest
+        .spyOn(service, '$queryRaw')
+        .mockResolvedValue([{ '?column?': 1 }]);
 
-      service.onModuleInit();
+      await service.onModuleInit();
 
-      expect(consoleSpy).toHaveBeenCalledWith('🔗 PrismaService inicializado');
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '🔗 PrismaService conectado exitosamente',
+      );
+      expect(consoleSpy).toHaveBeenCalledWith('✅ Base de datos accesible');
 
       consoleSpy.mockRestore();
+      connectSpy.mockRestore();
+      queryRawSpy.mockRestore();
     });
   });
 
   describe('onModuleDestroy', () => {
-    it('should log destruction message', () => {
+    it('should log destruction message', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const disconnectSpy = jest
+        .spyOn(service, '$disconnect')
+        .mockResolvedValue();
 
-      service.onModuleDestroy();
+      await service.onModuleDestroy();
 
-      expect(consoleSpy).toHaveBeenCalledWith('🔗 PrismaService destruido');
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '🔗 PrismaService desconectado exitosamente',
+      );
 
       consoleSpy.mockRestore();
+      disconnectSpy.mockRestore();
     });
   });
 });

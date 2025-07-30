@@ -1,4 +1,4 @@
-import { User, UserRole } from '@/modules/users/domain/entities/user.entity';
+import { User } from '@/modules/users/domain/entities/user.entity';
 
 /**
  * Interfaz del servicio de dominio de usuarios
@@ -46,21 +46,6 @@ export interface IUserDomainService {
    * Verifica si un usuario puede modificar a otro usuario
    */
   canModifyUser(currentUser: User, targetUser: User): boolean;
-
-  /**
-   * Obtiene los permisos de un rol específico
-   */
-  getRolePermissions(role: UserRole): string[];
-
-  /**
-   * Valida si un rol es válido
-   */
-  isValidRole(role: string): boolean;
-
-  /**
-   * Obtiene el rol por defecto para nuevos usuarios
-   */
-  getDefaultRole(): UserRole;
 
   /**
    * Valida la información básica de un usuario

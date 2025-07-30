@@ -2,13 +2,25 @@ services:
   - type: web
     name: km0-market-backend
     runtime: node
-    plan: free
-    buildCommand: npm install && npm run db:prod && npm run build
+    plan: starter
+    buildCommand: npm ci && npm run build
     startCommand: npm run start:prod
-    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_ORM
-        value: drizzle
+        value: prisma
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECRET
+        generateValue: true
+      - key: THROTTLE_TTL
+        value: 60
+      - key: THROTTLE_LIMIT
+        value: 100
+      - key: CORS_ORIGIN
+        value: https://km0-market.vercel.app
+      - key: LOG_LEVEL
+        value: info
+    healthCheckPath: /health
     autoDeploy: true

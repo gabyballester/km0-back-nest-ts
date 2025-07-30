@@ -25,12 +25,10 @@ export interface IUserRepository {
   /**
    * Busca todos los usuarios con opciones de paginación
    */
-  findAll(options?: {
-    page?: number;
-    limit?: number;
-    isActive?: boolean;
-    role?: string;
-  }): Promise<{
+  findAll(
+    page?: number,
+    limit?: number,
+  ): Promise<{
     users: User[];
     total: number;
     page: number;
@@ -44,29 +42,9 @@ export interface IUserRepository {
   update(id: string, user: Partial<User>): Promise<User | null>;
 
   /**
-   * Elimina un usuario (soft delete)
+   * Elimina un usuario
    */
-  delete(id: string): Promise<boolean>;
-
-  /**
-   * Activa un usuario
-   */
-  activate(id: string): Promise<User | null>;
-
-  /**
-   * Desactiva un usuario
-   */
-  deactivate(id: string): Promise<User | null>;
-
-  /**
-   * Cambia el rol de un usuario
-   */
-  changeRole(id: string, role: string): Promise<User | null>;
-
-  /**
-   * Cambia la contraseña de un usuario
-   */
-  changePassword(id: string, newPassword: string): Promise<User | null>;
+  delete(id: string): Promise<void>;
 
   /**
    * Verifica si existe un usuario con el email dado
@@ -74,17 +52,7 @@ export interface IUserRepository {
   existsByEmail(email: string): Promise<boolean>;
 
   /**
-   * Busca usuarios por rol
-   */
-  findByRole(role: string): Promise<User[]>;
-
-  /**
-   * Busca usuarios activos
-   */
-  findActiveUsers(): Promise<User[]>;
-
-  /**
    * Cuenta el total de usuarios
    */
-  count(options?: { isActive?: boolean; role?: string }): Promise<number>;
+  count(): Promise<number>;
 }

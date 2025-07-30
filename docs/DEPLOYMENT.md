@@ -8,8 +8,8 @@
 # Entorno
 NODE_ENV=production
 
-# Base de datos
-DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
+# Base de datos (OBLIGATORIO: Nomenclatura específica por entorno)
+DATABASE_URL=postgresql://user:password@host:port/km0_db?sslmode=require
 DATABASE_ORM=drizzle
 
 # Sistema de Seguridad de Base de Datos (CRÍTICO)
@@ -22,6 +22,18 @@ HOST=0.0.0.0
 # CORS
 CORS_ORIGIN=https://your-frontend-domain.com
 ```
+
+### 🛡️ Nomenclatura Obligatoria de Bases de Datos
+
+**CRÍTICO**: El sistema valida automáticamente que cada entorno use su base de datos designada para prevenir pérdida accidental de datos.
+
+| Entorno        | Base de Datos | Ejemplo                                                   |
+| -------------- | ------------- | --------------------------------------------------------- |
+| **Producción** | `km0_db`      | `postgresql://user:pass@host:5432/km0_db?sslmode=require` |
+| **Desarrollo** | `km0_db_dev`  | `postgresql://user:pass@localhost:5432/km0_db_dev`        |
+| **Test**       | `km0_db_test` | `postgresql://user:pass@localhost:5432/km0_db_test`       |
+
+**Validación Automática**: Si intentas usar una base de datos incorrecta para el entorno, el sistema abortará automáticamente con un error claro.
 
 ### Configuración de Puertos y Host
 

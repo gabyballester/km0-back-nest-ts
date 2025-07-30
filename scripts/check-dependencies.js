@@ -10,9 +10,6 @@ const path = require('path');
 
 // Dependencias que DEBEN estar en dependencies (producción)
 const PRODUCTION_DEPS = [
-  'drizzle-kit',
-  'drizzle-orm',
-  'postgres',
   '@nestjs/common',
   '@nestjs/core',
   '@nestjs/config',

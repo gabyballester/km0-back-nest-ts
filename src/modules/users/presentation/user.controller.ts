@@ -27,7 +27,7 @@ import {
   UserResponseDto,
   UsersPaginatedResponseDto,
 } from '@/modules/users/application/dto/user-response.dto';
-import { UserRole } from '@/modules/users/domain/entities/user.entity';
+import { UserRole } from '@/shared/constants/user-roles';
 
 /**
  * Controlador para la gestión de usuarios
@@ -108,18 +108,12 @@ export class UserController {
   async getAllUsers(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
-    @Query('isActive') isActive?: string,
-    @Query('role') role?: string,
   ): Promise<UsersPaginatedResponseDto> {
-    return this.userService.getAllUsers({
-      page,
-      limit,
-      isActive:
-        isActive === 'true' ? true : isActive === 'false' ? false : undefined,
-      role,
-    });
+    return this.userService.getAllUsers(page, limit);
   }
 
+  // TODO: Implementar cuando se añadan los roles a la entidad User
+  /*
   @Get('active')
   @ApiOperation({
     summary: 'Obtener usuarios activos',
@@ -163,18 +157,14 @@ export class UserController {
       },
     },
   })
-  async countUsers(
-    @Query('isActive') isActive?: string,
-    @Query('role') role?: string,
-  ): Promise<{ count: number }> {
-    const count = await this.userService.countUsers({
-      isActive:
-        isActive === 'true' ? true : isActive === 'false' ? false : undefined,
-      role,
-    });
+  async countUsers(): Promise<{ count: number }> {
+    const count = await this.userService.countUsers();
     return { count };
   }
+  */
 
+  // TODO: Implementar cuando se añadan los roles a la entidad User
+  /*
   @Get('role/:role')
   @ApiOperation({
     summary: 'Obtener usuarios por rol',
@@ -200,6 +190,7 @@ export class UserController {
   ): Promise<UserResponseDto[]> {
     return this.userService.getUsersByRole(role);
   }
+  */
 
   @Get(':id')
   @ApiOperation({
@@ -287,16 +278,18 @@ export class UserController {
     return this.userService.updateUser(id, updateUserDto);
   }
 
+  /**
+   * Elimina un usuario
+   */
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Eliminar usuario',
-    description: 'Elimina un usuario (soft delete)',
+    description: 'Elimina un usuario específico por ID',
   })
   @ApiParam({
     name: 'id',
-    description: 'ID del usuario a eliminar',
-    example: 'clx1234567890abcdef',
+    description: 'ID del usuario',
+    example: 'user_1234567890',
   })
   @ApiResponse({
     status: 204,
@@ -308,141 +301,5 @@ export class UserController {
   })
   async deleteUser(@Param('id') id: string): Promise<void> {
     return this.userService.deleteUser(id);
-  }
-
-  @Put(':id/activate')
-  @ApiOperation({
-    summary: 'Activar usuario',
-    description: 'Activa un usuario previamente desactivado',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del usuario a activar',
-    example: 'clx1234567890abcdef',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuario activado exitosamente',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado',
-  })
-  async activateUser(@Param('id') id: string): Promise<UserResponseDto> {
-    return this.userService.activateUser(id);
-  }
-
-  @Put(':id/deactivate')
-  @ApiOperation({
-    summary: 'Desactivar usuario',
-    description: 'Desactiva un usuario (soft delete)',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del usuario a desactivar',
-    example: 'clx1234567890abcdef',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuario desactivado exitosamente',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado',
-  })
-  async deactivateUser(@Param('id') id: string): Promise<UserResponseDto> {
-    return this.userService.deactivateUser(id);
-  }
-
-  @Put(':id/role')
-  @ApiOperation({
-    summary: 'Cambiar rol de usuario',
-    description: 'Cambia el rol de un usuario específico',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del usuario',
-    example: 'clx1234567890abcdef',
-  })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        role: {
-          type: 'string',
-          enum: Object.values(UserRole),
-          example: UserRole.ADMIN,
-        },
-      },
-      required: ['role'],
-    },
-    description: 'Nuevo rol del usuario',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Rol cambiado exitosamente',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Rol inválido',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado',
-  })
-  async changeUserRole(
-    @Param('id') id: string,
-    @Body('role') role: UserRole,
-  ): Promise<UserResponseDto> {
-    return this.userService.changeUserRole(id, role);
-  }
-
-  @Put(':id/password')
-  @ApiOperation({
-    summary: 'Cambiar contraseña de usuario',
-    description: 'Cambia la contraseña de un usuario específico',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del usuario',
-    example: 'clx1234567890abcdef',
-  })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        password: {
-          type: 'string',
-          description:
-            'Nueva contraseña (mínimo 8 caracteres, debe incluir mayúscula, minúscula y número)',
-          example: 'NewPassword123',
-          minLength: 8,
-        },
-      },
-      required: ['password'],
-    },
-    description: 'Nueva contraseña del usuario',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Contraseña cambiada exitosamente',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Contraseña débil',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado',
-  })
-  async changeUserPassword(
-    @Param('id') id: string,
-    @Body('password') password: string,
-  ): Promise<UserResponseDto> {
-    return this.userService.changeUserPassword(id, password);
   }
 }
