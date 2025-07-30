@@ -1,0 +1,23 @@
+NODE_ENV=production
+PORT=8000
+HOST=0.0.0.0
+DATABASE_URL=postgresql://gabi:JrqKcqtJtm8KgeMJ0xzVDCn5FIv3rDWA@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db
+LOG_LEVEL=info
+DATABASE_ORM=prisma
+JWT_SECRET=8f7d3b2a1e9c6f5d4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0
+COOKIE_SECRET=1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2
+JWT_EXPIRES_IN=1d
+THROTTLE_TTL=60
+THROTTLE_LIMIT=100
+CORS_ORIGIN=http://localhost:3000
+DATABASE_SAFETY_LEVEL=strict
+SEED_ENABLED=true
+SEED_DATA_PATH=./data/seed-dev.json
+# 📧 CONFIGURACIÓN DE EMAIL
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_USER=your-email@gmail.com
+# SMTP_PASS=your-app-password
+# # Email de origen
+# FROM_EMAIL=noreply@km0.com
+# FROM_NAME=KM0 Market
