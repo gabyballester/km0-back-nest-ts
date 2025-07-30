@@ -18,7 +18,7 @@
 ### **Credenciales Expuestas:**
 
 ```
-DATABASE_URL=postgresql://gabi:JrqKcqtJtm8KgeMJ0xzVDCn5FIv3rDWA@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db
+DATABASE_URL=postgresql://user:REPLACED_PASSWORD@REPLACED_HOST/km0_db
 ```
 
 ---
