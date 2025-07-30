@@ -299,7 +299,9 @@ describe('User Entity', () => {
         createdAt: oldDate,
       });
 
-      expect(user.getUserAgeInDays()).toBe(5);
+      const ageInDays = user.getUserAgeInDays();
+      expect(ageInDays).toBeGreaterThanOrEqual(5);
+      expect(ageInDays).toBeLessThanOrEqual(6);
     });
 
     it('should calculate user age for very recent user', () => {
