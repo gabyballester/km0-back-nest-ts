@@ -1,3 +1,2 @@
-postgresql://gabi:JrqKcqtJtm8KgeMJ0xzVDCn5FIv3rDWA@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db==>postgresql://user:password@host:port/km0_db?sslmode=require
 JrqKcqtJtm8KgeMJ0xzVDCn5FIv3rDWA==>REPLACED_PASSWORD
-dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com==>REPLACED_HOST
+postgresql://gabi:JrqKcqtJtm8KgeMJ0xzVDCn5FIv3rDWA@dpg-d21b6hmmcj7s73c4atcg-a.oregon-postgres.render.com/km0_db==>postgresql://user:password@host:port/km0_db?sslmode=require
