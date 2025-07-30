@@ -38,6 +38,7 @@ export class ProfileFactory {
       data.userId,
       data.firstName,
       data.lastName,
+      undefined, // lastName2
       data.language,
       data.createdAt,
       data.updatedAt,

@@ -15,7 +15,7 @@ describe('Profile DTOs', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user-1';
       dto.firstName = 'Juan';
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
       dto.language = 'es';
       dto.phone = '+34 600 123 456';
       dto.city = 'Madrid';
@@ -29,7 +29,7 @@ describe('Profile DTOs', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user-1';
       dto.firstName = 'Juan';
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
 
       const errors = await validate(dto);
       expect(errors).toHaveLength(0);
@@ -42,14 +42,14 @@ describe('Profile DTOs', () => {
       const errors = await validate(dto);
       expect(errors.length).toBeGreaterThan(0);
       expect(errors.some(e => e.property === 'userId')).toBe(true);
-      expect(errors.some(e => e.property === 'lastName')).toBe(true);
+      expect(errors.some(e => e.property === 'lastName1')).toBe(true);
     });
 
     it('should validate language enum values', async () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user-1';
       dto.firstName = 'Juan';
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
       dto.language = 'en';
 
       const errors = await validate(dto);
@@ -60,7 +60,7 @@ describe('Profile DTOs', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user-1';
       dto.firstName = 'Juan';
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
       dto.language = 'invalid';
 
       const errors = await validate(dto);
@@ -72,7 +72,7 @@ describe('Profile DTOs', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user-1';
       dto.firstName = 'A'.repeat(51); // Too long
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
       dto.phone = 'A'.repeat(21); // Too long
       dto.city = 'A'.repeat(101); // Too long
       dto.postalCode = 'A'.repeat(11); // Too long
@@ -235,7 +235,7 @@ describe('Profile DTOs', () => {
       dto.id = 'clx1234567890abcdef';
       dto.userId = 'clx1234567890abcdef';
       dto.firstName = 'Juan';
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
       dto.phone = '+34 600 123 456';
       dto.language = 'es';
       dto.city = 'Madrid';
@@ -257,7 +257,7 @@ describe('Profile DTOs', () => {
       dto.id = 'clx1234567890abcdef';
       dto.userId = 'clx1234567890abcdef';
       dto.firstName = 'Juan';
-      dto.lastName = 'Pérez';
+      dto.lastName1 = 'Pérez';
       dto.language = 'es';
       dto.createdAt = new Date();
       dto.updatedAt = new Date();
@@ -292,7 +292,7 @@ describe('Profile DTOs', () => {
       profile.id = 'clx1234567890abcdef';
       profile.userId = 'clx1234567890abcdef';
       profile.firstName = 'Juan';
-      profile.lastName = 'Pérez';
+      profile.lastName1 = 'Pérez';
       profile.language = 'es';
       profile.createdAt = new Date();
       profile.updatedAt = new Date();

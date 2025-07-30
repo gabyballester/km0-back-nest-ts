@@ -58,6 +58,7 @@ describe('ProfileRepository', () => {
         profileData.userId,
         profileData.firstName,
         profileData.lastName,
+        undefined, // lastName2
         profileData.language,
         profileData.createdAt,
         profileData.updatedAt,
