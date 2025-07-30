@@ -8,7 +8,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.phone = '+1234567890';
       dto.language = 'es';
       dto.city = 'Madrid';
@@ -26,7 +26,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -39,7 +39,7 @@ describe('CreateProfileDto', () => {
       // Arrange
       const dto = new CreateProfileDto();
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -55,7 +55,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = '';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -70,7 +70,7 @@ describe('CreateProfileDto', () => {
       // Arrange
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -86,7 +86,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = '';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -102,7 +102,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'A'.repeat(51);
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -124,7 +124,7 @@ describe('CreateProfileDto', () => {
 
       // Assert
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
+      expect(errors[0].property).toBe('lastName1');
       expect(errors[0].constraints).toHaveProperty('isString');
     });
 
@@ -133,14 +133,14 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = '';
+      dto.lastName1 = '';
 
       // Act
       const errors = await validate(dto);
 
       // Assert
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
+      expect(errors[0].property).toBe('lastName1');
       expect(errors[0].constraints).toHaveProperty('minLength');
     });
 
@@ -149,14 +149,14 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'A'.repeat(51);
+      dto.lastName1 = 'A'.repeat(51);
 
       // Act
       const errors = await validate(dto);
 
       // Assert
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
+      expect(errors[0].property).toBe('lastName1');
       expect(errors[0].constraints).toHaveProperty('maxLength');
     });
 
@@ -165,7 +165,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.phone = 'A'.repeat(21);
 
       // Act
@@ -182,7 +182,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.language = 'invalid';
 
       // Act
@@ -202,7 +202,7 @@ describe('CreateProfileDto', () => {
         const dto = new CreateProfileDto();
         dto.userId = 'user_1234567890';
         dto.firstName = 'John';
-        dto.lastName = 'Doe';
+        dto.lastName1 = 'Doe';
         dto.language = language;
 
         // Act
@@ -218,7 +218,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.city = 'A'.repeat(101);
 
       // Act
@@ -235,7 +235,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.postalCode = 'A'.repeat(11);
 
       // Act
@@ -252,7 +252,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.phone = '+1234567890';
       dto.language = 'en';
       dto.city = 'Barcelona';
@@ -270,7 +270,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -287,7 +287,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'A'.repeat(1000);
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -301,7 +301,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'José María';
-      dto.lastName = 'García López';
+      dto.lastName1 = 'García López';
 
       // Act
       const errors = await validate(dto);
@@ -315,7 +315,7 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'John2';
-      dto.lastName = 'Doe3';
+      dto.lastName1 = 'Doe3';
 
       // Act
       const errors = await validate(dto);
@@ -323,7 +323,7 @@ describe('CreateProfileDto', () => {
       // Assert
       expect(errors).toHaveLength(2);
       expect(errors[0].property).toBe('firstName');
-      expect(errors[1].property).toBe('lastName');
+      expect(errors[1].property).toBe('lastName1');
     });
 
     it('should reject names with hyphens', async () => {
@@ -331,14 +331,14 @@ describe('CreateProfileDto', () => {
       const dto = new CreateProfileDto();
       dto.userId = 'user_1234567890';
       dto.firstName = 'José María';
-      dto.lastName = 'García-López';
+      dto.lastName1 = 'García-López';
 
       // Act
       const errors = await validate(dto);
 
       // Assert
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
+      expect(errors[0].property).toBe('lastName1');
     });
   });
 });

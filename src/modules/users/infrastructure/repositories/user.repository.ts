@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/infrastructure/database/prisma.service';
 import { IUserRepository } from '@/modules/users/domain/repositories/user.repository.interface';
 import { User } from '@/modules/users/domain/entities/user.entity';
+import { UserPersistenceAdapter } from '@/modules/users/infrastructure/adapters/user.persistence.adapter';
 
 /**
  * Implementación del repositorio de usuarios usando Prisma ORM
@@ -14,17 +15,13 @@ export class UserRepository implements IUserRepository {
    * Crea un nuevo usuario
    */
   async create(user: User): Promise<User> {
+    const prismaData = UserPersistenceAdapter.toPrismaCreate(user);
+
     const createdUser = await this.prisma.user.create({
-      data: {
-        id: user.id,
-        email: user.email,
-        password: user.password,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      },
+      data: prismaData,
     });
 
-    return User.fromJSON(createdUser);
+    return UserPersistenceAdapter.fromPrisma(createdUser);
   }
 
   /**
@@ -35,7 +32,7 @@ export class UserRepository implements IUserRepository {
       where: { id },
     });
 
-    return user ? User.fromJSON(user) : null;
+    return user ? UserPersistenceAdapter.fromPrisma(user) : null;
   }
 
   /**
@@ -46,7 +43,7 @@ export class UserRepository implements IUserRepository {
       where: { email },
     });
 
-    return user ? User.fromJSON(user) : null;
+    return user ? UserPersistenceAdapter.fromPrisma(user) : null;
   }
 
   /**
@@ -76,7 +73,7 @@ export class UserRepository implements IUserRepository {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      users: users.map(user => User.fromJSON(user)),
+      users: UserPersistenceAdapter.fromPrismaMany(users),
       total,
       page,
       limit,
@@ -88,16 +85,14 @@ export class UserRepository implements IUserRepository {
    * Actualiza un usuario
    */
   async update(id: string, userData: Partial<User>): Promise<User> {
+    const updateData = UserPersistenceAdapter.toPrismaUpdate(userData);
+
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: {
-        email: userData.email,
-        password: userData.password,
-        updatedAt: new Date(),
-      },
+      data: updateData,
     });
 
-    return User.fromJSON(updatedUser);
+    return UserPersistenceAdapter.fromPrisma(updatedUser);
   }
 
   /**
@@ -158,6 +153,6 @@ export class UserRepository implements IUserRepository {
       orderBy: { createdAt: 'desc' },
     });
 
-    return users.map(user => User.fromJSON(user));
+    return UserPersistenceAdapter.fromPrismaMany(users);
   }
 }

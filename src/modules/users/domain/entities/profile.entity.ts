@@ -6,7 +6,8 @@ export class Profile {
   private readonly _id: string;
   private readonly _userId: string;
   private _firstName: string;
-  private _lastName: string;
+  private _lastName1: string;
+  private _lastName2?: string;
   private _phone?: string;
   private _language: string;
   private _city?: string;
@@ -18,7 +19,8 @@ export class Profile {
     id: string,
     userId: string,
     firstName: string,
-    lastName: string,
+    lastName1: string,
+    lastName2?: string,
     language: string = 'es',
     createdAt: Date = new Date(),
     updatedAt: Date = new Date(),
@@ -29,7 +31,8 @@ export class Profile {
     this._id = id;
     this._userId = userId;
     this._firstName = firstName;
-    this._lastName = lastName;
+    this._lastName1 = lastName1;
+    this._lastName2 = lastName2;
     this._language = language;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
@@ -51,8 +54,12 @@ export class Profile {
     return this._firstName;
   }
 
-  get lastName(): string {
-    return this._lastName;
+  get lastName1(): string {
+    return this._lastName1;
+  }
+
+  get lastName2(): string | undefined {
+    return this._lastName2;
   }
 
   get phone(): string | undefined {
@@ -90,11 +97,22 @@ export class Profile {
   }
 
   /**
-   * Update last name
+   * Update first last name
    */
-  updateLastName(lastName: string): void {
-    this.validateLastName(lastName);
-    this._lastName = lastName;
+  updateLastName1(lastName1: string): void {
+    this.validateLastName(lastName1);
+    this._lastName1 = lastName1;
+    this._updatedAt = new Date();
+  }
+
+  /**
+   * Update second last name
+   */
+  updateLastName2(lastName2?: string): void {
+    if (lastName2 !== undefined) {
+      this.validateLastName(lastName2);
+    }
+    this._lastName2 = lastName2;
     this._updatedAt = new Date();
   }
 
@@ -138,14 +156,17 @@ export class Profile {
    * Get full name
    */
   getFullName(): string {
-    return `${this._firstName} ${this._lastName}`.replace(/\s+/g, ' ').trim();
+    const lastName2 = this._lastName2 ? ` ${this._lastName2}` : '';
+    return `${this._firstName} ${this._lastName1}${lastName2}`
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   /**
    * Check if profile is complete (has basic information)
    */
   isComplete(): boolean {
-    return !!(this._firstName && this._lastName && this._city);
+    return !!(this._firstName && this._lastName1 && this._city);
   }
 
   /**
@@ -154,7 +175,8 @@ export class Profile {
   getCompletionPercentage(): number {
     const fields = [
       this._firstName,
-      this._lastName,
+      this._lastName1,
+      this._lastName2,
       this._phone,
       this._city,
       this._postalCode,
@@ -214,7 +236,8 @@ export class Profile {
   static create(
     userId: string,
     firstName: string,
-    lastName: string,
+    lastName1: string,
+    lastName2?: string,
     language: string = 'es',
     phone?: string,
     city?: string,
@@ -225,7 +248,8 @@ export class Profile {
       id,
       userId,
       firstName,
-      lastName,
+      lastName1,
+      lastName2,
       language,
       new Date(),
       new Date(),
@@ -240,7 +264,8 @@ export class Profile {
     id: string;
     userId: string;
     firstName: string;
-    lastName: string;
+    lastName1: string;
+    lastName2?: string;
     phone?: string;
     language: string;
     city?: string;
@@ -252,7 +277,8 @@ export class Profile {
       data.id,
       data.userId,
       data.firstName,
-      data.lastName,
+      data.lastName1,
+      data.lastName2,
       data.language,
       new Date(data.createdAt),
       new Date(data.updatedAt),

@@ -5,7 +5,8 @@ describe('Profile', () => {
   const mockId = 'test-id';
   const mockUserId = 'user-id';
   const mockFirstName = 'John';
-  const mockLastName = 'Doe';
+  const mockLastName1 = 'Doe';
+  const mockLastName2 = 'Smith';
   const mockLanguage = 'es';
   const mockCreatedAt = new Date('2023-01-01T00:00:00Z');
   const mockUpdatedAt = new Date('2023-01-02T00:00:00Z');
@@ -15,7 +16,8 @@ describe('Profile', () => {
       mockId,
       mockUserId,
       mockFirstName,
-      mockLastName,
+      mockLastName1,
+      mockLastName2,
       mockLanguage,
       mockCreatedAt,
       mockUpdatedAt,
@@ -28,7 +30,8 @@ describe('Profile', () => {
       expect(profile.id).toBe(mockId);
       expect(profile.userId).toBe(mockUserId);
       expect(profile.firstName).toBe(mockFirstName);
-      expect(profile.lastName).toBe(mockLastName);
+      expect(profile.lastName1).toBe(mockLastName1);
+      expect(profile.lastName2).toBe(mockLastName2);
       expect(profile.language).toBe(mockLanguage);
       expect(profile.createdAt).toBe(mockCreatedAt);
       expect(profile.updatedAt).toBe(mockUpdatedAt);
@@ -45,7 +48,8 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
+        mockLastName2,
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
@@ -66,7 +70,7 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
       );
 
       // Assert
@@ -82,7 +86,7 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
       );
 
       const afterCreation = new Date();
@@ -109,7 +113,7 @@ describe('Profile', () => {
       expect(profile.id).toBe(mockId);
       expect(profile.userId).toBe(mockUserId);
       expect(profile.firstName).toBe(mockFirstName);
-      expect(profile.lastName).toBe(mockLastName);
+      expect(profile.lastName1).toBe(mockLastName1);
       expect(profile.language).toBe(mockLanguage);
       expect(profile.createdAt).toBe(mockCreatedAt);
       expect(profile.updatedAt).toBe(mockUpdatedAt);
@@ -178,10 +182,10 @@ describe('Profile', () => {
       const originalUpdatedAt = profile.updatedAt;
 
       // Act
-      profile.updateLastName(newLastName);
+      profile.updateLastName1(newLastName);
 
       // Assert
-      expect(profile.lastName).toBe(newLastName);
+      expect(profile.lastName1).toBe(newLastName);
       expect(profile.updatedAt.getTime()).toBeGreaterThan(
         originalUpdatedAt.getTime(),
       );
@@ -189,10 +193,10 @@ describe('Profile', () => {
 
     it('should throw error when lastName is empty', () => {
       // Act & Assert
-      expect(() => profile.updateLastName('')).toThrow(
+      expect(() => profile.updateLastName1('')).toThrow(
         'Last name cannot be empty',
       );
-      expect(() => profile.updateLastName('   ')).toThrow(
+      expect(() => profile.updateLastName1('   ')).toThrow(
         'Last name cannot be empty',
       );
     });
@@ -202,7 +206,7 @@ describe('Profile', () => {
       const longLastName = 'A'.repeat(51);
 
       // Act & Assert
-      expect(() => profile.updateLastName(longLastName)).toThrow(
+      expect(() => profile.updateLastName1(longLastName)).toThrow(
         'Last name cannot exceed 50 characters',
       );
     });
@@ -365,7 +369,7 @@ describe('Profile', () => {
       const fullName = profile.getFullName();
 
       // Assert
-      expect(fullName).toBe('John Doe');
+      expect(fullName).toBe('John Doe Smith');
     });
 
     it('should trim extra spaces from full name', () => {
@@ -403,7 +407,7 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
@@ -433,12 +437,13 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
+        undefined, // lastName2
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
         '+1234567890',
-        undefined,
+        undefined, // city
         '28001',
       );
 
@@ -457,7 +462,8 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
+        mockLastName2, // lastName2
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
@@ -478,28 +484,30 @@ describe('Profile', () => {
       const percentage = profile.getCompletionPercentage();
 
       // Assert
-      expect(percentage).toBe(40); // firstName, lastName (2 out of 5 fields)
+      expect(percentage).toBe(50); // firstName, lastName1, lastName2 (3 out of 6 fields)
     });
 
-    it('should return 60% for profile with some optional fields', () => {
+    it('should return 67% for profile with some optional fields', () => {
       // Arrange
       const partialProfile = new Profile(
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
+        undefined, // lastName2
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
         '+1234567890',
         'Madrid',
+        undefined, // postalCode
       );
 
       // Act
       const percentage = partialProfile.getCompletionPercentage();
 
       // Assert
-      expect(percentage).toBe(80); // firstName, lastName, phone, city (4 out of 5 fields)
+      expect(percentage).toBe(67); // firstName, lastName1, phone, city (4 out of 6 fields)
     });
 
     it('should handle empty strings as incomplete', () => {
@@ -508,7 +516,7 @@ describe('Profile', () => {
         mockId,
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
         mockLanguage,
         mockCreatedAt,
         mockUpdatedAt,
@@ -521,7 +529,7 @@ describe('Profile', () => {
       const percentage = profileWithEmptyFields.getCompletionPercentage();
 
       // Assert
-      expect(percentage).toBe(40); // Only firstName and lastName count
+      expect(percentage).toBe(50); // Only firstName, lastName1, and lastName2 count
     });
   });
 
@@ -531,14 +539,14 @@ describe('Profile', () => {
       const createdProfile = Profile.create(
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
       );
 
       // Assert
       expect(createdProfile).toBeInstanceOf(Profile);
       expect(createdProfile.userId).toBe(mockUserId);
       expect(createdProfile.firstName).toBe(mockFirstName);
-      expect(createdProfile.lastName).toBe(mockLastName);
+      expect(createdProfile.lastName1).toBe(mockLastName1);
       expect(createdProfile.language).toBe('es'); // Default
       expect(createdProfile.id).toBeDefined();
       expect(createdProfile.id).not.toBe(mockId); // Should be different
@@ -556,7 +564,8 @@ describe('Profile', () => {
       const createdProfile = Profile.create(
         mockUserId,
         mockFirstName,
-        mockLastName,
+        mockLastName1,
+        undefined, // lastName2
         'en',
         phone,
         city,
@@ -572,8 +581,8 @@ describe('Profile', () => {
 
     it('should generate unique IDs for different profiles', () => {
       // Act
-      const profile1 = Profile.create(mockUserId, mockFirstName, mockLastName);
-      const profile2 = Profile.create(mockUserId, mockFirstName, mockLastName);
+      const profile1 = Profile.create(mockUserId, mockFirstName, mockLastName1);
+      const profile2 = Profile.create(mockUserId, mockFirstName, mockLastName1);
 
       // Assert
       expect(profile1.id).not.toBe(profile2.id);

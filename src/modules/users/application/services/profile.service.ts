@@ -17,7 +17,8 @@ import {
 export interface CreateProfileDto {
   userId: string;
   firstName: string;
-  lastName: string;
+  lastName1: string;
+  lastName2?: string;
   language?: string;
   phone?: string;
   city?: string;
@@ -26,7 +27,8 @@ export interface CreateProfileDto {
 
 export interface UpdateProfileDto {
   firstName?: string;
-  lastName?: string;
+  lastName1?: string;
+  lastName2?: string;
   language?: string;
   phone?: string;
   city?: string;
@@ -73,7 +75,8 @@ export class ProfileService {
     const profile = Profile.create(
       createProfileDto.userId,
       createProfileDto.firstName,
-      createProfileDto.lastName,
+      createProfileDto.lastName1,
+      createProfileDto.lastName2,
       createProfileDto.language ?? 'es',
       createProfileDto.phone,
       createProfileDto.city,
@@ -181,8 +184,12 @@ export class ProfileService {
       existingProfile.updateFirstName(updateProfileDto.firstName);
     }
 
-    if (updateProfileDto.lastName !== undefined) {
-      existingProfile.updateLastName(updateProfileDto.lastName);
+    if (updateProfileDto.lastName1 !== undefined) {
+      existingProfile.updateLastName1(updateProfileDto.lastName1);
+    }
+
+    if (updateProfileDto.lastName2 !== undefined) {
+      existingProfile.updateLastName2(updateProfileDto.lastName2);
     }
 
     if (updateProfileDto.phone !== undefined) {

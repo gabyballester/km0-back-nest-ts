@@ -7,7 +7,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.phone = '+1234567890';
       dto.language = 'es';
       dto.city = 'Madrid';
@@ -71,31 +71,45 @@ describe('UpdateProfileDto', () => {
       expect(errors[0].constraints).toHaveProperty('maxLength');
     });
 
-    it('should fail validation when lastName is empty', async () => {
+    it('should fail validation when lastName1 is empty', async () => {
       // Arrange
       const dto = new UpdateProfileDto();
-      dto.lastName = '';
+      dto.lastName1 = '';
 
       // Act
       const errors = await validate(dto);
 
       // Assert
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
+      expect(errors[0].property).toBe('lastName1');
       expect(errors[0].constraints).toHaveProperty('minLength');
     });
 
-    it('should fail validation when lastName is too long', async () => {
+    it('should fail validation when lastName1 is too long', async () => {
       // Arrange
       const dto = new UpdateProfileDto();
-      dto.lastName = 'A'.repeat(51);
+      dto.lastName1 = 'A'.repeat(51);
 
       // Act
       const errors = await validate(dto);
 
       // Assert
       expect(errors).toHaveLength(1);
-      expect(errors[0].property).toBe('lastName');
+      expect(errors[0].property).toBe('lastName1');
+      expect(errors[0].constraints).toHaveProperty('maxLength');
+    });
+
+    it('should fail validation when lastName2 is too long', async () => {
+      // Arrange
+      const dto = new UpdateProfileDto();
+      dto.lastName2 = 'A'.repeat(51);
+
+      // Act
+      const errors = await validate(dto);
+
+      // Assert
+      expect(errors).toHaveLength(1);
+      expect(errors[0].property).toBe('lastName2');
       expect(errors[0].constraints).toHaveProperty('maxLength');
     });
 
@@ -175,7 +189,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.phone = '+1234567890';
       dto.language = 'en';
       dto.city = 'Barcelona';
@@ -203,7 +217,7 @@ describe('UpdateProfileDto', () => {
     it('should pass validation with only lastName', async () => {
       // Arrange
       const dto = new UpdateProfileDto();
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
 
       // Act
       const errors = await validate(dto);
@@ -266,7 +280,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'José María';
-      dto.lastName = 'García López';
+      dto.lastName1 = 'García López';
 
       // Act
       const errors = await validate(dto);
@@ -279,7 +293,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'John2';
-      dto.lastName = 'Doe3';
+      dto.lastName1 = 'Doe3';
 
       // Act
       const errors = await validate(dto);
@@ -287,14 +301,14 @@ describe('UpdateProfileDto', () => {
       // Assert
       expect(errors).toHaveLength(2);
       expect(errors[0].property).toBe('firstName');
-      expect(errors[1].property).toBe('lastName');
+      expect(errors[1].property).toBe('lastName1');
     });
 
     it('should handle maximum length values', async () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'A'.repeat(50);
-      dto.lastName = 'B'.repeat(50);
+      dto.lastName1 = 'B'.repeat(50);
       dto.phone = '+123456789012345';
       dto.city = 'D'.repeat(100);
       dto.postalCode = '12345-6789';
@@ -310,7 +324,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'AA';
-      dto.lastName = 'BB';
+      dto.lastName1 = 'BB';
 
       // Act
       const errors = await validate(dto);
@@ -323,7 +337,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       // Test with null values (should be converted to undefined)
       dto.phone = undefined;
       dto.city = undefined;
@@ -340,7 +354,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'John';
-      dto.lastName = 'Doe';
+      dto.lastName1 = 'Doe';
       dto.phone = undefined;
       dto.city = undefined;
       dto.postalCode = undefined;
@@ -358,7 +372,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = '';
-      dto.lastName = '';
+      dto.lastName1 = '';
       dto.language = 'invalid';
 
       // Act
@@ -367,7 +381,7 @@ describe('UpdateProfileDto', () => {
       // Assert
       expect(errors).toHaveLength(3);
       expect(errors.some(e => e.property === 'firstName')).toBe(true);
-      expect(errors.some(e => e.property === 'lastName')).toBe(true);
+      expect(errors.some(e => e.property === 'lastName1')).toBe(true);
       expect(errors.some(e => e.property === 'language')).toBe(true);
     });
 
@@ -375,7 +389,7 @@ describe('UpdateProfileDto', () => {
       // Arrange
       const dto = new UpdateProfileDto();
       dto.firstName = 'A'.repeat(51);
-      dto.lastName = 'B'.repeat(51);
+      dto.lastName1 = 'B'.repeat(51);
       dto.phone = 'C'.repeat(21);
       dto.city = 'D'.repeat(101);
       dto.postalCode = 'E'.repeat(11);
@@ -386,7 +400,7 @@ describe('UpdateProfileDto', () => {
       // Assert
       expect(errors).toHaveLength(5);
       expect(errors.some(e => e.property === 'firstName')).toBe(true);
-      expect(errors.some(e => e.property === 'lastName')).toBe(true);
+      expect(errors.some(e => e.property === 'lastName1')).toBe(true);
       expect(errors.some(e => e.property === 'phone')).toBe(true);
       expect(errors.some(e => e.property === 'city')).toBe(true);
       expect(errors.some(e => e.property === 'postalCode')).toBe(true);

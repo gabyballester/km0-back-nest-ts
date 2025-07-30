@@ -18,6 +18,7 @@ describe('ProfileController', () => {
     'user-1',
     'Juan',
     'Pérez',
+    undefined,
     'es',
     new Date('2024-01-01'),
     new Date('2024-01-01'),
@@ -30,7 +31,8 @@ describe('ProfileController', () => {
     id: 'profile-1',
     userId: 'user-1',
     firstName: 'Juan',
-    lastName: 'Pérez',
+    lastName1: 'Pérez',
+    lastName2: undefined,
     phone: '+34 600 123 456',
     language: 'es',
     city: 'Madrid',
@@ -39,7 +41,7 @@ describe('ProfileController', () => {
     updatedAt: new Date('2024-01-01'),
     fullName: 'Juan Pérez',
     isComplete: true,
-    completionPercentage: 100,
+    completionPercentage: 83,
   };
 
   beforeEach(async () => {
@@ -83,7 +85,8 @@ describe('ProfileController', () => {
     const createProfileDto = {
       userId: 'user-1',
       firstName: 'Juan',
-      lastName: 'Pérez',
+      lastName1: 'Pérez',
+      lastName2: 'García',
       language: 'es',
       phone: '+34 600 123 456',
       city: 'Madrid',
@@ -191,6 +194,7 @@ describe('ProfileController', () => {
         'user-1',
         'Juan Carlos',
         'Pérez',
+        undefined,
         'es',
         new Date('2024-01-01'),
         new Date('2024-01-02'),
@@ -214,7 +218,8 @@ describe('ProfileController', () => {
         id: 'profile-1',
         userId: 'user-1',
         firstName: 'Juan Carlos',
-        lastName: 'Pérez',
+        lastName1: 'Pérez',
+        lastName2: undefined,
         phone: '+34 600 123 456',
         language: 'es',
         city: 'Barcelona',
@@ -223,7 +228,7 @@ describe('ProfileController', () => {
         updatedAt: new Date('2024-01-02'),
         fullName: 'Juan Carlos Pérez',
         isComplete: true,
-        completionPercentage: 100,
+        completionPercentage: 83,
       });
     });
   });

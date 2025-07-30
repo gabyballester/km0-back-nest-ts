@@ -22,6 +22,7 @@ export class ProfileRepository implements IProfileRepository {
   private convertPrismaData(profile: PrismaProfile) {
     return {
       ...profile,
+      lastName2: profile.lastName2 ?? undefined,
       phone: profile.phone ?? undefined,
       city: profile.city ?? undefined,
       postalCode: profile.postalCode ?? undefined,
@@ -37,7 +38,8 @@ export class ProfileRepository implements IProfileRepository {
         id: profile.id,
         userId: profile.userId,
         firstName: profile.firstName,
-        lastName: profile.lastName,
+        lastName1: profile.lastName1,
+        lastName2: profile.lastName2,
         phone: profile.phone,
         language: profile.language,
         city: profile.city,
@@ -130,7 +132,8 @@ export class ProfileRepository implements IProfileRepository {
       where: { id },
       data: {
         firstName: profileData.firstName,
-        lastName: profileData.lastName,
+        lastName1: profileData.lastName1,
+        lastName2: profileData.lastName2,
         phone: profileData.phone,
         language: profileData.language,
         city: profileData.city,
@@ -221,7 +224,7 @@ export class ProfileRepository implements IProfileRepository {
       where: {
         AND: [
           { firstName: { not: undefined } },
-          { lastName: { not: undefined } },
+          { lastName1: { not: undefined } },
           { phone: { not: undefined } },
           { city: { not: undefined } },
           { postalCode: { not: undefined } },

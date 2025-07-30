@@ -36,7 +36,7 @@ export class CreateProfileDto {
   firstName!: string;
 
   @ApiProperty({
-    description: 'Apellido del usuario',
+    description: 'Primer apellido del usuario',
     example: 'Pérez',
     minLength: 1,
     maxLength: 50,
@@ -45,7 +45,19 @@ export class CreateProfileDto {
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(50)
-  lastName!: string;
+  lastName1!: string;
+
+  @ApiPropertyOptional({
+    description: 'Segundo apellido del usuario',
+    example: 'García',
+    minLength: 1,
+    maxLength: 50,
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(50)
+  lastName2?: string;
 
   @ApiPropertyOptional({
     description: 'Número de teléfono',
@@ -106,7 +118,7 @@ export class UpdateProfileDto {
   firstName?: string;
 
   @ApiPropertyOptional({
-    description: 'Apellido del usuario',
+    description: 'Primer apellido del usuario',
     example: 'Pérez',
     minLength: 1,
     maxLength: 50,
@@ -115,7 +127,19 @@ export class UpdateProfileDto {
   @IsString()
   @MinLength(1)
   @MaxLength(50)
-  lastName?: string;
+  lastName1?: string;
+
+  @ApiPropertyOptional({
+    description: 'Segundo apellido del usuario',
+    example: 'García',
+    minLength: 1,
+    maxLength: 50,
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(50)
+  lastName2?: string;
 
   @ApiPropertyOptional({
     description: 'Número de teléfono',
@@ -240,10 +264,16 @@ export class ProfileResponseDto {
   firstName!: string;
 
   @ApiProperty({
-    description: 'Apellido del usuario',
+    description: 'Primer apellido del usuario',
     example: 'Pérez',
   })
-  lastName!: string;
+  lastName1!: string;
+
+  @ApiPropertyOptional({
+    description: 'Segundo apellido del usuario',
+    example: 'García',
+  })
+  lastName2?: string;
 
   @ApiPropertyOptional({
     description: 'Número de teléfono',

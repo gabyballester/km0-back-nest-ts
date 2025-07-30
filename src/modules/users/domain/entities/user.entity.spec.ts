@@ -64,109 +64,117 @@ describe('User Entity', () => {
     });
   });
 
-  describe('email validation', () => {
-    it('should validate correct email format', () => {
+  describe('business logic validation', () => {
+    it('should allow email change by default', () => {
       const user = new User(mockUserData);
-      expect(user.isValidEmail()).toBe(true);
+      expect(user.canChangeEmail()).toBe(true);
     });
 
-    it('should reject invalid email format', () => {
+    it('should allow password change by default', () => {
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
       const user = new User({
         ...mockUserData,
-        email: 'invalid-email',
+        updatedAt: oldDate,
       });
-      expect(user.isValidEmail()).toBe(false);
+      expect(user.canChangePassword()).toBe(true);
     });
 
-    it('should reject empty email', () => {
-      const user = new User({
+    it('should prevent password change if changed recently', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _user = new User(mockUserData);
+
+      // Simulate recent password change
+      const recentDate = new Date();
+      recentDate.setHours(recentDate.getHours() - 12); // 12 hours ago
+
+      const userWithRecentChange = new User({
         ...mockUserData,
-        email: '',
+        updatedAt: recentDate,
       });
-      expect(user.isValidEmail()).toBe(false);
+
+      expect(userWithRecentChange.canChangePassword()).toBe(false);
     });
 
-    it('should accept email with special characters', () => {
-      const user = new User({
+    it('should allow password change after sufficient time', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _user = new User(mockUserData);
+
+      // Simulate old password change
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const userWithOldChange = new User({
         ...mockUserData,
-        email: 'test+tag@example.com',
+        updatedAt: oldDate,
       });
-      expect(user.isValidEmail()).toBe(true);
-    });
 
-    it('should accept email with subdomains', () => {
-      const user = new User({
-        ...mockUserData,
-        email: 'user@subdomain.example.com',
-      });
-      expect(user.isValidEmail()).toBe(true);
-    });
-  });
-
-  describe('password validation', () => {
-    it('should validate correct password length', () => {
-      const user = new User(mockUserData);
-      expect(user.isValidPassword()).toBe(true);
-    });
-
-    it('should reject short password', () => {
-      const user = new User({
-        ...mockUserData,
-        password: 'short',
-      });
-      expect(user.isValidPassword()).toBe(false);
-    });
-
-    it('should accept minimum valid password length', () => {
-      const user = new User({
-        ...mockUserData,
-        password: 'Pass123!',
-      });
-      expect(user.isValidPassword()).toBe(true);
-    });
-
-    it('should accept long password', () => {
-      const user = new User({
-        ...mockUserData,
-        password: 'A'.repeat(100),
-      });
-      expect(user.isValidPassword()).toBe(true);
+      expect(userWithOldChange.canChangePassword()).toBe(true);
     });
   });
 
   describe('updateEmail', () => {
-    it('should update email and updatedAt', () => {
-      const user = new User(mockUserData);
+    it('should update email and updatedAt when allowed', () => {
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const user = new User({
+        ...mockUserData,
+        updatedAt: oldDate,
+      });
       const originalUpdatedAt = user.updatedAt;
       const newEmail = 'new@example.com';
 
-      // Wait a bit to ensure timestamp difference
-      setTimeout(() => {
-        user.updateEmail(newEmail);
+      user.updateEmail(newEmail);
 
-        expect(user.email).toBe(newEmail);
-        expect(user.updatedAt.getTime()).toBeGreaterThan(
-          originalUpdatedAt.getTime(),
-        );
-      }, 1);
+      expect(user.email).toBe(newEmail);
+      expect(user.updatedAt.getTime()).toBeGreaterThan(
+        originalUpdatedAt.getTime(),
+      );
+    });
+
+    it('should throw error when email change is not allowed', () => {
+      const user = new User(mockUserData);
+
+      // Mock canChangeEmail to return false
+      jest.spyOn(user, 'canChangeEmail').mockReturnValue(false);
+
+      expect(() => {
+        user.updateEmail('new@example.com');
+      }).toThrow('No se puede cambiar el email en este momento');
     });
   });
 
   describe('changePassword', () => {
-    it('should update password and updatedAt', () => {
-      const user = new User(mockUserData);
+    it('should update password and updatedAt when allowed', () => {
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const user = new User({
+        ...mockUserData,
+        updatedAt: oldDate,
+      });
       const originalUpdatedAt = user.updatedAt;
       const newPassword = 'NewPassword123';
 
-      // Wait a bit to ensure timestamp difference
-      setTimeout(() => {
-        user.changePassword(newPassword);
+      user.changePassword(newPassword);
 
-        expect(user.password).toBe(newPassword);
-        expect(user.updatedAt.getTime()).toBeGreaterThan(
-          originalUpdatedAt.getTime(),
-        );
-      }, 1);
+      expect(user.password).toBe(newPassword);
+      expect(user.updatedAt.getTime()).toBeGreaterThan(
+        originalUpdatedAt.getTime(),
+      );
+    });
+
+    it('should throw error when password change is not allowed', () => {
+      const user = new User(mockUserData);
+
+      // Mock canChangePassword to return false
+      jest.spyOn(user, 'canChangePassword').mockReturnValue(false);
+
+      expect(() => {
+        user.changePassword('NewPassword123');
+      }).toThrow('No se puede cambiar la contraseña tan frecuentemente');
     });
   });
 
@@ -264,79 +272,51 @@ describe('User Entity', () => {
     });
   });
 
-  describe('email validation edge cases', () => {
-    it('should reject email without @', () => {
-      const user = new User({
-        ...mockUserData,
-        email: 'testexample.com',
-      });
-      expect(user.isValidEmail()).toBe(false);
+  describe('user classification', () => {
+    it('should identify recent user correctly', () => {
+      const recentUser = new User(mockUserData);
+      expect(recentUser.isRecentUser()).toBe(true);
     });
 
-    it('should reject email without domain', () => {
-      const user = new User({
+    it('should identify old user correctly', () => {
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 31); // 31 days ago
+
+      const oldUser = new User({
         ...mockUserData,
-        email: 'test@',
+        createdAt: oldDate,
       });
-      expect(user.isValidEmail()).toBe(false);
+
+      expect(oldUser.isRecentUser()).toBe(false);
     });
 
-    it('should reject email with spaces', () => {
+    it('should calculate user age in days correctly', () => {
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 5); // 5 days ago
+
       const user = new User({
         ...mockUserData,
-        email: 'test @example.com',
+        createdAt: oldDate,
       });
-      expect(user.isValidEmail()).toBe(false);
+
+      expect(user.getUserAgeInDays()).toBe(5);
     });
 
-    it('should accept complex valid emails', () => {
-      const validEmails = [
-        'test+tag@example.com',
-        'test.name@example.co.uk',
-        'test123@example-domain.com',
-        'test@example.com',
-        'user@subdomain.example.com',
-      ];
-
-      validEmails.forEach(email => {
-        const user = new User({
-          ...mockUserData,
-          email,
-        });
-        expect(user.isValidEmail()).toBe(true);
-      });
-    });
-  });
-
-  describe('password validation edge cases', () => {
-    it('should reject password with exactly 7 characters', () => {
-      const user = new User({
-        ...mockUserData,
-        password: 'Pass12!',
-      });
-      expect(user.isValidPassword()).toBe(false);
-    });
-
-    it('should accept password with exactly 8 characters', () => {
-      const user = new User({
-        ...mockUserData,
-        password: 'Pass123!',
-      });
-      expect(user.isValidPassword()).toBe(true);
-    });
-
-    it('should reject empty password', () => {
-      const user = new User({
-        ...mockUserData,
-        password: '',
-      });
-      expect(user.isValidPassword()).toBe(false);
+    it('should calculate user age for very recent user', () => {
+      const user = new User(mockUserData);
+      expect(user.getUserAgeInDays()).toBe(0);
     });
   });
 
   describe('updateEmail edge cases', () => {
     it('should update email multiple times', () => {
-      const user = new User(mockUserData);
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const user = new User({
+        ...mockUserData,
+        updatedAt: oldDate,
+      });
 
       user.updateEmail('second@example.com');
       expect(user.email).toBe('second@example.com');
@@ -346,7 +326,13 @@ describe('User Entity', () => {
     });
 
     it('should preserve other properties when updating email', () => {
-      const user = new User(mockUserData);
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const user = new User({
+        ...mockUserData,
+        updatedAt: oldDate,
+      });
 
       const originalId = user.id;
       const originalPassword = user.password;
@@ -362,17 +348,34 @@ describe('User Entity', () => {
 
   describe('changePassword edge cases', () => {
     it('should update password multiple times', () => {
-      const user = new User(mockUserData);
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const user = new User({
+        ...mockUserData,
+        updatedAt: oldDate,
+      });
 
       user.changePassword('SecondPass123!');
       expect(user.password).toBe('SecondPass123!');
+
+      // Mock the updatedAt to be old enough for the second change
+      const olderDate = new Date();
+      olderDate.setDate(olderDate.getDate() - 3); // 3 days ago
+      user.updatedAt = olderDate;
 
       user.changePassword('ThirdPass123!');
       expect(user.password).toBe('ThirdPass123!');
     });
 
     it('should preserve other properties when changing password', () => {
-      const user = new User(mockUserData);
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 2); // 2 days ago
+
+      const user = new User({
+        ...mockUserData,
+        updatedAt: oldDate,
+      });
 
       const originalId = user.id;
       const originalEmail = user.email;

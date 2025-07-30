@@ -6,7 +6,8 @@ describe('ProfileResponseDto', () => {
     id: 'profile-1',
     userId: 'user-1',
     firstName: 'Juan',
-    lastName: 'Pérez',
+    lastName1: 'Pérez',
+    lastName2: 'García',
     phone: '+34 600 123 456',
     language: 'es',
     city: 'Madrid',
@@ -21,14 +22,14 @@ describe('ProfileResponseDto', () => {
     expect(profileDto.id).toBe('profile-1');
     expect(profileDto.userId).toBe('user-1');
     expect(profileDto.firstName).toBe('Juan');
-    expect(profileDto.lastName).toBe('Pérez');
+    expect(profileDto.lastName1).toBe('Pérez');
     expect(profileDto.phone).toBe('+34 600 123 456');
     expect(profileDto.language).toBe('es');
     expect(profileDto.city).toBe('Madrid');
     expect(profileDto.postalCode).toBe('28001');
     expect(profileDto.createdAt).toEqual(new Date('2024-01-01T00:00:00.000Z'));
     expect(profileDto.updatedAt).toEqual(new Date('2024-01-01T00:00:00.000Z'));
-    expect(profileDto.fullName).toBe('Juan Pérez');
+    expect(profileDto.fullName).toBe('Juan Pérez García');
     expect(profileDto.completionPercentage).toBe(100);
     expect(profileDto.isComplete).toBe(true);
   });
@@ -36,6 +37,7 @@ describe('ProfileResponseDto', () => {
   it('should handle missing optional fields', () => {
     const incompleteData = {
       ...mockProfileData,
+      lastName2: undefined,
       phone: undefined,
       city: undefined,
       postalCode: undefined,
@@ -47,13 +49,14 @@ describe('ProfileResponseDto', () => {
     expect(profileDto.city).toBeUndefined();
     expect(profileDto.postalCode).toBeUndefined();
     expect(profileDto.fullName).toBe('Juan Pérez');
-    expect(profileDto.completionPercentage).toBe(40); // 2 out of 5 fields
+    expect(profileDto.completionPercentage).toBe(33); // 2 out of 6 fields
     expect(profileDto.isComplete).toBe(false);
   });
 
   it('should handle null values from database', () => {
     const nullData = {
       ...mockProfileData,
+      lastName2: null,
       phone: null,
       city: null,
       postalCode: null,
@@ -64,13 +67,14 @@ describe('ProfileResponseDto', () => {
     expect(profileDto.phone).toBeNull();
     expect(profileDto.city).toBeNull();
     expect(profileDto.postalCode).toBeNull();
-    expect(profileDto.completionPercentage).toBe(40);
+    expect(profileDto.completionPercentage).toBe(33);
     expect(profileDto.isComplete).toBe(false);
   });
 
   it('should calculate completion percentage correctly', () => {
     const partialData = {
       ...mockProfileData,
+      lastName2: undefined,
       phone: '123456789',
       city: undefined,
       postalCode: undefined,
@@ -78,12 +82,13 @@ describe('ProfileResponseDto', () => {
 
     const profileDto = plainToClass(ProfileResponseDto, partialData);
 
-    expect(profileDto.completionPercentage).toBe(60); // 3 out of 5 fields
+    expect(profileDto.completionPercentage).toBe(50); // 3 out of 6 fields
   });
 
   it('should handle empty strings as incomplete', () => {
     const emptyData = {
       ...mockProfileData,
+      lastName2: '',
       phone: '',
       city: '',
       postalCode: '',
@@ -91,7 +96,7 @@ describe('ProfileResponseDto', () => {
 
     const profileDto = plainToClass(ProfileResponseDto, emptyData);
 
-    expect(profileDto.completionPercentage).toBe(40); // 2 out of 5 fields
+    expect(profileDto.completionPercentage).toBe(33); // 2 out of 6 fields
     expect(profileDto.isComplete).toBe(false);
   });
 });

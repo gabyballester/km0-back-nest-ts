@@ -26,13 +26,17 @@ export class CreateProfileDto {
   @MinLength(1, { message: 'El userId no puede estar vacío' })
   userId!: string;
 
-  @ApiName(true, 'nombre')
+  @ApiName(true, 'first name')
   @IsValidName(true)
   firstName!: string;
 
-  @ApiName(true, 'apellido')
+  @ApiName(true, 'first last name')
   @IsValidName(true)
-  lastName!: string;
+  lastName1!: string;
+
+  @ApiName(false, 'second last name')
+  @IsValidName(false)
+  lastName2?: string;
 
   @ApiPhone()
   @IsValidPhone()

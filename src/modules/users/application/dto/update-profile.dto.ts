@@ -15,13 +15,17 @@ import {
  * DTO para actualizar un perfil de usuario existente
  */
 export class UpdateProfileDto {
-  @ApiName(false, 'nombre')
+  @ApiName(false, 'first name')
   @IsValidName(false)
   firstName?: string;
 
-  @ApiName(false, 'apellido')
+  @ApiName(false, 'first last name')
   @IsValidName(false)
-  lastName?: string;
+  lastName1?: string;
+
+  @ApiName(false, 'second last name')
+  @IsValidName(false)
+  lastName2?: string;
 
   @ApiPhone()
   @IsValidPhone()

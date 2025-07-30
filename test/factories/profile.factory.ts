@@ -53,7 +53,8 @@ export class ProfileFactory {
     return {
       userId: 'new-user-id',
       firstName: 'New',
-      lastName: 'Profile',
+      lastName1: 'Profile',
+      lastName2: 'Factory',
       phone: '+1234567890',
       language: 'es',
       city: 'Madrid',
@@ -67,7 +68,8 @@ export class ProfileFactory {
   ): UpdateProfileDto {
     return {
       firstName: 'Updated',
-      lastName: 'Profile',
+      lastName1: 'Profile',
+      lastName2: 'Factory',
       phone: '+0987654321',
       language: 'en',
       city: 'Barcelona',
@@ -83,8 +85,9 @@ export class ProfileFactory {
       id: 'profile-response-id',
       userId: 'user-id',
       firstName: 'Response',
-      lastName: 'Profile',
-      fullName: 'Response Profile',
+      lastName1: 'Profile',
+      lastName2: 'Factory',
+      fullName: 'Response Profile Factory',
       phone: '+1234567890',
       language: 'es',
       city: 'Madrid',

@@ -22,8 +22,8 @@ describe('ProfileService', () => {
     'Juan',
     'Pérez',
     'es',
-    new Date('2024-01-01'),
-    new Date('2024-01-01'),
+    '2024-01-01',
+    '2024-01-01',
     '+34 600 123 456',
     'Madrid',
     '28001',
@@ -66,7 +66,8 @@ describe('ProfileService', () => {
     const createProfileDto = {
       userId: 'user-1',
       firstName: 'Juan',
-      lastName: 'Pérez',
+      lastName1: 'Pérez',
+      lastName2: 'García',
       language: 'es',
       phone: '+34 600 123 456',
       city: 'Madrid',
@@ -218,8 +219,8 @@ describe('ProfileService', () => {
         'Juan Carlos',
         'Pérez',
         'es',
-        new Date('2024-01-01'),
-        new Date('2024-01-02'),
+        '2024-01-01',
+        '2024-01-02',
         '+34 600 123 456',
         'Barcelona',
         '28001',
@@ -236,7 +237,7 @@ describe('ProfileService', () => {
         expect.objectContaining({
           id: 'profile-1',
           firstName: 'Juan Carlos',
-          lastName: 'Pérez',
+          lastName1: 'Pérez',
         }),
       );
       expect(result).toBe(updatedProfile);
